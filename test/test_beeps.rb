@@ -15,10 +15,4 @@ class TestBeeps < Test::Unit::TestCase
     assert Beeps.fin!
   end
 
-  def test_test ()
-    assert Beeps.init!
-    assert Beeps.test
-    assert Beeps.fin!
-  end
-
 end# TestBeeps

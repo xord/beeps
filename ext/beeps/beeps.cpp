@@ -22,14 +22,6 @@ RUCY_DEF0(fin)
 }
 RUCY_END
 
-static
-RUCY_DEF0(test)
-{
-	Beeps::test();
-	return self;
-}
-RUCY_END
-
 
 static Module mBeeps;
 
@@ -39,7 +31,6 @@ Init_beeps ()
 	mBeeps = define_module("Beeps");
 	mBeeps.define_singleton_method("init!", init);
 	mBeeps.define_singleton_method("fin!", fin);
-	mBeeps.define_singleton_method("test", test);
 }
 
 

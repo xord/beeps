@@ -15,6 +15,7 @@ include Xot::Rake
 
 MODULES     = [Xot, Rucy, Beeps].map {|m| m.const_get :Module}
 MODULE      = MODULES.last
+INCDIRS     = ['src/stk/include']
 TESTS_ALONE = ['test/test_beeps.rb']
 
 

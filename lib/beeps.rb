@@ -3,3 +3,5 @@
 
 require 'beeps/autoinit'
 require 'beeps/module'
+
+require 'beeps/sound'

@@ -3,8 +3,7 @@
 
 
 #include <stdlib.h>
-#include <thread>
-#include <chrono>
+#include "Stk.h"
 #include "beeps/openal.h"
 #include "beeps/exception.h"
 
@@ -50,6 +49,8 @@ namespace Beeps
 		if (g::device || g::context)
 			beeps_error(__FILE__, __LINE__, "Beeps::init(): already initialized.");
 
+		stk::Stk::setSampleRate(44100);
+
 		g::device = alcOpenDevice(NULL);
 		if (!g::device) goto FAILED;
 
@@ -81,35 +82,11 @@ namespace Beeps
 		return g::device;
 	}
 
-	void
-	test ()
+
+	uint
+	sampling_rate ()
 	{
-		ALuint buffer = 0;
-		alGenBuffers(1, &buffer);
-		check_error(__FILE__, __LINE__);
-
-		int sampling_rate = 44100;
-		int seconds       = 1;
-		ALsizei bufsize   = sampling_rate * seconds;
-		short* samples    = new short[bufsize];
-		for (ALsizei i = 0; i < bufsize; ++i)
-			samples[i] = rand();
-		alBufferData(
-			buffer, AL_FORMAT_MONO16, samples, sizeof(short) * bufsize, sampling_rate);
-		delete [] samples;
-
-		ALuint source = 0;
-		alGenSources(1, &source);
-		alSourcei(source, AL_BUFFER, buffer);
-		check_error(__FILE__, __LINE__);
-
-		alSourcePlay(source);
-		check_error(__FILE__, __LINE__);
-
-		std::this_thread::sleep_for(std::chrono::seconds(seconds));
-
-		alDeleteSources(1, &source);
-		alDeleteBuffers(1, &buffer);
+		return stk::Stk::sampleRate();
 	}
 
 

@@ -4,6 +4,9 @@
 #define __BEEPS_BEEPS_H__
 
 
+#include <beeps/defs.h>
+
+
 namespace Beeps
 {
 
@@ -12,7 +15,8 @@ namespace Beeps
 
 	void fin ();
 
-	void test ();
+
+	uint sampling_rate ();
 
 
 }// Beeps
