@@ -46,15 +46,31 @@ namespace Beeps
 
 		stk::SineWave oscillator;
 
+		float frequency;
+
 	};// SineWave::Data
 
 
 	SineWave::SineWave ()
 	{
+		set_frequency(440);
 	}
 
 	SineWave::~SineWave ()
 	{
+	}
+
+	void
+	SineWave::set_frequency (float frequency)
+	{
+		self->frequency = frequency;
+		self->oscillator.setFrequency(frequency);
+	}
+
+	float
+	SineWave::frequency () const
+	{
+		return self->frequency;
 	}
 
 	void
@@ -66,33 +82,33 @@ namespace Beeps
 	}
 
 
-	struct FileInput::Data
+	struct FileIn::Data
 	{
 
 		stk::FileWvIn input;
 
-	};// FileInput::Data
+	};// FileIn::Data
 
 
-	FileInput::FileInput (const char* path)
+	FileIn::FileIn (const char* path)
 	{
 		if (path)
 			self->input.openFile(path);
 	}
 
-	FileInput::~FileInput ()
+	FileIn::~FileIn ()
 	{
 	}
 
 	void
-	FileInput::process (Signals* signals)
+	FileIn::process (Signals* signals)
 	{
 		Super::process(signals);
 
 		self->input.tick(*signals->frames());
 	}
 
-	FileInput::operator bool () const
+	FileIn::operator bool () const
 	{
 		return self->input.isOpen();
 	}

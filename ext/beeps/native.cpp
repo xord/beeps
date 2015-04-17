@@ -9,7 +9,7 @@ void Init_beeps ();
 void Init_sound ();
 void Init_processor ();
 void Init_sine_wave ();
-void Init_file_input ();
+void Init_file_in ();
 
 
 extern "C" void
@@ -27,7 +27,7 @@ extern "C" void
 	Init_sound();
 	Init_processor();
 	Init_sine_wave();
-	Init_file_input();
+	Init_file_in();
 
 	RUCY_CATCH
 }

@@ -1,7 +1,7 @@
 #include "beeps/exception.h"
 
 
-#include "xot/string.h"
+#include <xot/string.h>
 
 
 namespace Beeps

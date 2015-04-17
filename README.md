@@ -1,4 +1,4 @@
 
-# Beeps - A Simple Synthesis Library
+# Beeps - A Simple Sound Synthesis Library.
 
-## by snori@xord.org
+ by snori@xord.org

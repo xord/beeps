@@ -10,7 +10,7 @@ module Beeps
   class Sound
 
     def self.load (path)
-      Sound.new FileInput.new(path), 1
+      Sound.new FileIn.new(path), 1
     end
 
   end# Sound

@@ -43,6 +43,10 @@ namespace Beeps
 
 			virtual ~SineWave ();
 
+			virtual void set_frequency (float frequency);
+
+			virtual float    frequency () const;
+
 			virtual void process (Signals* signals);
 
 			struct Data;
@@ -52,16 +56,16 @@ namespace Beeps
 	};// SineWave
 
 
-	class FileInput : public Processor
+	class FileIn : public Processor
 	{
 
 		typedef Processor Super;
 
 		public:
 
-			FileInput (const char* path = NULL);
+			FileIn (const char* path = NULL);
 
-			virtual ~FileInput ();
+			virtual ~FileIn ();
 
 			virtual void process (Signals* signals);
 
@@ -71,7 +75,7 @@ namespace Beeps
 
 			Xot::PImpl<Data, true> self;
 
-	};// FileInput
+	};// FileIn
 
 
 }// Beeps

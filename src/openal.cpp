@@ -2,10 +2,18 @@
 
 
 #include <vector>
+#include <xot/debug.h>
 #include "beeps/defs.h"
 #include "beeps/sound.h"
 #include "beeps/exception.h"
 #include "openal.h"
+
+
+#if 0
+#define LOG(...) doutln(__VA_ARGS__)
+#else
+#define LOG(...)
+#endif
 
 
 namespace Beeps
@@ -96,6 +104,28 @@ namespace Beeps
 			check_error(__FILE__, __LINE__);
 		}
 
+		void play (const Sound& sound)
+		{
+			if (!sound)
+				argument_error(__FILE__, __LINE__);
+
+			if (!*this)
+				invalid_state_error(__FILE__, __LINE__);
+
+			alSourcei(id, AL_BUFFER, get_sound_buffer_id(sound));
+			alSourcePlay(id);
+			check_error(__FILE__, __LINE__);
+		}
+
+		void stop ()
+		{
+			if (!*this)
+				invalid_state_error(__FILE__, __LINE__);
+
+			alSourceStop(id);
+			check_error(__FILE__, __LINE__);
+		}
+
 		bool is_playing () const
 		{
 			if (!*this) return false;
@@ -128,36 +158,38 @@ namespace Beeps
 	static SoundSource*
 	next_source ()
 	{
+		SoundSource::Ptr source;
 		for (SoundSourceList::iterator it = sources.begin(); it != sources.end(); ++it)
 		{
 			const SoundSource::Ptr& p = *it;
-			if (!p || !*p || p->is_playing())
-				continue;
-
-			sources.erase(it);
-			sources.push_back(p);
-			return p.get();
+			if (p && *p && !p->is_playing())
+			{
+				source = p;
+				sources.erase(it);
+				LOG("reuse source");
+				break;
+			}
 		}
 
-		SoundSource::Ptr new_source = SoundSource::create();
-		if (new_source)
+		if (!source)
 		{
-			sources.push_back(new_source);
-			return new_source.get();
+			source = SoundSource::create();
+			LOG("new source");
 		}
 
-		SoundSource::Ptr oldest = *sources.begin();
-		if (oldest)
+		if (!source)
 		{
-			alSourceStop(oldest->id);
-			check_error(__FILE__, __LINE__);
-
+			source = *sources.begin();
+			if (source) source->stop();
 			sources.erase(sources.begin());
-			sources.push_back(oldest);
-			return oldest.get();
+			LOG("stop and reuse oldest source");
 		}
 
-		return NULL;
+		if (!source)
+			return NULL;
+
+		sources.push_back(source);
+		return source.get();
 	}
 
 	void
@@ -170,11 +202,14 @@ namespace Beeps
 		if (!source || !*source)
 			invalid_state_error(__FILE__, __LINE__);
 
-		alSourcei(source->id, AL_BUFFER, get_sound_buffer_id(sound));
-		check_error(__FILE__, __LINE__);
+		source->play(sound);
 
-		alSourcePlay(source->id);
-		check_error(__FILE__, __LINE__);
+#if 0
+		std::string ox = "";
+		for (size_t i = 0; i < sources.size(); ++i)
+			ox += sources[i]->is_playing() ? 'o' : 'x';
+		LOG("playing with %d sources. (%s)", sources.size(), ox.c_str());
+#endif
 	}
 
 
