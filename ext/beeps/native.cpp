@@ -6,10 +6,12 @@ using namespace Rucy;
 
 
 void Init_beeps ();
-void Init_sound ();
+
 void Init_processor ();
 void Init_sine_wave ();
 void Init_file_in ();
+
+void Init_sound ();
 
 
 extern "C" void
@@ -24,10 +26,12 @@ extern "C" void
 	Rucy::init();
 
 	Init_beeps();
-	Init_sound();
+
 	Init_processor();
 	Init_sine_wave();
 	Init_file_in();
+
+	Init_sound();
 
 	RUCY_CATCH
 }
