@@ -1,4 +1,4 @@
 
-# Beeps - A Simple Sound Synthesis Library.
+# Beeps - Plays beep sound.
 
  by snori@xord.org

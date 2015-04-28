@@ -17,13 +17,13 @@ Gem::Specification.new do |s|
   rdocs = glob.call *%w[README .doc/ext/**/*.cpp]
 
   s.name        = name
-  s.summary     = 'A Simple Synthesys Library.'
-  s.description = 'This library helps you to develop simple sound synthesis application.'
+  s.summary     = 'Plays beep sound.'
+  s.description = 'Synthesize and play beep sounds.'
   s.version     = mod.version
 
   s.authors  = %w[snori]
   s.email    = 'snori@xord.org'
-  s.homepage = "https://github.com/xord/reflexion/wiki/#{name.capitalize}-Home"
+  s.homepage = "https://github.com/xord/beeps"
 
   s.platform              = Gem::Platform::RUBY
   s.required_ruby_version = '>=1.9.0'
