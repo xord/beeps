@@ -2,6 +2,8 @@
 
 
 #include "SineWave.h"
+#include "BlitSaw.h"
+#include "BlitSquare.h"
 #include "FileWvIn.h"
 #include "beeps/signals.h"
 #include "beeps/exception.h"
@@ -75,6 +77,88 @@ namespace Beeps
 
 	void
 	SineWave::process (Signals* signals)
+	{
+		Super::process(signals);
+
+		self->oscillator.tick(*signals->frames());
+	}
+
+
+	struct SquareWave::Data
+	{
+
+		stk::BlitSquare oscillator;
+
+		float frequency;
+
+	};// SquareWave::Data
+
+
+	SquareWave::SquareWave ()
+	{
+		set_frequency(440);
+	}
+
+	SquareWave::~SquareWave ()
+	{
+	}
+
+	void
+	SquareWave::set_frequency (float frequency)
+	{
+		self->frequency = frequency;
+		self->oscillator.setFrequency(frequency);
+	}
+
+	float
+	SquareWave::frequency () const
+	{
+		return self->frequency;
+	}
+
+	void
+	SquareWave::process (Signals* signals)
+	{
+		Super::process(signals);
+
+		self->oscillator.tick(*signals->frames());
+	}
+
+
+	struct SawtoothWave::Data
+	{
+
+		stk::BlitSaw oscillator;
+
+		float frequency;
+
+	};// SawtoothWave::Data
+
+
+	SawtoothWave::SawtoothWave ()
+	{
+		set_frequency(440);
+	}
+
+	SawtoothWave::~SawtoothWave ()
+	{
+	}
+
+	void
+	SawtoothWave::set_frequency (float frequency)
+	{
+		self->frequency = frequency;
+		self->oscillator.setFrequency(frequency);
+	}
+
+	float
+	SawtoothWave::frequency () const
+	{
+		return self->frequency;
+	}
+
+	void
+	SawtoothWave::process (Signals* signals)
 	{
 		Super::process(signals);
 

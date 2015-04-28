@@ -7,7 +7,7 @@ require_relative 'helper'
 class TestSound < Test::Unit::TestCase
 
   def s ()
-    Beeps::Sound.load '/Users/snori/Desktop/test.wav'
+    Beeps::Sound.new Beeps::SineWave.new, 0.1
   end
 
   def test_play ()

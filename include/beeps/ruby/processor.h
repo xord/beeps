@@ -21,6 +21,12 @@ namespace Beeps
 	Rucy::Class sine_wave_class ();
 	// class Beeps::SineWave
 
+	Rucy::Class square_wave_class ();
+	// class Beeps::SineWave
+
+	Rucy::Class sawtooth_wave_class ();
+	// class Beeps::SawtoothWave
+
 	Rucy::Class file_in_class ();
 	// class Beeps::FileIn
 
@@ -31,6 +37,10 @@ namespace Beeps
 RUCY_DECLARE_VALUE_FROM_TO(Beeps::Processor)
 
 RUCY_DECLARE_VALUE_FROM_TO(Beeps::SineWave)
+
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::SquareWave)
+
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::SawtoothWave)
 
 RUCY_DECLARE_VALUE_FROM_TO(Beeps::FileIn)
 
@@ -49,6 +59,18 @@ namespace Rucy
 	get_ruby_class<Beeps::SineWave> ()
 	{
 		return Beeps::sine_wave_class();
+	}
+
+	template <> inline Class
+	get_ruby_class<Beeps::SquareWave> ()
+	{
+		return Beeps::square_wave_class();
+	}
+
+	template <> inline Class
+	get_ruby_class<Beeps::SawtoothWave> ()
+	{
+		return Beeps::sawtooth_wave_class();
 	}
 
 	template <> inline Class
