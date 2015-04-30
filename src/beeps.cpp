@@ -28,6 +28,9 @@ namespace Beeps
 	static void
 	cleanup ()
 	{
+		void cleanup_sources ();
+		cleanup_sources();
+
 		alcMakeContextCurrent(NULL);
 
 		if (g::context)

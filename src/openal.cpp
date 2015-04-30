@@ -155,6 +155,12 @@ namespace Beeps
 	static SoundSourceList sources;
 
 
+	void
+	cleanup_sources ()
+	{
+		sources.clear();
+	}
+
 	static SoundSource*
 	next_source ()
 	{

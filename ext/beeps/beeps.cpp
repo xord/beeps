@@ -1,4 +1,5 @@
 #include <rucy.h>
+#include <ruby/intern.h>
 #include "beeps/beeps.h"
 #include "defs.h"
 
@@ -17,6 +18,7 @@ RUCY_END
 static
 RUCY_DEF0(fin)
 {
+	rb_gc_start();
 	Beeps::fin();
 	return self;
 }
