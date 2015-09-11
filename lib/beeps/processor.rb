@@ -14,8 +14,6 @@ module Beeps
 
     include Xot::Setter
 
-    extend Xot::UniversalAccessor
-
     def initialize (options = nil, &block)
       super()
       set options if options
