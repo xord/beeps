@@ -51,7 +51,7 @@ namespace Beeps
 
 			struct Data;
 
-			Xot::PImpl<Data, true> self;
+			Xot::PSharedImpl<Data> self;
 
 	};// SineWave
 
@@ -75,7 +75,7 @@ namespace Beeps
 
 			struct Data;
 
-			Xot::PImpl<Data, true> self;
+			Xot::PSharedImpl<Data> self;
 
 	};// SquareWave
 
@@ -99,7 +99,7 @@ namespace Beeps
 
 			struct Data;
 
-			Xot::PImpl<Data, true> self;
+			Xot::PSharedImpl<Data> self;
 
 	};// SawtoothWave
 
@@ -121,7 +121,7 @@ namespace Beeps
 
 			struct Data;
 
-			Xot::PImpl<Data, true> self;
+			Xot::PSharedImpl<Data> self;
 
 	};// FileIn
 

@@ -33,7 +33,7 @@ namespace Beeps
 
 			struct Data;
 
-			Xot::PImpl<Data, true> self;
+			Xot::PSharedImpl<Data> self;
 
 	};// Sound
 
