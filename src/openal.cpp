@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <memory>
-#include <xot/debug.h>
 #include "beeps/defs.h"
 #include "beeps/sound.h"
 #include "beeps/exception.h"
+#include "beeps/debug.h"
 #include "openal.h"
 
 
