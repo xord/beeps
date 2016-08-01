@@ -2,6 +2,7 @@
 
 
 #include <vector>
+#include <memory>
 #include <xot/debug.h>
 #include "beeps/defs.h"
 #include "beeps/sound.h"
@@ -75,7 +76,7 @@ namespace Beeps
 
 		typedef SoundSource This;
 
-		typedef boost::shared_ptr<This> Ptr;
+		typedef std::shared_ptr<This> Ptr;
 
 		ALint id;
 

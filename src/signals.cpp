@@ -1,7 +1,7 @@
 #include "beeps/signals.h"
 
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 #include "Stk.h"
 #include "beeps/beeps.h"
 #include "beeps/exception.h"
@@ -14,7 +14,7 @@ namespace Beeps
 	struct Signals::Data
 	{
 
-		boost::scoped_ptr<stk::StkFrames> frames;
+		std::unique_ptr<stk::StkFrames> frames;
 
 	};// Signals::Data
 
