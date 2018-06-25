@@ -1,12 +1,8 @@
 #include "beeps/ruby/processor.h"
 
 
-#include <rucy.h>
 #include "beeps/exception.h"
 #include "defs.h"
-
-
-using namespace Rucy;
 
 
 RUCY_DEFINE_VALUE_FROM_TO(Beeps::Processor)
@@ -19,7 +15,7 @@ RUCY_DEFINE_VALUE_FROM_TO(Beeps::Processor)
 static
 RUCY_DEF_ALLOC(alloc, klass)
 {
-	beeps_error(__FILE__, __LINE__);
+	Beeps::beeps_error(__FILE__, __LINE__);
 }
 RUCY_END
 

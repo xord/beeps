@@ -1,12 +1,7 @@
 #include "beeps/ruby/sound.h"
 
 
-#include <rucy.h>
-#include "beeps/exception.h"
 #include "defs.h"
-
-
-using namespace Rucy;
 
 
 RUCY_DEFINE_VALUE_FROM_TO(Beeps::Sound)

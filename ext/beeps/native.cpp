@@ -1,8 +1,4 @@
-#include <rucy.h>
 #include "defs.h"
-
-
-using namespace Rucy;
 
 
 void Init_beeps ();

@@ -4,10 +4,11 @@
 #define __BEEPS_EXT_DEFS_H__
 
 
-#include <beeps/exception.h>
+#include <rucy.h>
+#include <beeps/defs.h>
 
 
-using Beeps::beeps_error;
+using namespace Rucy;
 
 
 #endif//EOH

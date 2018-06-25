@@ -1,10 +1,5 @@
-#include <rucy.h>
-#include <ruby/intern.h>
 #include "beeps/beeps.h"
 #include "defs.h"
-
-
-using namespace Rucy;
 
 
 static
