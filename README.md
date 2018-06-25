@@ -1,4 +1,4 @@
 
 # Beeps - Plays beep sound.
 
- by snori@xord.org
+ by xordog@gmail.com

@@ -21,8 +21,8 @@ Gem::Specification.new do |s|
   s.description = 'Synthesize and play beep sounds.'
   s.version     = mod.version
 
-  s.authors  = %w[snori]
-  s.email    = 'snori@xord.org'
+  s.authors  = %w[xordog]
+  s.email    = 'xordog@gmail.com'
   s.homepage = "https://github.com/xord/beeps"
 
   s.platform              = Gem::Platform::RUBY
