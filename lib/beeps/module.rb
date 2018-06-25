@@ -6,6 +6,8 @@ module Beeps
 
   module Module
 
+    module_function
+
     def name ()
       super.split('::')[-2]
     end
@@ -15,33 +17,16 @@ module Beeps
     end
 
     def root_dir (path = '')
-      File.expand_path "../../../#{path}", __FILE__
+      File.expand_path "../../#{path}", __dir__
     end
 
-    def include_dir ()
+    def inc_dir ()
       root_dir 'include'
     end
 
     def lib_dir ()
       root_dir 'lib'
     end
-
-    def task_dir ()
-      root_dir 'task'
-    end
-
-    def load_tasks (*names)
-      if names.empty?
-        Dir["#{task_dir}/**/*.rake"].each {|path| load path}
-      else
-        names.each do |name|
-          path = "#{task_dir}/#{name}.rake"
-          load path if File.exist? path
-        end
-      end
-    end
-
-    extend self
 
   end# Module
 
