@@ -24,7 +24,7 @@ namespace Beeps
 
 			~Signals ();
 
-			Signals copy () const;
+			Signals dup () const;
 
 			float seconds () const;
 

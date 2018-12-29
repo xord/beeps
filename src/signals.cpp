@@ -32,7 +32,7 @@ namespace Beeps
 	}
 
 	Signals
-	Signals::copy () const
+	Signals::dup () const
 	{
 		Signals t;
 		if (self->frames)
