@@ -5,6 +5,7 @@
 
 
 #include <xot/pimpl.h>
+#include <beeps/defs.h>
 
 
 namespace Beeps

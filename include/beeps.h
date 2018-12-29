@@ -5,7 +5,6 @@
 
 
 #include <beeps/defs.h>
-#include <beeps/openal.h>
 #include <beeps/beeps.h>
 #include <beeps/exception.h>
 #include <beeps/debug.h>

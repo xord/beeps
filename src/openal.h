@@ -4,19 +4,30 @@
 #define __BEEPS_SRC_OPENAL_H__
 
 
-#include <beeps/openal.h>
+#if defined(OSX) || defined(IOS)
+	#include <OpenAL/al.h>
+	#include <OpenAL/alc.h>
+#else
+	#include <AL/al.h>
+	#include <AL/alc.h>
+#endif
+
+#include <beeps/defs.h>
 
 
 namespace Beeps
 {
 
 
-	class Sound;
+	void OpenAL_init ();
 
+	void OpenAL_fin ();
 
-	void play_sound (const Sound& sound);
+	ALCenum OpenAL_get_error();
 
-	ALuint get_sound_buffer_id (const Sound& sound);
+	bool OpenAL_no_error();
+
+	void OpenAL_check_error(const char* file, int line);
 
 
 }// Beeps

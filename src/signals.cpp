@@ -1,8 +1,7 @@
-#include "beeps/signals.h"
+#include "signals.h"
 
 
 #include <memory>
-#include "Stk.h"
 #include "beeps/beeps.h"
 #include "beeps/exception.h"
 
@@ -17,6 +16,22 @@ namespace Beeps
 		std::unique_ptr<stk::StkFrames> frames;
 
 	};// Signals::Data
+
+
+	stk::StkFrames*
+	Signals_get_frames (Signals* signals)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+
+		return signals->self->frames.get();
+	}
+
+	const stk::StkFrames*
+	Signals_get_frames (const Signals* signals)
+	{
+		return Signals_get_frames(const_cast<Signals*>(signals));
+	}
 
 
 	Signals::Signals (float seconds, uint channels)
@@ -61,22 +76,9 @@ namespace Beeps
 		return p ? p->frames->channels() : 0;
 	}
 
-	stk::StkFrames*
-	Signals::frames ()
-	{
-		Data* p = self.get();
-		return p ? p->frames.get() : NULL;
-	}
-
-	const stk::StkFrames*
-	Signals::frames () const
-	{
-		return const_cast<Signals*>(this)->frames();
-	}
-
 	Signals::operator bool () const
 	{
-		const stk::StkFrames* f = frames();
+		const stk::StkFrames* f = Signals_get_frames(this);
 		return f && f->frames() > 0 && f->channels() > 0;
 	}
 

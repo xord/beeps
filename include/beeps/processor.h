@@ -5,6 +5,7 @@
 
 
 #include <xot/pimpl.h>
+#include <beeps/defs.h>
 
 
 namespace Beeps
@@ -19,8 +20,6 @@ namespace Beeps
 
 		public:
 
-			Processor ();
-
 			virtual ~Processor ();
 
 			virtual void process (Signals* signals);
@@ -28,6 +27,10 @@ namespace Beeps
 			virtual operator bool () const;
 
 			virtual bool operator ! () const;
+
+		protected:
+
+			Processor ();
 
 	};// Processor
 

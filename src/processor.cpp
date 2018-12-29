@@ -5,8 +5,8 @@
 #include "BlitSaw.h"
 #include "BlitSquare.h"
 #include "FileWvIn.h"
-#include "beeps/signals.h"
 #include "beeps/exception.h"
+#include "signals.h"
 
 
 namespace Beeps
@@ -80,7 +80,7 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		self->oscillator.tick(*signals->frames());
+		self->oscillator.tick(*Signals_get_frames(signals));
 	}
 
 
@@ -121,7 +121,7 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		self->oscillator.tick(*signals->frames());
+		self->oscillator.tick(*Signals_get_frames(signals));
 	}
 
 
@@ -162,7 +162,7 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		self->oscillator.tick(*signals->frames());
+		self->oscillator.tick(*Signals_get_frames(signals));
 	}
 
 
@@ -189,7 +189,7 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		self->input.tick(*signals->frames());
+		self->input.tick(*Signals_get_frames(signals));
 	}
 
 	FileIn::operator bool () const

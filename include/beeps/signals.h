@@ -8,9 +8,6 @@
 #include <beeps/defs.h>
 
 
-namespace stk {class StkFrames;};
-
-
 namespace Beeps
 {
 
@@ -31,10 +28,6 @@ namespace Beeps
 			uint samples () const;
 
 			uint channels () const;
-
-			      stk::StkFrames* frames ();
-
-			const stk::StkFrames* frames () const;
 
 			operator bool () const;
 
