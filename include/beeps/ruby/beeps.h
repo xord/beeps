@@ -5,6 +5,7 @@
 
 
 #include <rucy/module.h>
+#include <beeps/beeps.h>
 
 
 namespace Beeps
