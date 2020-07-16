@@ -31,9 +31,13 @@ namespace Beeps
 
 		using namespace Xot::ErrorFunctions;
 
-		void beeps_error   (const char* file, int line, const char* format = NULL, ...);
+		[[noreturn]]
+		void beeps_error (
+			const char* file, int line, const char* format = NULL, ...);
 
-		void openal_error (const char* file, int line, const char* format = NULL, ...);
+		[[noreturn]]
+		void openal_error (
+			const char* file, int line, const char* format = NULL, ...);
 
 	}// ErrorFunctions
 
