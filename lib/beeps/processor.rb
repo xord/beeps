@@ -14,7 +14,7 @@ module Beeps
 
     include Xot::Setter
 
-    def initialize (options = nil, &block)
+    def initialize(options = nil, &block)
       super()
       set options if options
       Xot::BlockUtil.instance_eval_or_block_call self, &block if block

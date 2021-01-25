@@ -8,7 +8,7 @@ require_relative 'helper'
 
 class TestBeeps < Test::Unit::TestCase
 
-  def test_init! ()
+  def test_init!()
     assert_raise(Rucy::NativeError) {Beeps.fin!}
     assert Beeps.init!
     assert_raise(Rucy::NativeError) {Beeps.init!}

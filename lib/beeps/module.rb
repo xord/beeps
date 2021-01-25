@@ -8,23 +8,23 @@ module Beeps
 
     module_function
 
-    def name ()
+    def name()
       super.split('::')[-2]
     end
 
-    def version ()
+    def version()
       open(root_dir 'VERSION') {|f| f.readline.chomp}
     end
 
-    def root_dir (path = '')
+    def root_dir(path = '')
       File.expand_path "../../#{path}", __dir__
     end
 
-    def inc_dir ()
+    def inc_dir()
       root_dir 'include'
     end
 
-    def lib_dir ()
+    def lib_dir()
       root_dir 'lib'
     end
 

@@ -13,5 +13,5 @@ include Xot::Test
 
 
 unless $BEEPS_NOAUTOINIT
-  def Beeps.fin! () end
+  def Beeps.fin!() end
 end

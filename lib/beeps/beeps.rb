@@ -11,33 +11,33 @@ module Beeps
 
   extend module ClassMethods
 
-    def be ()
+    def be()
       beep_sound(0.1).play
     end
 
-    def bee ()
+    def bee()
       beep_sound(0.3).play
     end
 
-    def beep (time = 0.5)
+    def beep(time = 0.5)
       beep_sound(time).play
     end
 
-    def beeep ()
+    def beeep()
       beep_sound(1).play
     end
 
-    def beeeep ()
+    def beeeep()
       beep_sound(1.5).play
     end
 
-    def beeeeep ()
+    def beeeeep()
       beep_sound(2).play
     end
 
     private
 
-      def beep_sound (time)
+      def beep_sound(time)
         Sound.new SquareWave.new, time
       end
 
