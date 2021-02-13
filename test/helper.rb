@@ -12,6 +12,6 @@ require 'beeps'
 include Xot::Test
 
 
-unless $BEEPS_NOAUTOINIT
+unless defined?($BEEPS_NOAUTOINIT) && $BEEPS_NOAUTOINIT
   def Beeps.fin!() end
 end
