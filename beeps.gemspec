@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/xord/beeps"
 
   s.platform              = Gem::Platform::RUBY
-  s.required_ruby_version = '~> 2'
+  s.required_ruby_version = '>= 2.6.0'
 
   s.add_runtime_dependency 'xot',  '~> 0.1.23'
   s.add_runtime_dependency 'rucy', '~> 0.1.23'
