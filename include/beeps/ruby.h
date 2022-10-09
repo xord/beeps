@@ -5,6 +5,11 @@
 
 
 #include <beeps/ruby/beeps.h>
+#include <beeps/ruby/defs.h>
+#include <beeps/ruby/exception.h>
+
+#include <beeps/ruby/processor.h>
+#include <beeps/ruby/sound.h>
 
 
 #endif//EOH

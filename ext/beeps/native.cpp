@@ -2,6 +2,7 @@
 
 
 void Init_beeps ();
+void Init_exception ();
 
 void Init_processor ();
 void Init_sine_wave ();
@@ -24,6 +25,7 @@ extern "C" void
 	Rucy::init();
 
 	Init_beeps();
+	Init_exception();
 
 	Init_processor();
 	Init_sine_wave();

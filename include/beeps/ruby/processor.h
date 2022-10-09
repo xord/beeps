@@ -4,10 +4,8 @@
 #define __BEEPS_RUBY_PROCESSOR_H__
 
 
-#include <rucy/rucy.h>
 #include <rucy/class.h>
 #include <rucy/extension.h>
-#include <rucy/exception.h>
 #include <beeps/processor.h>
 
 
