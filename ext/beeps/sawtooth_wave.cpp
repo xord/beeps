@@ -39,7 +39,7 @@ RUCY_END
 static Class cSawtoothWave;
 
 void
-Init_sawtooth_wave ()
+Init_beeps_sawtooth_wave ()
 {
 	Module mBeeps = define_module("Beeps");
 

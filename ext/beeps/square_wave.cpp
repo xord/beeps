@@ -39,7 +39,7 @@ RUCY_END
 static Class cSquareWave;
 
 void
-Init_square_wave ()
+Init_beeps_square_wave ()
 {
 	Module mBeeps = define_module("Beeps");
 

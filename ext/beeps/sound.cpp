@@ -42,7 +42,7 @@ RUCY_END
 static Class cSound;
 
 void
-Init_sound ()
+Init_beeps_sound ()
 {
 	Module mBeeps = define_module("Beeps");
 

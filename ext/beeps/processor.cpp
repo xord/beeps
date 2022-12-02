@@ -23,7 +23,7 @@ RUCY_END
 static Class cProcessor;
 
 void
-Init_processor ()
+Init_beeps_processor ()
 {
 	Module mBeeps = define_module("Beeps");
 

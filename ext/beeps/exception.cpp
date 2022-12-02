@@ -8,7 +8,7 @@ static Class cBeepsError;
 static Class cOpenALError;
 
 void
-Init_exception ()
+Init_beeps_exception ()
 {
 	Module mBeeps = define_module("Beeps");
 

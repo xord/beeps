@@ -39,7 +39,7 @@ RUCY_END
 static Class cSineWave;
 
 void
-Init_sine_wave ()
+Init_beeps_sine_wave ()
 {
 	Module mBeeps = define_module("Beeps");
 

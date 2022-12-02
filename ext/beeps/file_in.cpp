@@ -32,7 +32,7 @@ RUCY_END
 static Class cFileIn;
 
 void
-Init_file_in ()
+Init_beeps_file_in ()
 {
 	Module mBeeps = define_module("Beeps");
 
