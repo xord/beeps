@@ -1,7 +1,7 @@
 # -*- mode: ruby; coding: utf-8 -*-
 
 
-File.expand_path('../lib', __FILE__)
+File.expand_path('lib', __dir__)
   .tap {|s| $:.unshift s if !$:.include?(s) && File.directory?(s)}
 
 require 'beeps/module'
