@@ -4,7 +4,7 @@
 module Beeps
 
 
-  module Module
+  module Extension
 
     module_function
 
@@ -13,7 +13,7 @@ module Beeps
     end
 
     def version()
-      open(root_dir 'VERSION') {|f| f.readline.chomp}
+      File.open(root_dir 'VERSION') {|f| f.readline chomp: true}
     end
 
     def root_dir(path = '')
@@ -28,7 +28,7 @@ module Beeps
       root_dir 'lib'
     end
 
-  end# Module
+  end# Extension
 
 
 end# Beeps
