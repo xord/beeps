@@ -7,9 +7,9 @@
 
 require 'mkmf'
 require 'xot/extconf'
-require 'xot/module'
-require 'rucy/module'
-require 'beeps/module'
+require 'xot/extension'
+require 'rucy/extension'
+require 'beeps/extension'
 
 
 Xot::ExtConf.new Xot, Rucy, Beeps do

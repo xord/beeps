@@ -2,7 +2,7 @@
 
 
 require 'beeps/autoinit'
-require 'beeps/module'
+require 'beeps/extension'
 
 require 'beeps/beeps'
 require 'beeps/processor'

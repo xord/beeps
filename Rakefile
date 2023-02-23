@@ -7,12 +7,12 @@
 
 require 'rucy/rake'
 
-require 'xot/module'
-require 'rucy/module'
-require 'beeps/module'
+require 'xot/extension'
+require 'rucy/extension'
+require 'beeps/extension'
 
 
-MODULES     = [Xot, Rucy, Beeps]
+EXTENSIONS  = [Xot, Rucy, Beeps]
 TESTS_ALONE = ['test/test_beeps.rb']
 
 use_external_library 'https://github.com/thestk/stk',
