@@ -1,0 +1,23 @@
+name: Tag
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: ruby 3.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: install xot gem
+        run: gem install xot
+
+      - name: tag versions
+        run: rake tag:versions
