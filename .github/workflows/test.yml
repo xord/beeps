@@ -1,0 +1,34 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: ruby 3.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: setup dependencies
+        run: rake setup:dependencies
+
+      - name: clean
+        run: rake clean
+
+      - name: lib
+        run: rake lib
+
+      - name: ext
+        run: rake ext
+
+      - name: test
+        run: rake test
