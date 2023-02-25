@@ -19,5 +19,16 @@ jobs:
       - name: install xot gem
         run: gem install xot
 
+      - name: fetch all tags and histories
+        run: git fetch --unshallow --tags
+
+      - name: setup user name and email
+        run: |
+          git config --global user.email "xordog@gmail.com"
+          git config --global user.name "xord"
+
       - name: tag versions
         run: rake tag:versions
+
+      - name: push tags
+        run: git push origin --tags
