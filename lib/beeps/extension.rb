@@ -13,7 +13,7 @@ module Beeps
     end
 
     def version()
-      File.open(root_dir 'VERSION') {|f| f.readline chomp: true}
+      File.read(root_dir 'VERSION')[/[\d\.]+/]
     end
 
     def root_dir(path = '')
