@@ -19,7 +19,9 @@ jobs:
           ruby-version: 3.2
 
       - name: setup dependencies
-        run: rake setup:dependencies
+        run: |
+          gem install xot
+          rake setup:dependencies
 
       - name: clean
         run: rake clean
