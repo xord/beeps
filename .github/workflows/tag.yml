@@ -9,26 +9,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: ruby 3.2
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
 
-      - name: fetch all tags and histories
-        run: git fetch --unshallow --tags
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
+
+      - name: setup dependencies
+        run: ruby -L.github/workflows -rutils -e 'setup_dependencies only: :xot'
 
       - name: setup user name and email
         run: |
           git config --global user.email "xordog@gmail.com"
           git config --global user.name "xord"
 
-      - name: ruby 3.2
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.2
-
-      - name: install xot gem
-        run: gem install xot
-
       - name: tag versions
-        run: rake tag:versions
+        run: ruby -L.github/workflows -rutils -e 'tag_versions'
 
       - name: push tags
         run: git push origin --tags
