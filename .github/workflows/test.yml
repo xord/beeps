@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: setup dependencies
-        run: ruby -L.github/workflows -rutils -e 'setup_dependencies'
+        run: ruby -I.github/workflows -rutils -e 'setup_dependencies'
 
       - name: lib
         run: rake lib
