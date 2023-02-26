@@ -31,6 +31,9 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'xot',  '~> 0.1.31'
   s.add_runtime_dependency 'rucy', '~> 0.1.30'
 
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'test-unit'
+
   s.files            = `git ls-files`.split $/
   s.executables      = s.files.grep(%r{^bin/}) {|f| File.basename f}
   s.test_files       = s.files.grep %r{^(test|spec|features)/}
