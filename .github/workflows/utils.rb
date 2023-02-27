@@ -1,3 +1,5 @@
+RENAMES = {reflex: 'reflexion'}
+
 def sh(cmd)
   puts cmd
   system cmd
@@ -15,9 +17,13 @@ def setup_dependencies(build: true, only: nil)
   exts = exts & [only].flatten.map(&:to_s) if only
 
   exts.each do |ext|
-    ver = gemspec[/add_runtime_dependency.*'#{ext}'.*'\s*~>\s*([\d\.]+)\s*'/, 1]
-    url = "https://github.com/xord/#{ext}.git"
-    sh %( git clone --depth 1 --branch v#{ver} #{url} ../#{ext} )
+    gem   = RENAMES[ext].then {|s| s || ext}
+    clone = "git clone --depth 1 https://github.com/xord/#{ext}.git ../#{ext}"
+    ver   = gemspec[/add_runtime_dependency.*'#{gem}'.*'\s*~>\s*([\d\.]+)\s*'/, 1]
+
+    # 'rake subtree:push' pushes all subrepos, so cloning by new tag
+    # often fails before tagging each new tag
+    sh %( #{clone} --branch v#{ver} || #{clone} )
     sh %( cd ../#{ext} && rake ext )
   end
 end
