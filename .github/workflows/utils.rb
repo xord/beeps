@@ -7,8 +7,10 @@ end
 
 def setup_dependencies(build: true, only: nil)
   gemspec_path = `git ls-files`.lines(chomp: true).find {|l| l =~ /\.gemspec$/}
-  gemspec      = File.read gemspec_path
-  name         = File.basename gemspec_path, '.gemspec'
+  return unless gemspec_path
+
+  gemspec = File.read gemspec_path
+  name    = File.basename gemspec_path, '.gemspec'
 
   exts = File.readlines('Rakefile')
     .map {|l| l[%r|^\s*require\W+(\w+)/extension\W+$|, 1]}
