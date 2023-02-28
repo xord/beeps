@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.1.32] - 2023-03-01
+
+- fix bugs
+
+
 ## [v0.1.31] - 2023-02-27
 
 - add ChangeLog.md file
