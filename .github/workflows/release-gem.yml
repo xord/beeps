@@ -23,6 +23,31 @@ jobs:
       - name: test
         run: rake quiet test
 
+      - name: create gem
+        id: create_gem
+        run: |
+          rake gem
+          echo gem=$(ruby -e 'print Dir.glob("*.gem").first') >> $GITHUB_OUTPUT
+
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+
+      - name: upload to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.create_gem.outputs.gem }}
+          asset_name:   ${{ steps.create_gem.outputs.gem }}
+          asset_content_type: application/zip
+
       - name: upload to rubygems
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_AUTH_TOKEN }}
