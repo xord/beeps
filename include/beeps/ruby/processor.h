@@ -9,6 +9,17 @@
 #include <beeps/processor.h>
 
 
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::Processor)
+
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::SineWave)
+
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::SquareWave)
+
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::SawtoothWave)
+
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::FileIn)
+
+
 namespace Beeps
 {
 
@@ -30,17 +41,6 @@ namespace Beeps
 
 
 }// Beeps
-
-
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::Processor)
-
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::SineWave)
-
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::SquareWave)
-
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::SawtoothWave)
-
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::FileIn)
 
 
 namespace Rucy

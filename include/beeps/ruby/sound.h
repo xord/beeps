@@ -9,6 +9,9 @@
 #include <beeps/sound.h>
 
 
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::Sound)
+
+
 namespace Beeps
 {
 
@@ -18,9 +21,6 @@ namespace Beeps
 
 
 }// Beeps
-
-
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::Sound)
 
 
 namespace Rucy
