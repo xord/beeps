@@ -3,10 +3,10 @@
 
 #include <limits.h>
 #include "Stk.h"
-#include "beeps/processor.h"
 #include "beeps/exception.h"
 #include "openal.h"
 #include "signals.h"
+#include "processor.h"
 
 
 #if 0
@@ -216,31 +216,36 @@ namespace Beeps
 	{
 	}
 
-	Sound::Sound (Processor* processor, float seconds)
+	Sound::Sound (
+		Processor* processor, float seconds, uint nchannels, uint sampling_rate)
 	{
-		if (!processor || !*processor || seconds <= 0)
-			return;
+		if (!processor || !*processor || seconds < 0 || nchannels < 1 || 2 < nchannels)
+			argument_error(__FILE__, __LINE__);
 
 		self->create();
 
-		Signals signals(seconds, 1);
+		Signals signals = Signals_create(seconds, nchannels, sampling_rate);
 		processor->process(&signals);
 
 		stk::StkFrames* frames = Signals_get_frames(&signals);
 		if (!frames)
-			return;
+			invalid_state_error(__FILE__, __LINE__);
 
 		ALsizei size = frames->frames();
 		if (size <= 0)
-			return;
+			invalid_state_error(__FILE__, __LINE__);
 
 		std::vector<short> buffer;
-		buffer.reserve(size);
-		for (ALsizei i = 0; i < size; ++i)
-			buffer.push_back((*frames)[i] * SHRT_MAX);
+		buffer.reserve(size * nchannels);
+		for (ALsizei frame = 0; frame < size; ++frame)
+			for (uint channel = 0; channel < nchannels; ++channel)
+				buffer.push_back((*frames)(frame, channel) * SHRT_MAX);
 
 		alBufferData(
-			self->id, AL_FORMAT_MONO16, &buffer[0], sizeof(short) * size,
+			self->id,
+			nchannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16,
+			&buffer[0],
+			sizeof(short) * size,
 			frames->dataRate());
 		OpenAL_check_error(__FILE__, __LINE__);
 	}

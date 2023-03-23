@@ -120,6 +120,12 @@ namespace Beeps
 
 			virtual void process (Signals* signals);
 
+			virtual uint sampling_rate () const;
+
+			virtual uint nchannels () const;
+
+			virtual float seconds () const;
+
 			virtual operator bool () const;
 
 			struct Data;

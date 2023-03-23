@@ -1,4 +1,4 @@
-#include "beeps/processor.h"
+#include "processor.h"
 
 
 #include "SineWave.h"
@@ -6,7 +6,6 @@
 #include "BlitSquare.h"
 #include "FileWvIn.h"
 #include "beeps/exception.h"
-#include "signals.h"
 
 
 namespace Beeps
@@ -169,15 +168,14 @@ namespace Beeps
 	struct FileIn::Data
 	{
 
-		stk::FileWvIn input;
+		Signals signals;
 
 	};// FileIn::Data
 
 
 	FileIn::FileIn (const char* path)
 	{
-		if (path)
-			self->input.openFile(path);
+		if (path) self->signals = load_file(path);
 	}
 
 	FileIn::~FileIn ()
@@ -189,12 +187,30 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		self->input.tick(*Signals_get_frames(signals));
+		Signals_copy(signals, self->signals);
+	}
+
+	uint
+	FileIn::sampling_rate () const
+	{
+		return self->signals.sampling_rate();
+	}
+
+	uint
+	FileIn::nchannels () const
+	{
+		return self->signals.nchannels();
+	}
+
+	float
+	FileIn::seconds () const
+	{
+		return self->signals.seconds();
 	}
 
 	FileIn::operator bool () const
 	{
-		return self->input.isOpen();
+		return self->signals;
 	}
 
 

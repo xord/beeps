@@ -17,17 +17,21 @@ namespace Beeps
 
 		public:
 
-			Signals (float seconds = 1, uint channels = 1);
+			Signals ();
 
 			~Signals ();
 
 			Signals dup () const;
 
+			void clear ();
+
+			uint sampling_rate () const;
+
+			uint nsamples () const;
+
+			uint nchannels () const;
+
 			float seconds () const;
-
-			uint samples () const;
-
-			uint channels () const;
 
 			operator bool () const;
 

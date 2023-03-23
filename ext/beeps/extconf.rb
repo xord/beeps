@@ -15,7 +15,7 @@ require 'beeps/extension'
 Xot::ExtConf.new Xot, Rucy, Beeps do
   setup do
     headers    << 'ruby.h' << 'OpenAL/al.h' << 'OpenAL/alc.h'
-    frameworks << 'OpenAL' if osx?
+    frameworks << 'OpenAL' << 'AVFoundation' if osx?
     $LDFLAGS   << ' -Wl,--out-implib=native.dll.a' if cygwin?
   end
 
