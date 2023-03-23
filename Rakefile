@@ -21,6 +21,19 @@ use_external_library 'https://github.com/thestk/stk',
   srcdirs:  'src',
   excludes: %w[stk/src/include Tcp Udp Socket Thread Mutex InetWv /Rt]
 
+use_external_library 'https://github.com/avaneev/r8brain-free-src.git',
+  tag: 'version-6.2',
+  excludes: %w[DLL/ bench/ other/ pffft_double example.cpp],
+  &proc {
+    filter_file('r8bconf.h') do |conf|
+      <<~EOS + conf
+        #ifndef R8B_PFFFT
+        #define R8B_PFFFT 1
+        #endif
+      EOS
+    end
+  }
+
 default_tasks :ext
 build_native_library
 build_ruby_extension

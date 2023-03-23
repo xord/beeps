@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <CDSPResampler.h>
 #include "beeps/beeps.h"
 #include "beeps/exception.h"
 
@@ -91,24 +92,31 @@ namespace Beeps
 		const stk::StkFrames* fromf = Signals_get_frames(&from);
 		if (!tof || !fromf) return false;
 
-		float seconds = std::min(from_offset_sec + to->seconds(), from.seconds());
+		float seconds =
+			std::min(from_offset_sec + to->seconds(), from.seconds())
+			- from_offset_sec;
 
-		uint from_frames   = fromf->frames();
-		uint from_offset   = from_offset_sec * from.sampling_rate();
-		float to2from_rate = from.sampling_rate() / (float) to->sampling_rate();
+		uint from_offset  = from_offset_sec * from.sampling_rate();
+		uint from_nframes = seconds         * from.sampling_rate();
+		uint   to_nframes = seconds         * to->sampling_rate();
 
 		for (uint channel = 0; channel < tof->channels(); ++channel)
 		{
-			uint nframes      = (seconds - from_offset_sec) * to->sampling_rate();
 			uint from_channel = channel < fromf->channels() ? channel : 0;
 
-			for (uint frame = 0; frame < nframes; ++frame)
-			{
-				stk::StkFloat from_frame = from_offset + frame * to2from_rate;
-				if (from_frame >= from_frames) continue;
+			r8b::CDSPResampler24 resampler(
+				from.sampling_rate(), to->sampling_rate(), from_nframes);
 
-				(*tof)(frame, channel) = fromf->interpolate(from_frame, from_channel);
-			}
+			r8b::CFixedBuffer<double> frombuf(from_nframes);
+			for (uint i = 0; i < from_nframes; ++i)
+				frombuf[i] = (*fromf)(from_offset + i, from_channel);
+
+			r8b::CFixedBuffer<double> tobuf(to_nframes);
+			resampler.oneshot(
+				(const double*) frombuf, from_nframes, (double*) tobuf, to_nframes);
+
+			for (uint i = 0; i < to_nframes; ++i)
+				(*tof)(i, channel) = tobuf[i];
 		}
 
 		return true;
