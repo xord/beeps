@@ -16,9 +16,9 @@ EXTENSIONS  = [Xot, Rucy, Beeps]
 TESTS_ALONE = ['test/test_beeps.rb']
 
 use_external_library 'https://github.com/thestk/stk',
-  tag:      'v4.6.0',
-  incdir:   'include',
-  srcdir:   'src',
+  tag:      '4.6.2',
+  incdirs:  'include',
+  srcdirs:  'src',
   excludes: %w[stk/src/include Tcp Udp Socket Thread Mutex InetWv /Rt]
 
 default_tasks :ext
