@@ -21,7 +21,7 @@ use_external_library 'https://github.com/thestk/stk',
   srcdirs:  'src',
   excludes: %w[stk/src/include Tcp Udp Socket Thread Mutex InetWv /Rt]
 
-use_external_library 'https://github.com/avaneev/r8brain-free-src.git',
+use_external_library 'https://github.com/avaneev/r8brain-free-src',
   tag: 'version-6.2',
   excludes: %w[DLL/ bench/ other/ pffft_double example.cpp],
   &proc {
@@ -33,6 +33,10 @@ use_external_library 'https://github.com/avaneev/r8brain-free-src.git',
       EOS
     end
   }
+
+use_external_library 'https://github.com/Signalsmith-Audio/signalsmith-stretch',
+  commit:  'fddcdb628f326ef187b7e5694f285f35a528aba3',
+  srcdirs: 'NOSRC'
 
 default_tasks :ext
 build_native_library

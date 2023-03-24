@@ -74,6 +74,42 @@ namespace Beeps
 		return s;
 	}
 
+	template <typename T>
+	void
+	set_buffer (
+		Signals* signals, const SignalBuffer<T>& buffer)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+
+		stk::StkFrames* f = Signals_get_frames(signals);
+		if (!f)
+			invalid_state_error(__FILE__, __LINE__);
+
+		f->resize(buffer.nsamples(), buffer.nchannels());
+
+		for (uint channel = 0; channel < buffer.nchannels(); ++channel)
+		{
+			const T* buf = buffer.channel(channel);
+			for (uint sample = 0; sample < buffer.nsamples(); ++sample)
+				(*f)(sample, channel) = buf[sample];
+		}
+	}
+
+	template <>
+	void
+	Signals_set_buffer (Signals* signals, const SignalBuffer<float>& buffer)
+	{
+		set_buffer(signals, buffer);
+	}
+
+	template <>
+	void
+	Signals_set_buffer (Signals* signals, const SignalBuffer<double>& buffer)
+	{
+		set_buffer(signals, buffer);
+	}
+
 
 	static bool
 	copy (Signals* to, const Signals& from, float from_offset_sec)

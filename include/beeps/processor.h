@@ -107,6 +107,30 @@ namespace Beeps
 	};// SawtoothWave
 
 
+	class TimeStretch : public Processor
+	{
+
+		typedef Processor Super;
+
+		public:
+
+			TimeStretch ();
+
+			virtual ~TimeStretch ();
+
+			virtual void set_scale (float scale);
+
+			virtual float    scale () const;
+
+			virtual void process (Signals* signals);
+
+			struct Data;
+
+			Xot::PSharedImpl<Data> self;
+
+	};// TimeStretch
+
+
 	class FileIn : public Processor
 	{
 

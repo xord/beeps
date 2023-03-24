@@ -4,7 +4,6 @@
 #include "SineWave.h"
 #include "BlitSaw.h"
 #include "BlitSquare.h"
-#include "FileWvIn.h"
 #include "beeps/exception.h"
 
 
