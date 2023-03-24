@@ -22,6 +22,22 @@ namespace Beeps
 	};// Signals::Data
 
 
+	stk::StkFrames*
+	Signals_get_frames (Signals* signals)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+
+		return signals->self->frames.get();
+	}
+
+	const stk::StkFrames*
+	Signals_get_frames (const Signals* signals)
+	{
+		return Signals_get_frames(const_cast<Signals*>(signals));
+	}
+
+
 	Signals
 	Signals_create (
 		float seconds, uint nchannels, uint sampling_rate)
@@ -57,6 +73,7 @@ namespace Beeps
 
 		return s;
 	}
+
 
 	static bool
 	copy (Signals* to, const Signals& from, float from_offset_sec)
@@ -134,21 +151,6 @@ namespace Beeps
 			return copy(to, from, from_offset_sec);
 		else
 			return copy_interpolate(to, from, from_offset_sec);
-	}
-
-	stk::StkFrames*
-	Signals_get_frames (Signals* signals)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-
-		return signals->self->frames.get();
-	}
-
-	const stk::StkFrames*
-	Signals_get_frames (const Signals* signals)
-	{
-		return Signals_get_frames(const_cast<Signals*>(signals));
 	}
 
 
