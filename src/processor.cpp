@@ -1,10 +1,11 @@
-#include "processor.h"
+#include "beeps/processor.h"
 
 
 #include "SineWave.h"
 #include "BlitSaw.h"
 #include "BlitSquare.h"
 #include "beeps/exception.h"
+#include "signals.h"
 
 
 namespace Beeps
@@ -174,7 +175,7 @@ namespace Beeps
 
 	FileIn::FileIn (const char* path)
 	{
-		if (path) self->signals = load_file(path);
+		if (path) self->signals = Signals_load(path);
 	}
 
 	FileIn::~FileIn ()

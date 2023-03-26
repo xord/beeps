@@ -1,5 +1,5 @@
 // -*- c++ -*-
-#include "../processor.h"
+#include "../signals.h"
 
 
 #import <AVFoundation/AVFoundation.h>
@@ -56,7 +56,7 @@ namespace Beeps
 	}
 
 	Signals
-	load_file (const char* path)
+	Signals_load (const char* path)
 	{
 		AVAudioPCMBuffer* buffer = load_buffer(path);
 		if (!buffer) return Signals();

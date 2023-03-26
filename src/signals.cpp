@@ -37,7 +37,6 @@ namespace Beeps
 		return Signals_get_frames(const_cast<Signals*>(signals));
 	}
 
-
 	Signals
 	Signals_create (
 		float seconds, uint nchannels, uint sampling_rate)
@@ -109,7 +108,6 @@ namespace Beeps
 	{
 		set_buffer(signals, buffer);
 	}
-
 
 	static bool
 	copy (Signals* to, const Signals& from, float from_offset_sec)

@@ -22,7 +22,6 @@ namespace Beeps
 
 	const stk::StkFrames* Signals_get_frames (const Signals* signals);
 
-
 	Signals Signals_create (
 		float seconds, uint nchannels = 1, uint sampling_rate = 0);
 
@@ -30,9 +29,10 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, uint sampling_rate = 0);
 
+	Signals Signals_load (const char* path);
+
 	template <typename T>
 	void Signals_set_buffer (Signals* signals, const SignalBuffer<T>& buffer);
-
 
 	bool Signals_copy (
 		Signals* to, const Signals& from, float from_offset_sec = 0);

@@ -3,10 +3,10 @@
 
 #include <limits.h>
 #include "Stk.h"
+#include "beeps/processor.h"
 #include "beeps/exception.h"
 #include "openal.h"
 #include "signals.h"
-#include "processor.h"
 
 
 #if 0

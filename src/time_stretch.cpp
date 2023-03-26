@@ -1,7 +1,8 @@
-#include "processor.h"
+#include "beeps/processor.h"
 
 
 #include "signalsmith-stretch.h"
+#include "signals.h"
 
 
 namespace Beeps
