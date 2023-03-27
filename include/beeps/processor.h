@@ -35,16 +35,22 @@ namespace Beeps
 	};// Processor
 
 
-	class SineWave : public Processor
+	class Oscillator : public Processor
 	{
 
 		typedef Processor Super;
 
 		public:
 
-			SineWave ();
+			enum Type {NONE = 0, SINE, TRIANGLE, SQUARE, SAWTOOTH};
 
-			virtual ~SineWave ();
+			Oscillator (Type type = SINE);
+
+			virtual ~Oscillator ();
+
+			virtual void set_type (Type type);
+
+			virtual Type     type () const;
 
 			virtual void set_frequency (float frequency);
 
@@ -56,55 +62,7 @@ namespace Beeps
 
 			Xot::PSharedImpl<Data> self;
 
-	};// SineWave
-
-
-	class SquareWave : public Processor
-	{
-
-		typedef Processor Super;
-
-		public:
-
-			SquareWave ();
-
-			virtual ~SquareWave ();
-
-			virtual void set_frequency (float frequency);
-
-			virtual float    frequency () const;
-
-			virtual void process (Signals* signals);
-
-			struct Data;
-
-			Xot::PSharedImpl<Data> self;
-
-	};// SquareWave
-
-
-	class SawtoothWave : public Processor
-	{
-
-		typedef Processor Super;
-
-		public:
-
-			SawtoothWave ();
-
-			virtual ~SawtoothWave ();
-
-			virtual void set_frequency (float frequency);
-
-			virtual float    frequency () const;
-
-			virtual void process (Signals* signals);
-
-			struct Data;
-
-			Xot::PSharedImpl<Data> self;
-
-	};// SawtoothWave
+	};// Oscillator
 
 
 	class TimeStretch : public Processor

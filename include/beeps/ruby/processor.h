@@ -11,11 +11,9 @@
 
 RUCY_DECLARE_VALUE_FROM_TO(Beeps::Processor)
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::SineWave)
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::Oscillator)
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::SquareWave)
-
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::SawtoothWave)
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::TimeStretch)
 
 RUCY_DECLARE_VALUE_FROM_TO(Beeps::FileIn)
 
@@ -27,14 +25,11 @@ namespace Beeps
 	Rucy::Class processor_class ();
 	// class Beeps::Processor
 
-	Rucy::Class sine_wave_class ();
-	// class Beeps::SineWave
+	Rucy::Class oscillator_class ();
+	// class Beeps::Oscillator
 
-	Rucy::Class square_wave_class ();
-	// class Beeps::SineWave
-
-	Rucy::Class sawtooth_wave_class ();
-	// class Beeps::SawtoothWave
+	Rucy::Class time_stretch_class ();
+	// class Beeps::TimeStretch
 
 	Rucy::Class file_in_class ();
 	// class Beeps::FileIn
@@ -54,21 +49,15 @@ namespace Rucy
 	}
 
 	template <> inline Class
-	get_ruby_class<Beeps::SineWave> ()
+	get_ruby_class<Beeps::Oscillator> ()
 	{
-		return Beeps::sine_wave_class();
+		return Beeps::oscillator_class();
 	}
 
 	template <> inline Class
-	get_ruby_class<Beeps::SquareWave> ()
+	get_ruby_class<Beeps::TimeStretch> ()
 	{
-		return Beeps::square_wave_class();
-	}
-
-	template <> inline Class
-	get_ruby_class<Beeps::SawtoothWave> ()
-	{
-		return Beeps::sawtooth_wave_class();
+		return Beeps::time_stretch_class();
 	}
 
 	template <> inline Class
