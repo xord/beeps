@@ -15,8 +15,6 @@ namespace Beeps
 	struct Signals::Data
 	{
 
-		uint sampling_rate = 0;
-
 		std::unique_ptr<stk::StkFrames> frames;
 
 	};// Signals::Data
@@ -42,14 +40,14 @@ namespace Beeps
 		float seconds, uint nchannels, uint sampling_rate)
 	{
 		Signals s;
-		s.self->sampling_rate = sampling_rate;
-
 		if (seconds > 0 && nchannels > 0)
 		{
 			s.self->frames.reset(
 				new stk::StkFrames(seconds * s.sampling_rate(), nchannels));
-		}
 
+			if (sampling_rate > 0)
+				s.self->frames->setDataRate(sampling_rate);
+		}
 		return s;
 	}
 
@@ -59,8 +57,6 @@ namespace Beeps
 		uint nsamples, uint nchannels, uint sampling_rate)
 	{
 		Signals s;
-		s.self->sampling_rate = sampling_rate;
-
 		if (channels && nsamples > 0 && nchannels > 0)
 		{
 			stk::StkFrames* frames = new stk::StkFrames(nsamples, nchannels);
@@ -68,8 +64,10 @@ namespace Beeps
 				for (uint sample = 0; sample < nsamples; ++sample)
 					(*frames)(sample, channel) = channels[channel][sample];
 			s.self->frames.reset(frames);
-		}
 
+			if (sampling_rate > 0)
+				s.self->frames->setDataRate(sampling_rate);
+		}
 		return s;
 	}
 
@@ -220,7 +218,7 @@ namespace Beeps
 	Signals::sampling_rate () const
 	{
 		Data* p = self.get();
-		return p->sampling_rate > 0 ? p->sampling_rate : Beeps::sampling_rate();
+		return p->frames ? p->frames->dataRate() : Beeps::sampling_rate();
 	}
 
 	uint
