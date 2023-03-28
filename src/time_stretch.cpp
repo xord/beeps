@@ -42,15 +42,12 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		uint nchannels       = signals->nchannels();
-		uint input_nsamples  = signals->nsamples();
-		uint output_nsamples = input_nsamples * scale();
-
 		signalsmith::stretch::SignalsmithStretch<float> stretch;
-		stretch.presetDefault(nchannels, signals->sampling_rate());
+		stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
 
 		SignalBuffer<float> input(*signals);
-		SignalBuffer<float> output(output_nsamples, nchannels);
+		SignalBuffer<float> output(
+			signals->nsamples() * scale(), signals->nchannels());
 
 		stretch.process(
 			input.channels(),  input.nsamples(),
