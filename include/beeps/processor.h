@@ -70,6 +70,36 @@ namespace Beeps
 	};// Oscillator
 
 
+	class FileIn : public Processor
+	{
+
+		typedef Processor Super;
+
+		public:
+
+			FileIn (const char* path = NULL);
+
+			virtual ~FileIn ();
+
+			virtual void load (const char* path);
+
+			virtual uint sampling_rate () const;
+
+			virtual uint nchannels () const;
+
+			virtual float seconds () const;
+
+			virtual void process (Signals* signals);
+
+			virtual operator bool () const;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// FileIn
+
+
 	class TimeStretch : public Processor
 	{
 
@@ -116,36 +146,6 @@ namespace Beeps
 			Xot::PImpl<Data> self;
 
 	};// PitchShift
-
-
-	class FileIn : public Processor
-	{
-
-		typedef Processor Super;
-
-		public:
-
-			FileIn (const char* path = NULL);
-
-			virtual ~FileIn ();
-
-			virtual void load (const char* path);
-
-			virtual uint sampling_rate () const;
-
-			virtual uint nchannels () const;
-
-			virtual float seconds () const;
-
-			virtual void process (Signals* signals);
-
-			virtual operator bool () const;
-
-			struct Data;
-
-			Xot::PImpl<Data> self;
-
-	};// FileIn
 
 
 }// Beeps
