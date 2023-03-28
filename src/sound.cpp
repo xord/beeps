@@ -20,7 +20,86 @@ namespace Beeps
 {
 
 
-	static ALuint get_buffer_id (const Sound& sound);
+	struct SoundBuffer
+	{
+
+		ALint id;
+
+		SoundBuffer ()
+		:	id(-1)
+		{
+		}
+
+		~SoundBuffer ()
+		{
+			clear();
+		}
+
+		void write (const Signals& signals)
+		{
+			if (!signals)
+				argument_error(__FILE__, __LINE__);
+
+			uint sampling_rate = signals.sampling_rate();
+			uint nsamples      = signals.nsamples();
+			uint nchannels     = signals.nchannels();
+			if (sampling_rate <= 0 || nsamples <= 0 || nchannels <= 0)
+				argument_error(__FILE__, __LINE__);
+
+			const stk::StkFrames* frames = Signals_get_frames(&signals);
+			if (!frames)
+				argument_error(__FILE__, __LINE__);
+
+			std::vector<short> buffer;
+			buffer.reserve(nsamples * nchannels);
+			for (uint sample = 0; sample < nsamples; ++sample)
+				for (uint channel = 0; channel < nchannels; ++channel)
+					buffer.push_back((*frames)(sample, channel) * SHRT_MAX);
+
+			clear();
+			create();
+
+			alBufferData(
+				id,
+				nchannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16,
+				&buffer[0],
+				sizeof(short) * nsamples,
+				sampling_rate);
+			OpenAL_check_error(__FILE__, __LINE__);
+		}
+
+		bool is_valid () const
+		{
+			return id >= 0;
+		}
+
+		private:
+
+			void create ()
+			{
+				if (is_valid())
+					invalid_state_error(__FILE__, __LINE__);
+
+				ALuint id_ = 0;
+				alGenBuffers(1, &id_);
+				OpenAL_check_error(__FILE__, __LINE__);
+
+				id = id_;
+			}
+
+			void clear ()
+			{
+				if (id >= 0)
+				{
+					ALuint id_ = id;
+					alDeleteBuffers(1, &id_);
+					OpenAL_check_error(__FILE__, __LINE__);
+				}
+
+				id = -1;
+			}
+
+	};// SoundBuffer
 
 
 	struct SoundSource
@@ -50,14 +129,14 @@ namespace Beeps
 			OpenAL_check_error(__FILE__, __LINE__);
 		}
 
-		void play (const Sound& sound)
+		void play (const SoundBuffer& buffer)
 		{
-			assert(sound);
+			assert(buffer.is_valid());
 
 			if (!*this)
 				invalid_state_error(__FILE__, __LINE__);
 
-			alSourcei(id, AL_BUFFER, get_buffer_id(sound));
+			alSourcei(id, AL_BUFFER, buffer.id);
 			alSourcePlay(id);
 			OpenAL_check_error(__FILE__, __LINE__);
 		}
@@ -162,54 +241,35 @@ namespace Beeps
 	struct Sound::Data
 	{
 
-		ALint id;
+		uint nchannels = 0, sampling_rate = 0;
 
-		Data ()
-		:	id(-1)
+		Processor::Ref processor;
+
+		SoundBuffer buffer;
+
+		void process (float seconds)
 		{
-		}
+			if (seconds < 0)
+				argument_error(__FILE__, __LINE__);
 
-		~Data ()
-		{
-			clear();
-		}
+			if (!is_valid())
+				invalid_state_error(__FILE__, __LINE__);
 
-		void create ()
-		{
-			if (is_valid()) return;
+			Signals signals = Signals_create(seconds, nchannels, sampling_rate);
+			processor->process(&signals);
 
-			ALuint id_ = 0;
-			alGenBuffers(1, &id_);
-			OpenAL_check_error(__FILE__, __LINE__);
-
-			id = id_;
-		}
-
-		void clear ()
-		{
-			if (id >= 0)
-			{
-				ALuint id_ = id;
-				alDeleteBuffers(1, &id_);
-				OpenAL_check_error(__FILE__, __LINE__);
-			}
-
-			id = -1;
+			buffer.write(signals);
 		}
 
 		bool is_valid () const
 		{
-			return id >= 0;
+			return
+				(nchannels == 1 || nchannels == 2) &&
+				sampling_rate > 0 &&
+				processor && *processor;
 		}
 
 	};// Sound::Data
-
-
-	ALuint
-	get_buffer_id (const Sound& sound)
-	{
-		return sound.self->id;
-	}
 
 
 	Sound::Sound ()
@@ -219,35 +279,14 @@ namespace Beeps
 	Sound::Sound (
 		Processor* processor, float seconds, uint nchannels, uint sampling_rate)
 	{
-		if (!processor || !*processor || seconds < 0 || nchannels < 1 || 2 < nchannels)
+		if (!processor || !*processor || nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
 
-		self->create();
+		self->processor     = processor;
+		self->nchannels     = nchannels;
+		self->sampling_rate = sampling_rate;
 
-		Signals signals = Signals_create(seconds, nchannels, sampling_rate);
-		processor->process(&signals);
-
-		stk::StkFrames* frames = Signals_get_frames(&signals);
-		if (!frames)
-			invalid_state_error(__FILE__, __LINE__);
-
-		ALsizei size = frames->frames();
-		if (size <= 0)
-			invalid_state_error(__FILE__, __LINE__);
-
-		std::vector<short> buffer;
-		buffer.reserve(size * nchannels);
-		for (ALsizei frame = 0; frame < size; ++frame)
-			for (uint channel = 0; channel < nchannels; ++channel)
-				buffer.push_back((*frames)(frame, channel) * SHRT_MAX);
-
-		alBufferData(
-			self->id,
-			nchannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16,
-			&buffer[0],
-			sizeof(short) * size,
-			frames->dataRate());
-		OpenAL_check_error(__FILE__, __LINE__);
+		if (seconds > 0) self->process(seconds);
 	}
 
 	Sound::~Sound ()
@@ -264,7 +303,7 @@ namespace Beeps
 		if (!source || !*source)
 			invalid_state_error(__FILE__, __LINE__);
 
-		source->play(*this);
+		source->play(self->buffer);
 
 #if 0
 		std::string ox = "";
@@ -276,7 +315,7 @@ namespace Beeps
 
 	Sound::operator bool () const
 	{
-		return self->is_valid();
+		return self->is_valid() && self->buffer.is_valid();
 	}
 
 	bool
