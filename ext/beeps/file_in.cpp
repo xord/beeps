@@ -4,7 +4,7 @@
 #include "defs.h"
 
 
-RUCY_DEFINE_VALUE_FROM_TO(Beeps::FileIn)
+RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(Beeps::FileIn)
 
 #define THIS  to<Beeps::FileIn*>(self)
 
@@ -14,7 +14,7 @@ RUCY_DEFINE_VALUE_FROM_TO(Beeps::FileIn)
 static
 RUCY_DEF_ALLOC(alloc, klass)
 {
-	return new_type<Beeps::FileIn>(klass);
+	return value(new Beeps::RubyProcessor<Beeps::FileIn>, klass);
 }
 RUCY_END
 
@@ -23,7 +23,7 @@ RUCY_DEF1(initialize, path)
 {
 	RUCY_CHECK_OBJ(Beeps::FileIn, self);
 
-	*THIS = Beeps::FileIn(to<const char*>(path));
+	THIS->load(to<const char*>(path));
 	return self;
 }
 RUCY_END

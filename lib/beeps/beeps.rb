@@ -38,7 +38,7 @@ module Beeps
     private
 
       def beep_sound(time)
-        Sound.new SquareWave.new, time
+        Sound.new Oscillator.new(:square), time
       end
 
     self

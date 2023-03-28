@@ -7,7 +7,7 @@ require_relative 'helper'
 class TestSound < Test::Unit::TestCase
 
   def s()
-    Beeps::Sound.new Beeps::SineWave.new, 0.1
+    Beeps::Sound.new Beeps::Oscillator.new, 0.1
   end
 
   def test_play()

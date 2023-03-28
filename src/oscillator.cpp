@@ -25,7 +25,7 @@ namespace Beeps
 
 		std::unique_ptr<stk::BlitSaw> saw;
 
-	};// SineWave::Data
+	};// Oscillator::Data
 
 
 	Oscillator::Oscillator (Type type)

@@ -5,9 +5,8 @@ void Init_beeps ();
 void Init_beeps_exception ();
 
 void Init_beeps_processor ();
-void Init_beeps_sine_wave ();
-void Init_beeps_square_wave ();
-void Init_beeps_sawtooth_wave ();
+void Init_beeps_oscillator ();
+void Init_beeps_time_stretch ();
 void Init_beeps_file_in ();
 
 void Init_beeps_sound ();
@@ -28,9 +27,8 @@ extern "C" void
 	Init_beeps_exception();
 
 	Init_beeps_processor();
-	Init_beeps_sine_wave();
-	Init_beeps_square_wave();
-	Init_beeps_sawtooth_wave();
+	Init_beeps_oscillator();
+	Init_beeps_time_stretch();
 	Init_beeps_file_in();
 
 	Init_beeps_sound();

@@ -9,13 +9,13 @@
 #include <beeps/processor.h>
 
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::Processor)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::Processor)
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::Oscillator)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::Oscillator)
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::TimeStretch)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::TimeStretch)
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::FileIn)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::FileIn)
 
 
 namespace Beeps
@@ -33,6 +33,28 @@ namespace Beeps
 
 	Rucy::Class file_in_class ();
 	// class Beeps::FileIn
+
+
+	template <typename T>
+	class RubyProcessor : public Rucy::ClassWrapper<T>
+	{
+
+		typedef Rucy::ClassWrapper<T> Super;
+
+		public:
+
+			#if 0
+				virtual void process (Signals* signals)
+				{
+					RUCY_SYM(process);
+					if (this->is_overridable())
+						this->value.call(apply, Rucy::value(signals));
+					else
+						Super::process(signals);
+				}
+			#endif
+
+	};// RubyProcessor
 
 
 }// Beeps

@@ -4,6 +4,7 @@
 #define __BEEPS_PROCESSOR_H__
 
 
+#include <xot/ref.h>
 #include <xot/pimpl.h>
 #include <beeps/defs.h>
 
@@ -15,10 +16,14 @@ namespace Beeps
 	class Signals;
 
 
-	class Processor
+	class Processor : public Xot::RefCountable<>
 	{
 
+		typedef Processor This;
+
 		public:
+
+			typedef Xot::Ref<This> Ref;
 
 			virtual ~Processor ();
 
@@ -60,7 +65,7 @@ namespace Beeps
 
 			struct Data;
 
-			Xot::PSharedImpl<Data> self;
+			Xot::PImpl<Data> self;
 
 	};// Oscillator
 
@@ -84,7 +89,7 @@ namespace Beeps
 
 			struct Data;
 
-			Xot::PSharedImpl<Data> self;
+			Xot::PImpl<Data> self;
 
 	};// TimeStretch
 
@@ -100,7 +105,7 @@ namespace Beeps
 
 			virtual ~FileIn ();
 
-			virtual void process (Signals* signals);
+			virtual void load (const char* path);
 
 			virtual uint sampling_rate () const;
 
@@ -108,11 +113,13 @@ namespace Beeps
 
 			virtual float seconds () const;
 
+			virtual void process (Signals* signals);
+
 			virtual operator bool () const;
 
 			struct Data;
 
-			Xot::PSharedImpl<Data> self;
+			Xot::PImpl<Data> self;
 
 	};// FileIn
 

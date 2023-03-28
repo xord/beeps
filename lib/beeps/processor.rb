@@ -2,6 +2,7 @@
 
 
 require 'xot/setter'
+require 'xot/const_symbol_accessor'
 require 'xot/universal_accessor'
 require 'xot/block_util'
 require 'beeps/ext'
@@ -23,34 +24,34 @@ module Beeps
   end# Processor
 
 
-  class SineWave
+  class Oscillator
+
+    const_symbol_accessor :type, **{
+      none:     NONE,
+      sine:     SINE,
+      triangle: TRIANGLE,
+      square:   SQUARE,
+      sawtooth: SAWTOOTH
+    }
+
+    def initialize(type = :sine, *args, **kwargs, &block)
+      super(*args, **kwargs, &block)
+      self.type = type
+    end
 
     alias freq= frequency=
     alias freq  frequency
 
-    universal_accessor :frequency, :freq
+    universal_accessor :type, :frequency, :freq
 
-  end# SineWave
-
-
-  class SquareWave
-
-    alias freq= frequency=
-    alias freq  frequency
-
-    universal_accessor :frequency, :freq
-
-  end# SquareWave
+  end# Oscillator
 
 
-  class SawtoothWave
+  class TimeStretch
 
-    alias freq= frequency=
-    alias freq  frequency
+    universal_accessor :scale
 
-    universal_accessor :frequency, :freq
-
-  end# SawtoothWave
+  end# TimeStretch
 
 
 end# Beeps
