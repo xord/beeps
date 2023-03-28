@@ -2,6 +2,7 @@
 
 
 #include "PitShift.h"
+#include "signalsmith-stretch.h"
 #include "signals.h"
 
 
@@ -42,15 +43,18 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		stk::StkFrames* f = Signals_get_frames(signals);
-		if (!f)
-			invalid_state_error(__FILE__, __LINE__);
+		signalsmith::stretch::SignalsmithStretch<float> stretch;
+		stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
+		stretch.setTransposeFactor(self->shift);
 
-		stk::PitShift shift;
-		shift.setShift(self->shift);
+		SignalBuffer<float> input(*signals);
+		SignalBuffer<float> output(signals->nsamples(), signals->nchannels());
 
-		for (uint ch = 0; ch < signals->nchannels(); ++ch)
-			shift.tick(*f, ch);
+		stretch.process(
+			input.channels(),  input.nsamples(),
+			output.channels(), output.nsamples());
+
+		Signals_set_buffer(signals, output);
 	}
 
 	PitchShift::operator bool () const
