@@ -94,6 +94,30 @@ namespace Beeps
 	};// TimeStretch
 
 
+	class PitchShift : public Processor
+	{
+
+		typedef Processor Super;
+
+		public:
+
+			PitchShift ();
+
+			virtual ~PitchShift ();
+
+			virtual void set_shift (float shift);
+
+			virtual float    shift () const;
+
+			virtual void process (Signals* signals);
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// PitchShift
+
+
 	class FileIn : public Processor
 	{
 
