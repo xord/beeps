@@ -63,6 +63,8 @@ namespace Beeps
 
 			virtual void process (Signals* signals);
 
+			virtual operator bool () const;
+
 			struct Data;
 
 			Xot::PImpl<Data> self;
@@ -117,6 +119,8 @@ namespace Beeps
 
 			virtual void process (Signals* signals);
 
+			virtual operator bool () const;
+
 			struct Data;
 
 			Xot::PImpl<Data> self;
@@ -140,6 +144,8 @@ namespace Beeps
 			virtual float    shift () const;
 
 			virtual void process (Signals* signals);
+
+			virtual operator bool () const;
 
 			struct Data;
 

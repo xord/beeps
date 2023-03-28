@@ -53,5 +53,10 @@ namespace Beeps
 			shift.tick(*f, ch);
 	}
 
+	PitchShift::operator bool () const
+	{
+		return self->shift > 0;
+	}
+
 
 }// Beeps

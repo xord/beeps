@@ -56,5 +56,10 @@ namespace Beeps
 		Signals_set_buffer(signals, output);
 	}
 
+	TimeStretch::operator bool () const
+	{
+		return self->scale > 0;
+	}
+
 
 }// Beeps
