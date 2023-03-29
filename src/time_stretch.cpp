@@ -58,6 +58,7 @@ namespace Beeps
 
 	TimeStretch::operator bool () const
 	{
+		if (!Super::operator bool()) return false;
 		return self->scale > 0;
 	}
 

@@ -8,7 +8,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(Beeps::Oscillator)
 
 #define THIS  to<Beeps::Oscillator*>(self)
 
-#define CHECK RUCY_CHECK_OBJECT(Beeps::Oscillator, self)
+#define CHECK RUCY_CHECK_OBJ(Beeps::Oscillator, self)
 
 
 static

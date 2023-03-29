@@ -8,7 +8,7 @@ RUCY_DEFINE_VALUE_FROM_TO(Beeps::Sound)
 
 #define THIS  to<Beeps::Sound*>(self)
 
-#define CHECK RUCY_CHECK_OBJECT(Beeps::Sound, self)
+#define CHECK RUCY_CHECK_OBJ(Beeps::Sound, self)
 
 
 static
@@ -21,7 +21,7 @@ RUCY_END
 static
 RUCY_DEFN(initialize)
 {
-	RUCY_CHECK_OBJ(Beeps::Sound, self);
+	CHECK;
 	check_arg_count(__FILE__, __LINE__, "Sound#initialize", argc, 2, 3, 4);
 
 	Beeps::Processor* proc = to<Beeps::Processor*>(argv[0]);

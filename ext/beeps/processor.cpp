@@ -9,7 +9,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(Beeps::Processor)
 
 #define THIS  to<Beeps::Processor*>(self)
 
-#define CHECK RUCY_CHECK_OBJECT(Beeps::Processor, self)
+#define CHECK RUCY_CHECK_OBJ(Beeps::Processor, self)
 
 
 static

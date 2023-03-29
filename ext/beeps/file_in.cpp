@@ -8,7 +8,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(Beeps::FileIn)
 
 #define THIS  to<Beeps::FileIn*>(self)
 
-#define CHECK RUCY_CHECK_OBJECT(Beeps::FileIn, self)
+#define CHECK RUCY_CHECK_OBJ(Beeps::FileIn, self)
 
 
 static
@@ -21,7 +21,7 @@ RUCY_END
 static
 RUCY_DEF1(initialize, path)
 {
-	RUCY_CHECK_OBJ(Beeps::FileIn, self);
+	CHECK;
 
 	THIS->load(to<const char*>(path));
 	return self;

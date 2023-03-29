@@ -119,6 +119,7 @@ namespace Beeps
 
 	Oscillator::operator bool () const
 	{
+		if (!Super::operator bool()) return false;
 		return
 			self->type != NONE && self->frequency > 0 &&
 			(self->sine || self->square || self->saw);

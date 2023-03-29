@@ -314,7 +314,7 @@ namespace Beeps
 
 	Sound::operator bool () const
 	{
-		return self->is_valid() && self->buffer.is_valid();
+		return self->is_valid();
 	}
 
 	bool

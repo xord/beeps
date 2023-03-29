@@ -60,6 +60,7 @@ namespace Beeps
 
 	FileIn::operator bool () const
 	{
+		if (!Super::operator bool()) return false;
 		return self->signals;
 	}
 

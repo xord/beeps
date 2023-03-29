@@ -59,6 +59,7 @@ namespace Beeps
 
 	PitchShift::operator bool () const
 	{
+		if (!Super::operator bool()) return false;
 		return self->shift > 0;
 	}
 
