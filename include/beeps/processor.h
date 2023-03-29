@@ -154,30 +154,6 @@ namespace Beeps
 	};// PitchShift
 
 
-	class Pipeline : public Processor
-	{
-
-		typedef Processor Super;
-
-		public:
-
-			Pipeline ();
-
-			virtual ~Pipeline ();
-
-			virtual void add (Processor* processor);
-
-			virtual void process (Signals* signals);
-
-			virtual operator bool () const;
-
-			struct Data;
-
-			Xot::PImpl<Data> self;
-
-	};// Pipeline
-
-
 }// Beeps
 
 

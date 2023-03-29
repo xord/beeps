@@ -54,15 +54,4 @@ module Beeps
   end# TimeStretch
 
 
-  class Pipeline
-
-    def add(*processors)
-      processors.flatten.each do |processor|
-        add! processor
-      end
-    end
-
-  end# Pipeline
-
-
 end# Beeps

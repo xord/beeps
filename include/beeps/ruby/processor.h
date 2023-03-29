@@ -19,8 +19,6 @@ RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::TimeStretch)
 
 RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::PitchShift)
 
-RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::Pipeline)
-
 
 namespace Beeps
 {
@@ -40,9 +38,6 @@ namespace Beeps
 
 	Rucy::Class pitch_shift_class ();
 	// class Beeps::PitchShift
-
-	Rucy::Class pipeline_class ();
-	// class Beeps::Pipeline
 
 
 	template <typename T>
@@ -102,12 +97,6 @@ namespace Rucy
 	get_ruby_class<Beeps::PitchShift> ()
 	{
 		return Beeps::pitch_shift_class();
-	}
-
-	template <> inline Class
-	get_ruby_class<Beeps::Pipeline> ()
-	{
-		return Beeps::pipeline_class();
 	}
 
 
