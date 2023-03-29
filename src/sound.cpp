@@ -181,13 +181,10 @@ namespace Beeps
 	};// SoundSource
 
 
-	typedef std::vector<SoundSource::Ptr> SoundSourceList;
-
-
 	namespace global
 	{
 
-		static SoundSourceList sources;
+		static std::vector<SoundSource::Ptr> sources;
 
 	}// global
 

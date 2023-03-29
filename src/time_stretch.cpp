@@ -46,6 +46,8 @@ namespace Beeps
 	{
 		Super::process(signals);
 
+		if (self->scale == 1) return;
+
 		self->stretch.reset();
 		self->stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
 
