@@ -1,4 +1,4 @@
-#include "beeps/sound.h"
+#include "sound.h"
 
 
 #include <limits.h>

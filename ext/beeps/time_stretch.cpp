@@ -28,7 +28,7 @@ RUCY_DEF1(set_scale, scale)
 RUCY_END
 
 static
-RUCY_DEF0(scale)
+RUCY_DEF0(get_scale)
 {
 	CHECK;
 	return value(THIS->scale());
@@ -46,7 +46,7 @@ Init_beeps_time_stretch ()
 	cTimeStretch = mBeeps.define_class("TimeStretch", Beeps::processor_class());
 	cTimeStretch.define_alloc_func(alloc);
 	cTimeStretch.define_method("scale=", set_scale);
-	cTimeStretch.define_method("scale",      scale);
+	cTimeStretch.define_method("scale",  get_scale);
 }
 
 

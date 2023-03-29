@@ -9,12 +9,38 @@ namespace Beeps
 {
 
 
-	Processor::Processor ()
+	struct Processor::Data
 	{
+
+		bool need_input = false;
+
+		Processor::Ref input;
+
+	};// Processor::Data
+
+
+	Processor::Processor (bool input)
+	{
+		self->need_input = input;
 	}
 
 	Processor::~Processor ()
 	{
+	}
+
+	void
+	Processor::set_input (Processor* input)
+	{
+		if (!self->need_input)
+			invalid_state_error(__FILE__, __LINE__, "can not have inputs");
+
+		self->input = input;
+	}
+
+	const Processor*
+	Processor::input () const
+	{
+		return self->input;
 	}
 
 	void
@@ -25,11 +51,14 @@ namespace Beeps
 
 		if (!*this)
 			invalid_state_error(__FILE__, __LINE__);
+
+		if (self->input)
+			self->input->process(signals);
 	}
 
 	Processor::operator bool () const
 	{
-		return true;
+		return !self->need_input || (self->input && *self->input);
 	}
 
 	bool

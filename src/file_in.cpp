@@ -18,6 +18,7 @@ namespace Beeps
 
 
 	FileIn::FileIn (const char* path)
+	:	Super(false)
 	{
 		if (path) load(path);
 	}

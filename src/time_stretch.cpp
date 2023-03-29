@@ -12,13 +12,17 @@ namespace Beeps
 	struct TimeStretch::Data
 	{
 
+		signalsmith::stretch::SignalsmithStretch<float> stretch;
+
 		float scale = 1;
 
 	};// TimeStretch::Data
 
 
-	TimeStretch::TimeStretch ()
+	TimeStretch::TimeStretch (Processor* input)
+	:	Super(true)
 	{
+		set_input(input);
 	}
 
 	TimeStretch::~TimeStretch ()
@@ -42,14 +46,14 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		signalsmith::stretch::SignalsmithStretch<float> stretch;
-		stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
+		self->stretch.reset();
+		self->stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
 
 		SignalBuffer<float> input(*signals);
 		SignalBuffer<float> output(
 			signals->nsamples() * scale(), signals->nchannels());
 
-		stretch.process(
+		self->stretch.process(
 			input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
 

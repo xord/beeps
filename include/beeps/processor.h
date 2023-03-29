@@ -27,15 +27,23 @@ namespace Beeps
 
 			virtual ~Processor ();
 
+			virtual void         set_input (Processor* input);
+
+			virtual const Processor* input () const;
+
 			virtual void process (Signals* signals);
 
 			virtual operator bool () const;
 
 			virtual bool operator ! () const;
 
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
 		protected:
 
-			Processor ();
+			Processor (bool input);
 
 	};// Processor
 
@@ -109,7 +117,7 @@ namespace Beeps
 
 		public:
 
-			TimeStretch ();
+			TimeStretch (Processor* input = NULL);
 
 			virtual ~TimeStretch ();
 
@@ -135,7 +143,7 @@ namespace Beeps
 
 		public:
 
-			PitchShift ();
+			PitchShift (Processor* input = NULL);
 
 			virtual ~PitchShift ();
 

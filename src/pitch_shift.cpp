@@ -13,13 +13,17 @@ namespace Beeps
 	struct PitchShift::Data
 	{
 
+		signalsmith::stretch::SignalsmithStretch<float> stretch;
+
 		float shift = 1;
 
 	};// PitchShift::Data
 
 
-	PitchShift::PitchShift ()
+	PitchShift::PitchShift (Processor* input)
+	:	Super(true)
 	{
+		set_input(input);
 	}
 
 	PitchShift::~PitchShift ()
@@ -43,14 +47,14 @@ namespace Beeps
 	{
 		Super::process(signals);
 
-		signalsmith::stretch::SignalsmithStretch<float> stretch;
-		stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
-		stretch.setTransposeFactor(self->shift);
+		self->stretch.reset();
+		self->stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
+		self->stretch.setTransposeFactor(self->shift);
 
 		SignalBuffer<float> input(*signals);
 		SignalBuffer<float> output(signals->nsamples(), signals->nchannels());
 
-		stretch.process(
+		self->stretch.process(
 			input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
 

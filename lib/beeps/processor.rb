@@ -21,6 +21,18 @@ module Beeps
       Xot::BlockUtil.instance_eval_or_block_call self, &block if block
     end
 
+    def >>(o)
+      o.input = self
+      o
+    end
+
+    def <<(o)
+      self.input = o
+      o
+    end
+
+    universal_accessor :input
+
   end# Processor
 
 
@@ -49,9 +61,26 @@ module Beeps
 
   class TimeStretch
 
+    def initialize(input = nil, *args, **kwargs, &block)
+      super(*args, **kwargs, &block)
+      self.input = input
+    end
+
     universal_accessor :scale
 
   end# TimeStretch
+
+
+  class PitchShift
+
+    def initialize(input = nil, *args, **kwargs, &block)
+      super(*args, **kwargs, &block)
+      self.input = input
+    end
+
+    universal_accessor :shift
+
+  end# PitchShift
 
 
 end# Beeps

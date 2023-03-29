@@ -19,6 +19,23 @@ RUCY_DEF_ALLOC(alloc, klass)
 }
 RUCY_END
 
+static
+RUCY_DEF1(set_input, input)
+{
+	CHECK;
+	THIS->set_input(input ? to<Beeps::Processor*>(input) : NULL);
+	return self;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_input)
+{
+	CHECK;
+	return value(THIS->input());
+}
+RUCY_END
+
 
 static Class cProcessor;
 
@@ -29,6 +46,8 @@ Init_beeps_processor ()
 
 	cProcessor = mBeeps.define_class("Processor");
 	cProcessor.define_alloc_func(alloc);
+	cProcessor.define_method("input=", set_input);
+	cProcessor.define_method("input",  get_input);
 }
 
 
