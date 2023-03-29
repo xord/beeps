@@ -69,6 +69,9 @@ namespace Beeps
 	void
 	Oscillator::set_frequency (float frequency)
 	{
+		if (frequency <= 0)
+			argument_error(__FILE__, __LINE__);
+
 		self->frequency = frequency;
 	}
 

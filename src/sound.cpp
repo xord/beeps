@@ -265,7 +265,6 @@ namespace Beeps
 		{
 			return
 				(nchannels == 1 || nchannels == 2) &&
-				sampling_rate > 0 &&
 				processor && *processor;
 		}
 
