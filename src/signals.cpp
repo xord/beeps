@@ -42,11 +42,12 @@ namespace Beeps
 		Signals s;
 		if (seconds > 0 && nchannels > 0)
 		{
-			s.self->frames.reset(
-				new stk::StkFrames(seconds * s.sampling_rate(), nchannels));
+			if (sampling_rate <= 0)
+				sampling_rate = Beeps::sampling_rate();
 
-			if (sampling_rate > 0)
-				s.self->frames->setDataRate(sampling_rate);
+			s.self->frames.reset(
+				new stk::StkFrames(seconds * sampling_rate, nchannels));
+			s.self->frames->setDataRate(sampling_rate);
 		}
 		return s;
 	}
@@ -59,14 +60,16 @@ namespace Beeps
 		Signals s;
 		if (channels && nsamples > 0 && nchannels > 0)
 		{
+			if (sampling_rate <= 0)
+				sampling_rate = Beeps::sampling_rate();
+
 			stk::StkFrames* frames = new stk::StkFrames(nsamples, nchannels);
 			for (uint channel = 0; channel < nchannels; ++channel)
 				for (uint sample = 0; sample < nsamples; ++sample)
 					(*frames)(sample, channel) = channels[channel][sample];
-			s.self->frames.reset(frames);
 
-			if (sampling_rate > 0)
-				s.self->frames->setDataRate(sampling_rate);
+			s.self->frames.reset(frames);
+			s.self->frames->setDataRate(sampling_rate);
 		}
 		return s;
 	}

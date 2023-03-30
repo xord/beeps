@@ -275,7 +275,7 @@ namespace Beeps
 	Sound::Sound (
 		Processor* processor, float seconds, uint nchannels, uint sampling_rate)
 	{
-		if (!processor || !*processor || nchannels <= 0)
+		if (!processor || !*processor || seconds <= 0 || nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
 
 		self->processor     = processor;
