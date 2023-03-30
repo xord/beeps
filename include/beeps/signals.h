@@ -25,7 +25,7 @@ namespace Beeps
 
 			void clear ();
 
-			uint sampling_rate () const;
+			uint sample_rate () const;
 
 			uint nsamples () const;
 

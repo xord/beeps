@@ -36,18 +36,15 @@ namespace Beeps
 	}
 
 	Signals
-	Signals_create (
-		float seconds, uint nchannels, uint sampling_rate)
+	Signals_create (float seconds, uint nchannels, uint sample_rate)
 	{
 		Signals s;
 		if (seconds > 0 && nchannels > 0)
 		{
-			if (sampling_rate <= 0)
-				sampling_rate = Beeps::sampling_rate();
+			if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
 
-			s.self->frames.reset(
-				new stk::StkFrames(seconds * sampling_rate, nchannels));
-			s.self->frames->setDataRate(sampling_rate);
+			s.self->frames.reset(new stk::StkFrames(seconds * sample_rate, nchannels));
+			s.self->frames->setDataRate(sample_rate);
 		}
 		return s;
 	}
@@ -55,13 +52,12 @@ namespace Beeps
 	Signals
 	Signals_create (
 		const float* const* channels,
-		uint nsamples, uint nchannels, uint sampling_rate)
+		uint nsamples, uint nchannels, uint sample_rate)
 	{
 		Signals s;
 		if (channels && nsamples > 0 && nchannels > 0)
 		{
-			if (sampling_rate <= 0)
-				sampling_rate = Beeps::sampling_rate();
+			if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
 
 			stk::StkFrames* frames = new stk::StkFrames(nsamples, nchannels);
 			for (uint channel = 0; channel < nchannels; ++channel)
@@ -69,7 +65,7 @@ namespace Beeps
 					(*frames)(sample, channel) = channels[channel][sample];
 
 			s.self->frames.reset(frames);
-			s.self->frames->setDataRate(sampling_rate);
+			s.self->frames->setDataRate(sample_rate);
 		}
 		return s;
 	}
@@ -119,7 +115,7 @@ namespace Beeps
 		const stk::StkFrames* fromf = Signals_get_frames(&from);
 		if (!tof || !fromf) return false;
 
-		uint offset = from_offset_sec * from.sampling_rate();
+		uint offset = from_offset_sec * from.sample_rate();
 		uint frames = std::min(fromf->frames(), offset + tof->frames());
 
 		for (uint channel = 0; channel < tof->channels(); ++channel)
@@ -148,16 +144,16 @@ namespace Beeps
 			std::min(from_offset_sec + to->seconds(), from.seconds())
 			- from_offset_sec;
 
-		uint from_offset  = from_offset_sec * from.sampling_rate();
-		uint from_nframes = seconds         * from.sampling_rate();
-		uint   to_nframes = seconds         * to->sampling_rate();
+		uint from_offset  = from_offset_sec * from.sample_rate();
+		uint from_nframes = seconds         * from.sample_rate();
+		uint   to_nframes = seconds         * to->sample_rate();
 
 		for (uint channel = 0; channel < tof->channels(); ++channel)
 		{
 			uint from_channel = channel < fromf->channels() ? channel : 0;
 
 			r8b::CDSPResampler24 resampler(
-				from.sampling_rate(), to->sampling_rate(), from_nframes);
+				from.sample_rate(), to->sample_rate(), from_nframes);
 
 			r8b::CFixedBuffer<double> frombuf(from_nframes);
 			for (uint i = 0; i < from_nframes; ++i)
@@ -182,7 +178,7 @@ namespace Beeps
 
 		to->clear();
 
-		if (to->sampling_rate() == from.sampling_rate())
+		if (to->sample_rate() == from.sample_rate())
 			return copy(to, from, from_offset_sec);
 		else
 			return copy_interpolate(to, from, from_offset_sec);
@@ -218,10 +214,10 @@ namespace Beeps
 	}
 
 	uint
-	Signals::sampling_rate () const
+	Signals::sample_rate () const
 	{
 		Data* p = self.get();
-		return p->frames ? p->frames->dataRate() : Beeps::sampling_rate();
+		return p->frames ? p->frames->dataRate() : Beeps::sample_rate();
 	}
 
 	uint
@@ -241,7 +237,7 @@ namespace Beeps
 	float
 	Signals::seconds () const
 	{
-		double sec = nsamples() / (double) sampling_rate();
+		double sec = nsamples() / (double) sample_rate();
 		return (float) sec;
 	}
 

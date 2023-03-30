@@ -50,7 +50,7 @@ namespace Beeps
 		if (self->shift == 1) return;
 
 		self->stretch.reset();
-		self->stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
+		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
 		self->stretch.setTransposeFactor(self->shift);
 
 		SignalBuffer<float> input(*signals);

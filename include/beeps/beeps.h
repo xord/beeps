@@ -16,7 +16,7 @@ namespace Beeps
 	void fin ();
 
 
-	uint sampling_rate ();
+	uint sample_rate ();
 
 
 }// Beeps

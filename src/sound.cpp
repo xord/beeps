@@ -40,10 +40,10 @@ namespace Beeps
 			if (!signals)
 				argument_error(__FILE__, __LINE__);
 
-			uint sampling_rate = signals.sampling_rate();
-			uint nsamples      = signals.nsamples();
-			uint nchannels     = signals.nchannels();
-			if (sampling_rate <= 0 || nsamples <= 0 || nchannels <= 0)
+			uint sample_rate = signals.sample_rate();
+			uint nsamples    = signals.nsamples();
+			uint nchannels   = signals.nchannels();
+			if (sample_rate <= 0 || nsamples <= 0 || nchannels <= 0)
 				argument_error(__FILE__, __LINE__);
 
 			const stk::StkFrames* frames = Signals_get_frames(&signals);
@@ -64,7 +64,7 @@ namespace Beeps
 				nchannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16,
 				&buffer[0],
 				sizeof(short) * nsamples,
-				sampling_rate);
+				sample_rate);
 			OpenAL_check_error(__FILE__, __LINE__);
 		}
 
@@ -238,7 +238,7 @@ namespace Beeps
 	struct Sound::Data
 	{
 
-		uint nchannels = 0, sampling_rate = 0;
+		uint nchannels = 0, sample_rate = 0;
 
 		Processor::Ref processor;
 
@@ -252,7 +252,7 @@ namespace Beeps
 			if (!is_valid())
 				invalid_state_error(__FILE__, __LINE__);
 
-			Signals signals = Signals_create(seconds, nchannels, sampling_rate);
+			Signals signals = Signals_create(seconds, nchannels, sample_rate);
 			processor->process(&signals);
 
 			buffer.write(signals);
@@ -273,14 +273,14 @@ namespace Beeps
 	}
 
 	Sound::Sound (
-		Processor* processor, float seconds, uint nchannels, uint sampling_rate)
+		Processor* processor, float seconds, uint nchannels, uint sample_rate)
 	{
 		if (!processor || !*processor || seconds <= 0 || nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
 
-		self->processor     = processor;
-		self->nchannels     = nchannels;
-		self->sampling_rate = sampling_rate;
+		self->processor   = processor;
+		self->nchannels   = nchannels;
+		self->sample_rate = sample_rate;
 
 		if (seconds > 0) self->process(seconds);
 	}

@@ -49,7 +49,7 @@ namespace Beeps
 		if (self->scale == 1) return;
 
 		self->stretch.reset();
-		self->stretch.presetDefault(signals->nchannels(), signals->sampling_rate());
+		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
 
 		SignalBuffer<float> input(*signals);
 		SignalBuffer<float> output(

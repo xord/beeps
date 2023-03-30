@@ -24,7 +24,7 @@ namespace Beeps
 
 			Sound (
 				Processor* processor, float seconds,
-				uint nchannels = 1, uint sampling_rate = 0);
+				uint nchannels = 1, uint sample_rate = 0);
 
 			~Sound ();
 

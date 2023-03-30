@@ -29,11 +29,11 @@ RUCY_DEF1(initialize, path)
 RUCY_END
 
 static
-RUCY_DEF0(sampling_rate)
+RUCY_DEF0(sample_rate)
 {
 	CHECK;
 
-	return value(THIS->sampling_rate());
+	return value(THIS->sample_rate());
 }
 RUCY_END
 
@@ -66,9 +66,9 @@ Init_beeps_file_in ()
 	cFileIn = mBeeps.define_class("FileIn", Beeps::processor_class());
 	cFileIn.define_alloc_func(alloc);
 	cFileIn.define_private_method("initialize", initialize);
-	cFileIn.define_method("sampling_rate", sampling_rate);
-	cFileIn.define_method("nchannels",     nchannels);
-	cFileIn.define_method("seconds",       seconds);
+	cFileIn.define_method("sample_rate", sample_rate);
+	cFileIn.define_method("nchannels",   nchannels);
+	cFileIn.define_method("seconds",     seconds);
 }
 
 

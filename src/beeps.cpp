@@ -26,7 +26,7 @@ namespace Beeps
 	}
 
 	uint
-	sampling_rate ()
+	sample_rate ()
 	{
 		return stk::Stk::sampleRate();
 	}

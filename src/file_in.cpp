@@ -34,9 +34,9 @@ namespace Beeps
 	}
 
 	uint
-	FileIn::sampling_rate () const
+	FileIn::sample_rate () const
 	{
-		return self->signals.sampling_rate();
+		return self->signals.sample_rate();
 	}
 
 	uint

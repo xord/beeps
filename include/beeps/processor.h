@@ -93,7 +93,7 @@ namespace Beeps
 
 			virtual void load (const char* path);
 
-			virtual uint sampling_rate () const;
+			virtual uint sample_rate () const;
 
 			virtual uint nchannels () const;
 
