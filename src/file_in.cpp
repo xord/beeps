@@ -52,6 +52,12 @@ namespace Beeps
 	}
 
 	uint
+	FileIn::nsamples () const
+	{
+		return self->signals.nsamples();
+	}
+
+	uint
 	FileIn::nchannels () const
 	{
 		return self->signals.nchannels();

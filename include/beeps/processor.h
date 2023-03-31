@@ -97,6 +97,8 @@ namespace Beeps
 
 			virtual uint sample_rate () const;
 
+			virtual uint nsamples () const;
+
 			virtual uint nchannels () const;
 
 			virtual float seconds () const;

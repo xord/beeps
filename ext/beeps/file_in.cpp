@@ -47,6 +47,15 @@ RUCY_DEF0(get_sample_rate)
 RUCY_END
 
 static
+RUCY_DEF0(get_nsamples)
+{
+	CHECK;
+
+	return value(THIS->nsamples());
+}
+RUCY_END
+
+static
 RUCY_DEF0(get_nchannels)
 {
 	CHECK;
@@ -77,6 +86,7 @@ Init_beeps_file_in ()
 	cFileIn.define_method("path=",       set_path);
 	cFileIn.define_method("path",        get_path);
 	cFileIn.define_method("sample_rate", get_sample_rate);
+	cFileIn.define_method("nsamples",    get_nsamples);
 	cFileIn.define_method("nchannels",   get_nchannels);
 	cFileIn.define_method("seconds",     get_seconds);
 }
