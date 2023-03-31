@@ -31,6 +31,13 @@ namespace Beeps
 	}
 
 	void
+	PitchShift::reset ()
+	{
+		Super::reset();
+
+		self->stretch.reset();
+	}
+	void
 	PitchShift::set_shift (float shift)
 	{
 		self->shift = shift;
@@ -49,13 +56,11 @@ namespace Beeps
 
 		if (self->shift == 1) return;
 
-		self->stretch.reset();
-		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
-		self->stretch.setTransposeFactor(self->shift);
-
 		SignalBuffer<float> input(*signals);
 		SignalBuffer<float> output(signals->nsamples(), signals->nchannels());
 
+		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
+		self->stretch.setTransposeFactor(self->shift);
 		self->stretch.process(
 			input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());

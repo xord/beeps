@@ -29,6 +29,12 @@ namespace Beeps
 	}
 
 	void
+	Processor::reset ()
+	{
+		if (input) input->reset();
+	}
+
+	void
 	Processor::set_input (Processor* input)
 	{
 		if (!self->need_input)

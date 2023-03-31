@@ -39,6 +39,16 @@ namespace Beeps
 	}
 
 	void
+	Oscillator::reset ()
+	{
+		Super::reset();
+
+		if (self->sine)   self->sine->reset();
+		if (self->square) self->square->reset();
+		if (self->saw)    self->saw->reset();
+	}
+
+	void
 	Oscillator::set_type (Type type)
 	{
 		if (type == self->type) return;

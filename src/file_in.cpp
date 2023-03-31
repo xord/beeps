@@ -16,6 +16,8 @@ namespace Beeps
 
 		Signals signals;
 
+		uint current = 0;
+
 	};// FileIn::Data
 
 
@@ -27,6 +29,14 @@ namespace Beeps
 
 	FileIn::~FileIn ()
 	{
+	}
+
+	void
+	FileIn::reset ()
+	{
+		Super::reset();
+
+		self->current = 0;
 	}
 
 	void

@@ -27,6 +27,8 @@ namespace Beeps
 
 			virtual ~Processor ();
 
+			virtual void reset ();
+
 			virtual void         set_input (Processor* input);
 
 			virtual const Processor* input () const;
@@ -61,6 +63,8 @@ namespace Beeps
 
 			virtual ~Oscillator ();
 
+			virtual void reset ();
+
 			virtual void set_type (Type type);
 
 			virtual Type     type () const;
@@ -90,6 +94,8 @@ namespace Beeps
 			FileIn (const char* path = NULL);
 
 			virtual ~FileIn ();
+
+			virtual void reset ();
 
 			virtual void    set_path(const char* path);
 
@@ -125,6 +131,8 @@ namespace Beeps
 
 			virtual ~TimeStretch ();
 
+			virtual void reset ();
+
 			virtual void set_scale (float scale);
 
 			virtual float    scale () const;
@@ -150,6 +158,8 @@ namespace Beeps
 			PitchShift (Processor* input = NULL);
 
 			virtual ~PitchShift ();
+
+			virtual void reset ();
 
 			virtual void set_shift (float shift);
 

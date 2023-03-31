@@ -20,6 +20,16 @@ RUCY_DEF_ALLOC(alloc, klass)
 RUCY_END
 
 static
+RUCY_DEF(reset)
+{
+	CHECK;
+
+	THIS->reset();
+	return self;
+}
+RUCY_END
+
+static
 RUCY_DEF1(set_input, input)
 {
 	CHECK;
@@ -48,6 +58,7 @@ Init_beeps_processor ()
 
 	cProcessor = mBeeps.define_class("Processor");
 	cProcessor.define_alloc_func(alloc);
+	cProcessor.define_method("reset", reset);
 	cProcessor.define_method("input=", set_input);
 	cProcessor.define_method("input",  get_input);
 }

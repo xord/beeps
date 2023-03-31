@@ -30,6 +30,14 @@ namespace Beeps
 	}
 
 	void
+	TimeStretch::reset ()
+	{
+		Super::reset();
+
+		self->stretch.reset();
+	}
+
+	void
 	TimeStretch::set_scale (float scale)
 	{
 		self->scale = scale;
@@ -48,13 +56,11 @@ namespace Beeps
 
 		if (self->scale == 1) return;
 
-		self->stretch.reset();
-		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
-
 		SignalBuffer<float> input(*signals);
 		SignalBuffer<float> output(
 			signals->nsamples() * scale(), signals->nchannels());
 
+		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
 		self->stretch.process(
 			input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
