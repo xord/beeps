@@ -59,6 +59,18 @@ module Beeps
   end# Oscillator
 
 
+  class FileIn
+
+    def initialize(path = nil, *args, **kwargs, &block)
+      super(*args, **kwargs, &block)
+      self.path = path if path
+    end
+
+    universal_accessor :path
+
+  end# FileIn
+
+
   class TimeStretch
 
     def initialize(input = nil, *args, **kwargs, &block)

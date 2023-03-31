@@ -12,6 +12,8 @@ namespace Beeps
 	struct FileIn::Data
 	{
 
+		String path;
+
 		Signals signals;
 
 	};// FileIn::Data
@@ -20,7 +22,7 @@ namespace Beeps
 	FileIn::FileIn (const char* path)
 	:	Super(false)
 	{
-		if (path) load(path);
+		if (path) set_path(path);
 	}
 
 	FileIn::~FileIn ()
@@ -28,9 +30,19 @@ namespace Beeps
 	}
 
 	void
-	FileIn::load (const char* path)
+	FileIn::set_path (const char* path)
 	{
+		if (*this)
+			invalid_state_error(__FILE__, __LINE__, "path is already set");
+
 		self->signals = Signals_load(path);
+		self->path    = path;
+	}
+
+	const char*
+	FileIn::path () const
+	{
+		return self->path;
 	}
 
 	uint

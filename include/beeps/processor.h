@@ -91,7 +91,9 @@ namespace Beeps
 
 			virtual ~FileIn ();
 
-			virtual void load (const char* path);
+			virtual void    set_path(const char* path);
+
+			virtual const char* path () const;
 
 			virtual uint sample_rate () const;
 
