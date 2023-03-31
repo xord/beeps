@@ -33,7 +33,7 @@ namespace Beeps
 
 			virtual const Processor* input () const;
 
-			virtual void process (Signals* signals);
+			virtual void process (Signals* signals) = 0;
 
 			virtual operator bool () const;
 
@@ -45,7 +45,7 @@ namespace Beeps
 
 		protected:
 
-			Processor (bool input);
+			Processor (bool generator = false);
 
 	};// Processor
 

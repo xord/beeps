@@ -20,7 +20,6 @@ namespace Beeps
 
 
 	TimeStretch::TimeStretch (Processor* input)
-	:	Super(true)
 	{
 		set_input(input);
 	}

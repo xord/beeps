@@ -12,16 +12,21 @@ namespace Beeps
 	struct Processor::Data
 	{
 
-		bool need_input = false;
+		bool generator = false;
 
 		Processor::Ref input;
+
+		bool has_generator () const
+		{
+			return generator || (input && input->self->has_generator());
+		}
 
 	};// Processor::Data
 
 
-	Processor::Processor (bool input)
+	Processor::Processor (bool generator)
 	{
-		self->need_input = input;
+		self->generator = generator;
 	}
 
 	Processor::~Processor ()
@@ -37,8 +42,8 @@ namespace Beeps
 	void
 	Processor::set_input (Processor* input)
 	{
-		if (!self->need_input)
-			invalid_state_error(__FILE__, __LINE__, "can not have inputs");
+		if (input && self->generator)
+			invalid_state_error(__FILE__, __LINE__, "generator cannot have inputs");
 
 		self->input = input;
 	}
@@ -64,7 +69,7 @@ namespace Beeps
 
 	Processor::operator bool () const
 	{
-		return !self->need_input || (self->input && *self->input);
+		return self->has_generator()
 	}
 
 	bool

@@ -29,7 +29,7 @@ namespace Beeps
 
 
 	Oscillator::Oscillator (Type type)
-	:	Super(false)
+	:	Super(true)
 	{
 		set_type(type);
 	}

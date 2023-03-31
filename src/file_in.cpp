@@ -22,7 +22,7 @@ namespace Beeps
 
 
 	FileIn::FileIn (const char* path)
-	:	Super(false)
+	:	Super(true)
 	{
 		if (path) set_path(path);
 	}
