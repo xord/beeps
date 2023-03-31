@@ -22,7 +22,8 @@ static
 RUCY_DEF1(set_path, path)
 {
 	CHECK;
-	THIS->set_path(to<const char*>(path));
+
+	THIS->set_path(path.c_str());
 	return self;
 }
 RUCY_END
@@ -31,6 +32,7 @@ static
 RUCY_DEF0(get_path)
 {
 	CHECK;
+
 	return value(THIS->path());
 }
 RUCY_END
@@ -39,6 +41,7 @@ static
 RUCY_DEF0(get_sample_rate)
 {
 	CHECK;
+
 	return value(THIS->sample_rate());
 }
 RUCY_END
@@ -47,6 +50,7 @@ static
 RUCY_DEF0(get_nchannels)
 {
 	CHECK;
+
 	return value(THIS->nchannels());
 }
 RUCY_END
@@ -55,6 +59,7 @@ static
 RUCY_DEF0(get_seconds)
 {
 	CHECK;
+
 	return value(THIS->seconds());
 }
 RUCY_END

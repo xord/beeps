@@ -22,6 +22,7 @@ static
 RUCY_DEF1(set_shift, shift)
 {
 	CHECK;
+
 	THIS->set_shift(to<float>(shift));
 	return self;
 }
@@ -31,6 +32,7 @@ static
 RUCY_DEF0(get_shift)
 {
 	CHECK;
+
 	return value(THIS->shift());
 }
 RUCY_END

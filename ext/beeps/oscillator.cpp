@@ -22,6 +22,7 @@ static
 RUCY_DEF1(set_type, type)
 {
 	CHECK;
+
 	THIS->set_type((Beeps::Oscillator::Type) to<uint>(type));
 	return self;
 }
@@ -31,6 +32,7 @@ static
 RUCY_DEF0(get_type)
 {
 	CHECK;
+
 	return value(THIS->type());
 }
 RUCY_END
@@ -39,6 +41,7 @@ static
 RUCY_DEF1(set_frequency, frequency)
 {
 	CHECK;
+
 	THIS->set_frequency(to<float>(frequency));
 	return self;
 }
@@ -48,6 +51,7 @@ static
 RUCY_DEF0(get_frequency)
 {
 	CHECK;
+
 	return value(THIS->frequency());
 }
 RUCY_END
