@@ -20,7 +20,7 @@ RUCY_DEF_ALLOC(alloc, klass)
 RUCY_END
 
 static
-RUCY_DEF(reset)
+RUCY_DEF0(reset)
 {
 	CHECK;
 

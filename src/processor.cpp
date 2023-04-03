@@ -69,7 +69,7 @@ namespace Beeps
 
 	Processor::operator bool () const
 	{
-		return self->has_generator()
+		return self->has_generator();
 	}
 
 	bool

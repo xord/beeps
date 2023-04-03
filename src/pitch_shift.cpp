@@ -36,6 +36,7 @@ namespace Beeps
 
 		self->stretch.reset();
 	}
+
 	void
 	PitchShift::set_shift (float shift)
 	{
