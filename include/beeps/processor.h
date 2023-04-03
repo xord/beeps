@@ -33,7 +33,7 @@ namespace Beeps
 
 			virtual const Processor* input () const;
 
-			virtual void process (Signals* signals) = 0;
+			virtual void process (Signals* signals, uint* offset) = 0;
 
 			virtual operator bool () const;
 
@@ -73,7 +73,7 @@ namespace Beeps
 
 			virtual float    frequency () const;
 
-			virtual void process (Signals* signals);
+			virtual void process (Signals* signals, uint* offset);
 
 			virtual operator bool () const;
 
@@ -103,13 +103,13 @@ namespace Beeps
 
 			virtual uint sample_rate () const;
 
-			virtual uint nsamples () const;
-
 			virtual uint nchannels () const;
+
+			virtual uint nsamples () const;
 
 			virtual float seconds () const;
 
-			virtual void process (Signals* signals);
+			virtual void process (Signals* signals, uint* offset);
 
 			virtual operator bool () const;
 
@@ -137,7 +137,7 @@ namespace Beeps
 
 			virtual float    scale () const;
 
-			virtual void process (Signals* signals);
+			virtual void process (Signals* signals, uint* offset);
 
 			virtual operator bool () const;
 
@@ -165,7 +165,7 @@ namespace Beeps
 
 			virtual float    shift () const;
 
-			virtual void process (Signals* signals);
+			virtual void process (Signals* signals, uint* offset);
 
 			virtual operator bool () const;
 

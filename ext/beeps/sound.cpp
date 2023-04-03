@@ -19,19 +19,19 @@ RUCY_DEF_ALLOC(alloc, klass)
 RUCY_END
 
 static
-RUCY_DEFN(initialize)
+RUCY_DEF4(setup, processor, seconds, nchannels, sample_rate)
 {
 	CHECK;
-	check_arg_count(__FILE__, __LINE__, "Sound#initialize", argc, 2, 3, 4);
 
-	Beeps::Processor* proc = to<Beeps::Processor*>(argv[0]);
-	float seconds          = to<float>(argv[1]);
-	if (argc == 2)
-		*THIS = Beeps::Sound(proc, seconds);
-	else if (argc == 3)
-		*THIS = Beeps::Sound(proc, seconds, to<uint>(argv[2]));
+	Beeps::Processor* proc = to<Beeps::Processor*>(processor);
+	float secs             = seconds ? to<float>(seconds) : 0;
+
+	if (!nchannels && !sample_rate)
+		*THIS = Beeps::Sound(proc, secs);
+	else if (nchannels && !sample_rate)
+		*THIS = Beeps::Sound(proc, secs, to<uint>(nchannels));
 	else
-		*THIS = Beeps::Sound(proc, seconds, to<uint>(argv[2]), to<uint>(argv[3]));
+		*THIS = Beeps::Sound(proc, secs, to<uint>(nchannels), to<uint>(sample_rate));
 
 	return self;
 }
@@ -47,6 +47,43 @@ RUCY_DEF0(play)
 }
 RUCY_END
 
+static
+RUCY_DEF1(save, path)
+{
+	CHECK;
+
+	THIS->save(path.c_str());
+	return self;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_sample_rate)
+{
+	CHECK;
+
+	return value(THIS->sample_rate());
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_nchannels)
+{
+	CHECK;
+
+	return value(THIS->nchannels());
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_seconds)
+{
+	CHECK;
+
+	return value(THIS->seconds());
+}
+RUCY_END
+
 
 static Class cSound;
 
@@ -57,8 +94,12 @@ Init_beeps_sound ()
 
 	cSound = mBeeps.define_class("Sound");
 	cSound.define_alloc_func(alloc);
-	cSound.define_private_method("initialize", initialize);
+	cSound.define_private_method("setup", setup);
 	cSound.define_method("play", play);
+	cSound.define_method("save", save);
+	cSound.define_method("sample_rate", get_sample_rate);
+	cSound.define_method("nchannels",   get_nchannels);
+	cSound.define_method("seconds",     get_seconds);
 }
 
 

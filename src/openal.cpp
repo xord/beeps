@@ -23,7 +23,7 @@ namespace Beeps
 	static void
 	cleanup ()
 	{
-		Sound_cleanup_sources();
+		SoundPlayer_clear_all();
 
 		alcMakeContextCurrent(NULL);
 

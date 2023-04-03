@@ -23,19 +23,24 @@ namespace Beeps
 	const stk::StkFrames* Signals_get_frames (const Signals* signals);
 
 	Signals Signals_create (
-		float seconds, uint nchannels = 1, uint sample_rate = 0);
+		uint capacity, uint nchannels = 1, uint sample_rate = 0);
 
 	Signals Signals_create (
 		const float* const* channels,
 		uint nsamples, uint nchannels, uint sample_rate = 0);
 
-	Signals Signals_load (const char* path);
+	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
 
 	template <typename T>
-	void Signals_set_buffer (Signals* signals, const SignalBuffer<T>& buffer);
+	void Signals_write_buffer (Signals* signals, const SignalBuffer<T>& buffer);
 
-	bool Signals_copy (
-		Signals* to, const Signals& from, float from_offset_sec = 0);
+	void  Signals_set_nsamples (Signals* signals, uint nsamples);
+
+	float Signals_get_seconds (const Signals& signals);
+
+	void    Signals_save (const Signals& signals, const char* path);
+
+	Signals Signals_load (const char* path);
 
 
 	template <typename T>
@@ -60,30 +65,29 @@ namespace Beeps
 				if (!f)
 					invalid_state_error(__FILE__, __LINE__);
 
-				self->nsamples = signals.nsamples();
-
-				uint nframes   = f->frames();
-				uint nchannels = f->channels();
+				uint nsamples  = signals.nsamples();
+				uint nchannels = signals.nchannels();
 
 				auto& buffer = self->buffer;
-				buffer.reserve(nframes * nchannels);
+				buffer.reserve(nsamples * nchannels);
 
 				for (uint channel = 0; channel < nchannels; ++channel)
-					for (uint frame = 0; frame < nframes; ++frame)
-						buffer.push_back((*f)(frame, channel));
+					for (uint sample = 0; sample < nsamples; ++sample)
+						buffer.push_back((*f)(sample, channel));
 
+				self->nsamples = nsamples;
 				for (uint i = 0; i < nchannels; ++i)
-					self->channels.push_back(&self->buffer[nframes * i]);
-			}
-
-			uint nsamples () const
-			{
-				return self->nsamples;
+					self->channels.push_back(&self->buffer[nsamples * i]);
 			}
 
 			uint nchannels () const
 			{
 				return (uint) self->channels.size();
+			}
+
+			uint nsamples () const
+			{
+				return self->nsamples;
 			}
 
 			T* const* channels ()

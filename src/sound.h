@@ -11,7 +11,9 @@ namespace Beeps
 {
 
 
-	void Sound_cleanup_sources ();
+	void SoundPlayer_process_streams ();
+
+	void SoundPlayer_clear_all ();
 
 
 }// Beeps

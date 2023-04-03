@@ -49,22 +49,36 @@ namespace Beeps
 	}
 
 	void
-	TimeStretch::process (Signals* signals)
+	TimeStretch::process (Signals* signals, uint* offset)
 	{
-		Super::process(signals);
+		if (self->scale == 1)
+			return Super::process(signals, offset);
 
-		if (self->scale == 1) return;
+		if (!signals || !*signals)
+			argument_error(__FILE__, __LINE__);
 
-		SignalBuffer<float> input(*signals);
+		if (!*this)
+			invalid_state_error(__FILE__, __LINE__);
+
+		uint nsamples  = signals->capacity();
+		Signals source = Signals_create(
+			nsamples / self->scale, signals->nchannels(), signals->sample_rate());
+
+		Super::process(&source, offset);
+
+		SignalBuffer<float> input(source);
 		SignalBuffer<float> output(
-			signals->nsamples() * scale(), signals->nchannels());
+			source.nsamples() < source.capacity()
+				?	source.nsamples() * self->scale
+				:	nsamples,
+			signals->nchannels());
 
 		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
 		self->stretch.process(
 			input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
 
-		Signals_set_buffer(signals, output);
+		Signals_write_buffer(signals, output);
 	}
 
 	TimeStretch::operator bool () const

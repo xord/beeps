@@ -36,7 +36,7 @@ namespace Beeps
 	void
 	Processor::reset ()
 	{
-		if (input) input->reset();
+		if (self->input) self->input->reset();
 	}
 
 	void
@@ -55,16 +55,16 @@ namespace Beeps
 	}
 
 	void
-	Processor::process (Signals* signals)
+	Processor::process (Signals* signals, uint* offset)
 	{
-		if (!signals || !*signals)
+		if (!signals || !*signals || signals->nsamples() > 0)
 			argument_error(__FILE__, __LINE__);
 
 		if (!*this)
 			invalid_state_error(__FILE__, __LINE__);
 
 		if (self->input)
-			self->input->process(signals);
+			self->input->process(signals, offset);
 	}
 
 	Processor::operator bool () const

@@ -15,6 +15,46 @@ namespace Beeps
 	class Processor;
 
 
+	class SoundPlayer
+	{
+
+		public:
+
+			SoundPlayer ();
+
+			~SoundPlayer ();
+
+			void play ();
+
+			void pause ();
+
+			void rewind ();
+
+			void stop ();
+
+			bool is_playing () const;
+
+			bool is_stopped () const;
+
+			void set_gain (float gain);
+
+			float    gain () const;
+
+			void set_loop (bool loop);
+
+			bool     loop () const;
+
+			operator bool () const;
+
+			bool operator ! () const;
+
+			struct Data;
+
+			Xot::PSharedImpl<Data> self;
+
+	};// SoundPlayer
+
+
 	class Sound
 	{
 
@@ -28,7 +68,15 @@ namespace Beeps
 
 			~Sound ();
 
-			void play ();
+			SoundPlayer play ();
+
+			void save (const char* path) const;
+
+			uint sample_rate () const;
+
+			uint nchannels () const;
+
+			float seconds () const;
 
 			operator bool () const;
 
@@ -39,6 +87,9 @@ namespace Beeps
 			Xot::PSharedImpl<Data> self;
 
 	};// Sound
+
+
+	Sound load_sound (const char* path);
 
 
 }// Beeps

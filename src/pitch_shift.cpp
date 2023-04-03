@@ -50,14 +50,14 @@ namespace Beeps
 	}
 
 	void
-	PitchShift::process (Signals* signals)
+	PitchShift::process (Signals* signals, uint* offset)
 	{
-		Super::process(signals);
+		Super::process(signals, offset);
 
 		if (self->shift == 1) return;
 
 		SignalBuffer<float> input(*signals);
-		SignalBuffer<float> output(signals->nsamples(), signals->nchannels());
+		SignalBuffer<float> output(input.nsamples(), signals->nchannels());
 
 		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
 		self->stretch.setTransposeFactor(self->shift);
@@ -65,7 +65,7 @@ namespace Beeps
 			input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
 
-		Signals_set_buffer(signals, output);
+		Signals_write_buffer(signals, output);
 	}
 
 	PitchShift::operator bool () const

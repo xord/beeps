@@ -21,6 +21,14 @@ RUCY_DEF0(fin)
 }
 RUCY_END
 
+static
+RUCY_DEF0(process_streams)
+{
+	Beeps::process_streams();
+	return self;
+}
+RUCY_END
+
 
 static Module mBeeps;
 
@@ -29,7 +37,8 @@ Init_beeps ()
 {
 	mBeeps = define_module("Beeps");
 	mBeeps.define_singleton_method("init!", init);
-	mBeeps.define_singleton_method("fin!", fin);
+	mBeeps.define_singleton_method("fin!",  fin);
+	mBeeps.define_singleton_method("process_streams", process_streams);
 }
 
 

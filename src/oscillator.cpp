@@ -93,9 +93,9 @@ namespace Beeps
 	}
 
 	void
-	Oscillator::process (Signals* signals)
+	Oscillator::process (Signals* signals, uint* offset)
 	{
-		Super::process(signals);
+		Super::process(signals, offset);
 
 		stk::StkFrames* frames = Signals_get_frames(signals);
 		if (!frames)
@@ -126,6 +126,8 @@ namespace Beeps
 					__FILE__, __LINE__, "unknown oscilator type '%d'", self->type);
 				break;
 		}
+
+		Signals_set_nsamples(signals, frames->frames());
 	}
 
 	Oscillator::operator bool () const

@@ -16,8 +16,6 @@ namespace Beeps
 
 		Signals signals;
 
-		uint current = 0;
-
 	};// FileIn::Data
 
 
@@ -35,8 +33,6 @@ namespace Beeps
 	FileIn::reset ()
 	{
 		Super::reset();
-
-		self->current = 0;
 	}
 
 	void
@@ -62,29 +58,29 @@ namespace Beeps
 	}
 
 	uint
-	FileIn::nsamples () const
-	{
-		return self->signals.nsamples();
-	}
-
-	uint
 	FileIn::nchannels () const
 	{
 		return self->signals.nchannels();
 	}
 
+	uint
+	FileIn::nsamples () const
+	{
+		return self->signals.nsamples();
+	}
+
 	float
 	FileIn::seconds () const
 	{
-		return self->signals.seconds();
+		return Signals_get_seconds(self->signals);
 	}
 
 	void
-	FileIn::process (Signals* signals)
+	FileIn::process (Signals* signals, uint* offset)
 	{
-		Super::process(signals);
+		Super::process(signals, offset);
 
-		Signals_copy(signals, self->signals);
+		*offset += Signals_copy(signals, self->signals, *offset);
 	}
 
 	FileIn::operator bool () const

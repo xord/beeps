@@ -9,12 +9,17 @@
 #include <beeps/sound.h>
 
 
+RUCY_DECLARE_VALUE_FROM_TO(Beeps::SoundPlayer)
+
 RUCY_DECLARE_VALUE_FROM_TO(Beeps::Sound)
 
 
 namespace Beeps
 {
 
+
+	Rucy::Class sound_player_class ();
+	// class Beeps::SoundPlayer
 
 	Rucy::Class sound_class ();
 	// class Beeps::Sound
@@ -26,6 +31,12 @@ namespace Beeps
 namespace Rucy
 {
 
+
+	template <> inline Class
+	get_ruby_class<Beeps::SoundPlayer> ()
+	{
+		return Beeps::sound_player_class();
+	}
 
 	template <> inline Class
 	get_ruby_class<Beeps::Sound> ()
