@@ -31,7 +31,7 @@ RUCY_DEF4(setup, processor, seconds, nchannels, sample_rate)
 	else if (nchannels && !sample_rate)
 		*THIS = Beeps::Sound(proc, secs, to<uint>(nchannels));
 	else
-		*THIS = Beeps::Sound(proc, secs, to<uint>(nchannels), to<uint>(sample_rate));
+		*THIS = Beeps::Sound(proc, secs, to<uint>(nchannels), to<double>(sample_rate));
 
 	return self;
 }

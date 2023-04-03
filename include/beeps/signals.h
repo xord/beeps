@@ -23,7 +23,7 @@ namespace Beeps
 
 			Signals dup () const;
 
-			uint sample_rate () const;
+			double sample_rate () const;
 
 			uint nchannels () const;
 

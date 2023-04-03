@@ -101,7 +101,7 @@ namespace Beeps
 
 			virtual const char* path () const;
 
-			virtual uint sample_rate () const;
+			virtual double sample_rate () const;
 
 			virtual uint nchannels () const;
 

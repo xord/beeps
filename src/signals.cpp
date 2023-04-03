@@ -38,7 +38,7 @@ namespace Beeps
 	}
 
 	Signals
-	Signals_create (uint capacity, uint nchannels, uint sample_rate)
+	Signals_create (uint capacity, uint nchannels, double sample_rate)
 	{
 		if (capacity <= 0 || nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
@@ -54,7 +54,7 @@ namespace Beeps
 	Signals
 	Signals_create (
 		const float* const* channels,
-		uint nsamples, uint nchannels, uint sample_rate)
+		uint nsamples, uint nchannels, double sample_rate)
 	{
 		if (!channels || nsamples <= 0 || nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
@@ -225,7 +225,7 @@ namespace Beeps
 	float
 	Signals_get_seconds (const Signals& signals)
 	{
-		return (float) (signals.nsamples() / (double) signals.sample_rate());
+		return (float) (signals.nsamples() / signals.sample_rate());
 	}
 
 
@@ -247,7 +247,7 @@ namespace Beeps
 		return t;
 	}
 
-	uint
+	double
 	Signals::sample_rate () const
 	{
 		return self->frames ? self->frames->dataRate() : Beeps::sample_rate();

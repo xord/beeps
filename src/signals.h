@@ -23,11 +23,11 @@ namespace Beeps
 	const stk::StkFrames* Signals_get_frames (const Signals* signals);
 
 	Signals Signals_create (
-		uint capacity, uint nchannels = 1, uint sample_rate = 0);
+		uint capacity, uint nchannels = 1, double sample_rate = 0);
 
 	Signals Signals_create (
 		const float* const* channels,
-		uint nsamples, uint nchannels, uint sample_rate = 0);
+		uint nsamples, uint nchannels, double sample_rate = 0);
 
 	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
 

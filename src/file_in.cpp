@@ -51,7 +51,7 @@ namespace Beeps
 		return self->path;
 	}
 
-	uint
+	double
 	FileIn::sample_rate () const
 	{
 		return self->signals.sample_rate();

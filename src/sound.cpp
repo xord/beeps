@@ -48,9 +48,9 @@ namespace Beeps
 			if (!*this)
 				invalid_state_error(__FILE__, __LINE__);
 
-			uint sample_rate = signals.sample_rate();
-			uint nchannels   = signals.nchannels();
-			uint nsamples    = signals.nsamples();
+			double sample_rate = signals.sample_rate();
+			uint nchannels     = signals.nchannels();
+			uint nsamples      = signals.nsamples();
 			assert(sample_rate > 0 && nchannels > 0 && nsamples > 0);
 
 			const stk::StkFrames* frames = Signals_get_frames(&signals);
@@ -342,7 +342,7 @@ namespace Beeps
 			buffers.emplace_back(buffer);
 		}
 
-		void attach_stream (Processor* processor, uint nchannels, uint sample_rate)
+		void attach_stream (Processor* processor, uint nchannels, double sample_rate)
 		{
 			assert(processor && *processor && nchannels > 0 && sample_rate > 0);
 
@@ -589,7 +589,7 @@ namespace Beeps
 			not_implemented_error(__FILE__, __LINE__);
 		}
 
-		virtual uint sample_rate () const
+		virtual double sample_rate () const
 		{
 			return 0;
 		}
@@ -620,7 +620,7 @@ namespace Beeps
 		Signals signals;
 
 		SoundData (
-			Processor* processor, float seconds, uint nchannels, uint sample_rate)
+			Processor* processor, float seconds, uint nchannels, double sample_rate)
 		{
 			assert(
 				processor && *processor &&
@@ -654,14 +654,14 @@ namespace Beeps
 			Signals_save(signals, path);
 		}
 
-		uint sample_rate () const override
+		double sample_rate () const override
 		{
 			return signals ? signals.sample_rate() : Super::sample_rate();
 		}
 
 		uint nchannels () const override
 		{
-			return signals ? signals.nchannels() : Super::sample_rate();
+			return signals ? signals.nchannels() : Super::nchannels();
 		}
 
 		float seconds () const override
@@ -682,9 +682,11 @@ namespace Beeps
 
 		Processor::Ref processor;
 
-		uint sample_rate_ = 0, nchannels_ = 0;
+		double sample_rate_ = 0;
 
-		StreamSoundData (Processor* processor, uint nchannels, uint sample_rate)
+		uint  nchannels_ = 0;
+
+		StreamSoundData (Processor* processor, uint nchannels, double sample_rate)
 		{
 			assert(processor && *processor && nchannels > 0 && sample_rate > 0);
 
@@ -700,7 +702,7 @@ namespace Beeps
 			player->self->attach_stream(processor, nchannels_, sample_rate_);
 		}
 
-		uint sample_rate () const override
+		double sample_rate () const override
 		{
 			return sample_rate_;
 		}
@@ -736,7 +738,7 @@ namespace Beeps
 	}
 
 	Sound::Sound (
-		Processor* processor, float seconds, uint nchannels, uint sample_rate)
+		Processor* processor, float seconds, uint nchannels, double sample_rate)
 	{
 		Processor::Ref ref = processor;
 
@@ -781,7 +783,7 @@ namespace Beeps
 		self->save(path);
 	}
 
-	uint
+	double
 	Sound::sample_rate () const
 	{
 		return self->sample_rate();

@@ -64,7 +64,7 @@ namespace Beeps
 
 			Sound (
 				Processor* processor, float seconds,
-				uint nchannels = 1, uint sample_rate = 0);
+				uint nchannels = 1, double sample_rate = 0);
 
 			~Sound ();
 
@@ -72,7 +72,7 @@ namespace Beeps
 
 			void save (const char* path) const;
 
-			uint sample_rate () const;
+			double sample_rate () const;
 
 			uint nchannels () const;
 

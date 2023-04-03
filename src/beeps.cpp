@@ -32,7 +32,7 @@ namespace Beeps
 		SoundPlayer_process_streams();
 	}
 
-	uint
+	double
 	sample_rate ()
 	{
 		return stk::Stk::sampleRate();
