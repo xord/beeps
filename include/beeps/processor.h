@@ -63,7 +63,7 @@ namespace Beeps
 
 			virtual ~Oscillator ();
 
-			virtual void reset ();
+			virtual void reset () override;
 
 			virtual void set_type (Type type);
 
@@ -73,9 +73,9 @@ namespace Beeps
 
 			virtual float    frequency () const;
 
-			virtual void process (Signals* signals, uint* offset);
+			virtual void process (Signals* signals, uint* offset) override;
 
-			virtual operator bool () const;
+			virtual operator bool () const override;
 
 			struct Data;
 
@@ -95,7 +95,7 @@ namespace Beeps
 
 			virtual ~FileIn ();
 
-			virtual void reset ();
+			virtual void reset () override;
 
 			virtual void    set_path(const char* path);
 
@@ -109,9 +109,9 @@ namespace Beeps
 
 			virtual float seconds () const;
 
-			virtual void process (Signals* signals, uint* offset);
+			virtual void process (Signals* signals, uint* offset) override;
 
-			virtual operator bool () const;
+			virtual operator bool () const override;
 
 			struct Data;
 
@@ -131,15 +131,15 @@ namespace Beeps
 
 			virtual ~TimeStretch ();
 
-			virtual void reset ();
+			virtual void reset () override;
 
 			virtual void set_scale (float scale);
 
 			virtual float    scale () const;
 
-			virtual void process (Signals* signals, uint* offset);
+			virtual void process (Signals* signals, uint* offset) override;
 
-			virtual operator bool () const;
+			virtual operator bool () const override;
 
 			struct Data;
 
@@ -159,15 +159,15 @@ namespace Beeps
 
 			virtual ~PitchShift ();
 
-			virtual void reset ();
+			virtual void reset () override;
 
 			virtual void set_shift (float shift);
 
 			virtual float    shift () const;
 
-			virtual void process (Signals* signals, uint* offset);
+			virtual void process (Signals* signals, uint* offset) override;
 
-			virtual operator bool () const;
+			virtual operator bool () const override;
 
 			struct Data;
 
