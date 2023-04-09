@@ -23,6 +23,8 @@ namespace Beeps
 
 		public:
 
+			class Context {};
+
 			typedef Xot::Ref<This> Ref;
 
 			virtual ~Processor ();
@@ -32,8 +34,6 @@ namespace Beeps
 			virtual void         set_input (Processor* input);
 
 			virtual const Processor* input () const;
-
-			virtual void process (Signals* signals, uint* offset) = 0;
 
 			virtual operator bool () const;
 
@@ -47,15 +47,57 @@ namespace Beeps
 
 			Processor (bool generator = false, float buffering_seconds = 0);
 
+			virtual void process (Context* context, Signals* signals, uint* offset) final;
+
+			virtual void generate (Context* context, Signals* signals, uint* offset);
+
+			virtual void filter (Context* context, Signals* signals, uint* offset);
+
 			virtual void set_updated ();
+
+			friend class ProcessorContext;
 
 	};// Processor
 
 
-	class Oscillator : public Processor
+	class Generator : public Processor
 	{
 
 		typedef Processor Super;
+
+		protected:
+
+			Generator ();
+
+		private:
+
+			void filter (
+				Context* context, Signals* signals, uint* offset) override final;
+
+	};// Generator
+
+
+	class Filter : public Processor
+	{
+
+		typedef Processor Super;
+
+		protected:
+
+			Filter (uint buffering_seconds = 0);
+
+		private:
+
+			void generate (
+				Context* context, Signals* signals, uint* offset) override final;
+
+	};// Filter
+
+
+	class Oscillator : public Generator
+	{
+
+		typedef Generator Super;
 
 		public:
 
@@ -75,7 +117,8 @@ namespace Beeps
 
 			virtual float    frequency () const;
 
-			virtual void process (Signals* signals, uint* offset) override;
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
 
 			virtual operator bool () const override;
 
@@ -86,10 +129,10 @@ namespace Beeps
 	};// Oscillator
 
 
-	class FileIn : public Processor
+	class FileIn : public Generator
 	{
 
-		typedef Processor Super;
+		typedef Generator Super;
 
 		public:
 
@@ -111,7 +154,8 @@ namespace Beeps
 
 			virtual float seconds () const;
 
-			virtual void process (Signals* signals, uint* offset) override;
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
 
 			virtual operator bool () const override;
 
@@ -122,10 +166,10 @@ namespace Beeps
 	};// FileIn
 
 
-	class TimeStretch : public Processor
+	class TimeStretch : public Filter
 	{
 
-		typedef Processor Super;
+		typedef Filter Super;
 
 		public:
 
@@ -139,7 +183,8 @@ namespace Beeps
 
 			virtual float    scale () const;
 
-			virtual void process (Signals* signals, uint* offset) override;
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 			virtual operator bool () const override;
 
@@ -150,10 +195,10 @@ namespace Beeps
 	};// TimeStretch
 
 
-	class PitchShift : public Processor
+	class PitchShift : public Filter
 	{
 
-		typedef Processor Super;
+		typedef Filter Super;
 
 		public:
 
@@ -167,7 +212,8 @@ namespace Beeps
 
 			virtual float    shift () const;
 
-			virtual void process (Signals* signals, uint* offset) override;
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 			virtual operator bool () const override;
 

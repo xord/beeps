@@ -20,7 +20,6 @@ namespace Beeps
 
 
 	FileIn::FileIn (const char* path)
-	:	Super(true)
 	{
 		if (path) set_path(path);
 	}
@@ -43,6 +42,8 @@ namespace Beeps
 
 		self->signals = Signals_load(path);
 		self->path    = path;
+
+		set_updated();
 	}
 
 	const char*
@@ -76,9 +77,9 @@ namespace Beeps
 	}
 
 	void
-	FileIn::process (Signals* signals, uint* offset)
+	FileIn::generate (Context* context, Signals* signals, uint* offset)
 	{
-		Super::process(signals, offset);
+		Super::generate(context, signals, offset);
 
 		*offset += Signals_copy(signals, self->signals, *offset);
 	}

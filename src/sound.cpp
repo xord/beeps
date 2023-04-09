@@ -366,7 +366,7 @@ namespace Beeps
 		{
 			assert(buffer && processor && processor_context);
 
-			Signals signals = processor_context->process(processor);
+			Signals signals = processor_context->process_signals(processor);
 			if (!signals) return false;
 
 			if (processor_context->is_finished())
@@ -622,13 +622,8 @@ namespace Beeps
 				processor && *processor &&
 				seconds > 0 && nchannels > 0 && sample_rate > 0);
 
-			Signals signals =
-				Signals_create(seconds * sample_rate, nchannels, sample_rate);
-			if (!signals)
-				beeps_error(__FILE__, __LINE__, "failed to create a signals");
-
-			uint offset = 0;
-			processor->process(&signals, &offset);
+			ProcessorContext context(seconds * sample_rate, nchannels, sample_rate);
+			Signals signals = context.process_signals(processor);
 			if (!signals)
 				beeps_error(__FILE__, __LINE__, "failed to process signals");
 

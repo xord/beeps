@@ -20,7 +20,7 @@ namespace Beeps
 
 
 	TimeStretch::TimeStretch (Processor* input)
-	:	Super(false, 1)
+	:	Super(1)
 	{
 		set_input(input);
 	}
@@ -40,7 +40,12 @@ namespace Beeps
 	void
 	TimeStretch::set_scale (float scale)
 	{
+		if (scale <= 0)
+			argument_error(__FILE__, __LINE__, "'scale' must be greater than 0");
+
 		self->scale = scale;
+
+		set_updated();
 	}
 
 	float
@@ -50,22 +55,16 @@ namespace Beeps
 	}
 
 	void
-	TimeStretch::process (Signals* signals, uint* offset)
+	TimeStretch::filter (Context* context, Signals* signals, uint* offset)
 	{
 		if (self->scale == 1)
-			return Super::process(signals, offset);
-
-		if (!signals || !*signals)
-			argument_error(__FILE__, __LINE__);
-
-		if (!*this)
-			invalid_state_error(__FILE__, __LINE__);
+			return Super::filter(context, signals, offset);
 
 		uint nsamples  = signals->capacity();
 		Signals source = Signals_create(
 			nsamples / self->scale, signals->nchannels(), signals->sample_rate());
 
-		Super::process(&source, offset);
+		Super::filter(context, &source, offset);
 
 		SignalSamples<float> input(source);
 		SignalSamples<float> output(
@@ -76,7 +75,7 @@ namespace Beeps
 
 		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
 		self->stretch.process(
-			input.channels(),  input.nsamples(),
+			 input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
 
 		Signals_write_samples(signals, output);

@@ -29,7 +29,6 @@ namespace Beeps
 
 
 	Oscillator::Oscillator (Type type)
-	:	Super(true)
 	{
 		set_type(type);
 	}
@@ -69,6 +68,8 @@ namespace Beeps
 					__FILE__, __LINE__, "unknown oscilator type '%d'", self->type);
 				break;
 		}
+
+		set_updated();
 	}
 
 	Oscillator::Type
@@ -84,6 +85,8 @@ namespace Beeps
 			argument_error(__FILE__, __LINE__);
 
 		self->frequency = frequency;
+
+		set_updated();
 	}
 
 	float
@@ -93,9 +96,9 @@ namespace Beeps
 	}
 
 	void
-	Oscillator::process (Signals* signals, uint* offset)
+	Oscillator::generate (Context* context, Signals* signals, uint* offset)
 	{
-		Super::process(signals, offset);
+		Super::generate(context, signals, offset);
 
 		stk::StkFrames* frames = Signals_get_frames(signals);
 		if (!frames)

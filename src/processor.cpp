@@ -9,6 +9,13 @@ namespace Beeps
 {
 
 
+	static ProcessorContext*
+	get_context(Processor::Context* context)
+	{
+		return (ProcessorContext*) context;
+	}
+
+
 	struct Processor::Data
 	{
 
@@ -51,6 +58,8 @@ namespace Beeps
 	Processor::reset ()
 	{
 		if (self->input) self->input->reset();
+
+		set_updated();
 	}
 
 	void
@@ -60,25 +69,14 @@ namespace Beeps
 			invalid_state_error(__FILE__, __LINE__, "generator cannot have inputs");
 
 		self->input = input;
+
+		set_updated();
 	}
 
 	const Processor*
 	Processor::input () const
 	{
 		return self->input;
-	}
-
-	void
-	Processor::process (Signals* signals, uint* offset)
-	{
-		if (!signals || !*signals)
-			argument_error(__FILE__, __LINE__);
-
-		if (self->generator && signals->nsamples() > 0)
-			argument_error(__FILE__, __LINE__);
-
-		if (!*this)
-			invalid_state_error(__FILE__, __LINE__);
 	}
 
 	Processor::operator bool () const
@@ -93,9 +91,65 @@ namespace Beeps
 	}
 
 	void
+	Processor::process (Context* context, Signals* signals, uint* offset)
+	{
+		if (self->generator)
+			generate(context, signals, offset);
+		else
+			filter(context, signals, offset);
+	}
+
+	void
+	Processor::generate (Context* context, Signals* signals, uint* offset)
+	{
+		if (!context || !signals || !*signals || signals->nsamples() > 0 || !offset)
+			argument_error(__FILE__, __LINE__);
+
+		if (!*this || self->input)
+			invalid_state_error(__FILE__, __LINE__);
+	}
+
+	void
+	Processor::filter (Context* context, Signals* signals, uint* offset)
+	{
+		if (!context || !signals || !*signals || !offset)
+			argument_error(__FILE__, __LINE__);
+
+		if (!*this)
+			invalid_state_error(__FILE__, __LINE__);
+
+		if (self->input)
+			get_context(context)->process(self->input, signals, offset);
+	}
+
+	void
 	Processor::set_updated ()
 	{
 		self->last_update_time = Xot::time();
+	}
+
+
+	Generator::Generator ()
+	:	Super(true)
+	{
+	}
+
+	void
+	Generator::filter (Context* context, Signals* signals, uint* offset)
+	{
+		beeps_error(__FILE__, __LINE__);
+	}
+
+
+	Filter::Filter (uint buffering_seconds)
+	:	Super(false, buffering_seconds)
+	{
+	}
+
+	void
+	Filter::generate (Context* context, Signals* signals, uint* offset)
+	{
+		beeps_error(__FILE__, __LINE__);
 	}
 
 
@@ -108,16 +162,20 @@ namespace Beeps
 
 	void
 	SignalsBuffer::process (
-		Processor* processor, ProcessorContext* context,
-		Signals* signals, uint* offset)
+		ProcessorContext* context,
+		Processor* processor, Signals* signals, uint* offset)
 	{
 		assert(processor && context && signals && offset);
 
-		if (*offset < buffer_offset)
+		if (
+			last_update_time < processor->self->last_update_time ||
+			*offset < buffer_offset)
+		{
 			clear();
+		}
 
 		if (buffer.nsamples() == 0)
-			buffer_next(processor, context, *offset);
+			buffer_next(context, processor, *offset);
 
 		while (true)
 		{
@@ -128,7 +186,7 @@ namespace Beeps
 			if (signals_full || !buffer_full)
 				break;
 
-			buffer_next(processor, context, buffer_offset + buffer.nsamples());
+			buffer_next(context, processor, buffer_offset + buffer.nsamples());
 		}
 	}
 
@@ -145,12 +203,13 @@ namespace Beeps
 
 	void
 	SignalsBuffer::buffer_next (
-		Processor* processor, ProcessorContext* context, uint offset)
+		ProcessorContext* context, Processor* processor, uint offset)
 	{
 		Signals_clear(&buffer);
 		buffer_offset = offset;
+		context->process(processor, &buffer, &offset, true);
 
-		context->call_process(processor, &buffer, &offset, true);
+		last_update_time = Xot::time();
 	}
 
 	void
@@ -169,17 +228,30 @@ namespace Beeps
 	}
 
 	Signals
-	ProcessorContext::process (Processor* processor)
+	ProcessorContext::process_signals (Processor* processor)
 	{
 		assert(result && processor);
 
 		Signals_clear(&signals);
-		call_process(processor, &signals, &offset);
+		process(processor, &signals, &offset);
 
 		if (signals.nsamples() < signals.capacity())
 			finished = true;
 
 		return signals.nsamples() > 0 ? signals : Signals();
+	}
+
+	void
+	ProcessorContext::process (
+		Processor* processor, Signals* signals, uint* offset, bool ignore_buffer)
+	{
+		assert(processor);
+
+		SignalsBuffer* buffer = NULL;
+		if (!ignore_buffer && (buffer = get_buffer(processor)))
+			buffer->process(this, processor, signals, offset);
+		else
+			processor->process(this, signals, offset);
 	}
 
 	bool
@@ -197,24 +269,6 @@ namespace Beeps
 	ProcessorContext::operator ! () const
 	{
 		return !operator bool();
-	}
-
-	void
-	ProcessorContext::call_process (
-		Processor* processor, Signals* signals_, uint* offset_, bool ignore_buffer)
-	{
-		assert(processor && signals_ && offset_);
-
-		SignalsBuffer* buffer = NULL;
-		if (!ignore_buffer && (buffer = get_buffer(processor)))
-			buffer->process(processor, this, signals_, offset_);
-		else
-		{
-			if (processor->self->input)
-				call_process(processor->self->input, signals_, offset_);
-
-			processor->process(signals_, offset_);
-		}
 	}
 
 	static uintptr_t

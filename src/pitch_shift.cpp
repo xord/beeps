@@ -21,7 +21,7 @@ namespace Beeps
 
 
 	PitchShift::PitchShift (Processor* input)
-	:	Super(false, 1)
+	:	Super(1)
 	{
 		set_input(input);
 	}
@@ -42,6 +42,8 @@ namespace Beeps
 	PitchShift::set_shift (float shift)
 	{
 		self->shift = shift;
+
+		set_updated();
 	}
 
 	float
@@ -51,9 +53,9 @@ namespace Beeps
 	}
 
 	void
-	PitchShift::process (Signals* signals, uint* offset)
+	PitchShift::filter (Context* context, Signals* signals, uint* offset)
 	{
-		Super::process(signals, offset);
+		Super::filter(context, signals, offset);
 
 		if (self->shift == 1 || signals->nsamples() <= 0)
 			return;
