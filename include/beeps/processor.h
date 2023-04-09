@@ -45,7 +45,9 @@ namespace Beeps
 
 		protected:
 
-			Processor (bool generator = false);
+			Processor (bool generator = false, float buffering_seconds = 0);
+
+			virtual void set_updated ();
 
 	};// Processor
 

@@ -15,7 +15,7 @@ namespace Beeps
 {
 
 
-	template <typename T> class SignalBuffer;
+	template <typename T> class SignalSamples;
 
 
 	      stk::StkFrames* Signals_get_frames (      Signals* signals);
@@ -29,10 +29,13 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, double sample_rate = 0);
 
+	void  Signals_clear (Signals* signals);
+
 	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
 
 	template <typename T>
-	void Signals_write_buffer (Signals* signals, const SignalBuffer<T>& buffer);
+	void Signals_write_samples (
+		Signals* signals, const SignalSamples<T>& samples, long nsamples = -1);
 
 	void  Signals_set_nsamples (Signals* signals, uint nsamples);
 
@@ -44,40 +47,71 @@ namespace Beeps
 
 
 	template <typename T>
-	class SignalBuffer
+	class SignalSamples
 	{
 
-		typedef SignalBuffer<T> This;
+		typedef SignalSamples<T> This;
 
 		public:
 
-			SignalBuffer (uint nsamples, uint nchannels)
+			SignalSamples (uint nsamples, uint nchannels)
 			{
 				self->nsamples = nsamples;
-				self->buffer.resize(nsamples * nchannels, 0);
+				self->samples.resize(nsamples * nchannels, 0);
 				for (uint i = 0; i < nchannels; ++i)
-					self->channels.push_back(&self->buffer[nsamples * i]);
+					self->channels.push_back(&self->samples[nsamples * i]);
 			}
 
-			SignalBuffer (const Signals& signals)
+			SignalSamples (const Signals& signals)
 			{
+				append(signals);
+			}
+
+			void append (const Signals& signals)
+			{
+				if (!signals)
+					argument_error(__FILE__, __LINE__);
+
+				if (nchannels() > 0 && nchannels() != signals.nchannels())
+					argument_error(__FILE__, __LINE__);
+
 				const stk::StkFrames* f = Signals_get_frames(&signals);
-				if (!f)
-					invalid_state_error(__FILE__, __LINE__);
+				assert(f);
 
 				uint nsamples  = signals.nsamples();
 				uint nchannels = signals.nchannels();
 
-				auto& buffer = self->buffer;
-				buffer.reserve(nsamples * nchannels);
+				auto& samples = self->samples;
+				samples.reserve(samples.size() + nsamples * nchannels);
 
 				for (uint channel = 0; channel < nchannels; ++channel)
+				{
 					for (uint sample = 0; sample < nsamples; ++sample)
-						buffer.push_back((*f)(sample, channel));
+						samples.push_back((*f)(sample, channel));
+				}
 
-				self->nsamples = nsamples;
-				for (uint i = 0; i < nchannels; ++i)
-					self->channels.push_back(&self->buffer[nsamples * i]);
+				self->nsamples += nsamples;
+				self->update_channels(nchannels);
+			}
+
+			void append (uint nsamples, uint nchannels = 0, T value = 0)
+			{
+				if (nchannels <= 0) nchannels = this->nchannels();
+
+				if (nchannels == 0)
+					invalid_state_error(__FILE__, __LINE__);
+
+				auto& samples = self->samples;
+				samples.reserve(samples.size() + nsamples * nchannels);
+
+				for (uint channel = 0; channel < nchannels; ++channel)
+				{
+					for (uint sample = 0; sample < nsamples; ++sample)
+						samples.push_back(value);
+				}
+
+				self->nsamples += nsamples;
+				self->update_channels(nchannels);
 			}
 
 			uint nchannels () const
@@ -115,15 +149,22 @@ namespace Beeps
 
 				uint nsamples = 0;
 
-				std::vector<T> buffer;
+				std::vector<T> samples;
 
 				std::vector<T*> channels;
+
+				void update_channels (uint nchannels)
+				{
+					channels.clear();
+					for (uint i = 0; i < nchannels; ++i)
+						channels.push_back(&samples[nsamples * i]);
+				}
 
 			};// Data
 
 			Xot::PSharedImpl<Data> self;
 
-	};// SignalBuffer
+	};// SignalSamples
 
 
 }// Beeps

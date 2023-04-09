@@ -1,4 +1,4 @@
-#include "beeps/processor.h"
+#include "processor.h"
 
 
 #include "PitShift.h"
@@ -21,6 +21,7 @@ namespace Beeps
 
 
 	PitchShift::PitchShift (Processor* input)
+	:	Super(false, 1)
 	{
 		set_input(input);
 	}
@@ -54,18 +55,19 @@ namespace Beeps
 	{
 		Super::process(signals, offset);
 
-		if (self->shift == 1) return;
+		if (self->shift == 1 || signals->nsamples() <= 0)
+			return;
 
-		SignalBuffer<float> input(*signals);
-		SignalBuffer<float> output(input.nsamples(), signals->nchannels());
+		SignalSamples<float> input(*signals);
+		SignalSamples<float> output(input.nsamples(), signals->nchannels());
 
 		self->stretch.presetDefault(signals->nchannels(), signals->sample_rate());
 		self->stretch.setTransposeFactor(self->shift);
 		self->stretch.process(
-			input.channels(),  input.nsamples(),
+			 input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
 
-		Signals_write_buffer(signals, output);
+		Signals_write_samples(signals, output, signals->nsamples());
 	}
 
 	PitchShift::operator bool () const

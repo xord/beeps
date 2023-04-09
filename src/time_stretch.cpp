@@ -1,4 +1,4 @@
-#include "beeps/processor.h"
+#include "processor.h"
 
 
 #include "signalsmith-stretch.h"
@@ -20,6 +20,7 @@ namespace Beeps
 
 
 	TimeStretch::TimeStretch (Processor* input)
+	:	Super(false, 1)
 	{
 		set_input(input);
 	}
@@ -66,8 +67,8 @@ namespace Beeps
 
 		Super::process(&source, offset);
 
-		SignalBuffer<float> input(source);
-		SignalBuffer<float> output(
+		SignalSamples<float> input(source);
+		SignalSamples<float> output(
 			source.nsamples() < source.capacity()
 				?	source.nsamples() * self->scale
 				:	nsamples,
@@ -78,7 +79,7 @@ namespace Beeps
 			input.channels(),  input.nsamples(),
 			output.channels(), output.nsamples());
 
-		Signals_write_buffer(signals, output);
+		Signals_write_samples(signals, output);
 	}
 
 	TimeStretch::operator bool () const
