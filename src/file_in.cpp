@@ -1,4 +1,4 @@
-#include "processor.h"
+#include "beeps/generator.h"
 
 
 #include "beeps/exception.h"

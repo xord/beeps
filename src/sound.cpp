@@ -7,6 +7,7 @@
 #include "Stk.h"
 #include "beeps/beeps.h"
 #include "beeps/exception.h"
+#include "beeps/generator.h"
 #include "openal.h"
 #include "processor.h"
 #include "signals.h"
