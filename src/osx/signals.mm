@@ -14,6 +14,9 @@ namespace Beeps
 	void
 	objc_error (const char* file, int line, NSError* error, const char* format = NULL, ...)
 	{
+		if (!error)
+			argument_error(__FILE__, __LINE__);
+
 		XOT_STRINGF(format, s);
 		beeps_error(
 			file, line,
