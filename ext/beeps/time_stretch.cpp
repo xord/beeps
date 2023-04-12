@@ -1,6 +1,7 @@
+#include "beeps/ruby/filter.h"
+
+
 #include "beeps/ruby/processor.h"
-
-
 #include "defs.h"
 
 

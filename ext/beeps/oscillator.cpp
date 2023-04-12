@@ -1,6 +1,7 @@
+#include "beeps/ruby/generator.h"
+
+
 #include "beeps/ruby/processor.h"
-
-
 #include "defs.h"
 
 
