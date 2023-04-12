@@ -15,7 +15,7 @@ module Beeps
 
     def self.load(path)
       f = FileIn.new path
-      Sound.new f, f.seconds, f.nchannels
+      Sound.new f, f.seconds, nchannels: f.nchannels
     end
 
   end# Sound
