@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <AudioFile.h>
 #include <CDSPResampler.h>
 #include "beeps/beeps.h"
 #include "beeps/exception.h"
@@ -243,6 +244,37 @@ namespace Beeps
 	Signals_get_seconds (const Signals& signals)
 	{
 		return (float) (signals.nsamples() / signals.sample_rate());
+	}
+
+	static void
+	make_audio_buffer (
+		AudioFile<float>::AudioBuffer* buffer, const Signals& signals)
+	{
+		assert(buffer && signals);
+
+		const stk::StkFrames* frames = Signals_get_frames(&signals);
+		assert(frames);
+
+		buffer->clear();
+		for (uint ch = 0; ch < frames->channels(); ++ch)
+		{
+			buffer->emplace_back(std::vector<float>());
+			auto& channel = buffer->back();
+
+			uint nframes = frames->frames();
+			channel.reserve(nframes);
+
+			for (uint i = 0; i < nframes; ++i)
+				channel.emplace_back((*frames)(i, ch));
+		}
+	}
+
+	void
+	Signals_save (const Signals& signals, const char* path)
+	{
+		AudioFile<float> file;
+		make_audio_buffer(&file.samples, signals);
+		file.save(path);
 	}
 
 

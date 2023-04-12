@@ -21,6 +21,11 @@ use_external_library 'https://github.com/thestk/stk',
   srcdirs:  'src',
   excludes: %w[stk/src/include Tcp Udp Socket Thread Mutex InetWv /Rt]
 
+use_external_library 'https://github.com/adamstark/AudioFile',
+  tag:      '1.1.1',
+  srcdirs:  'NOSRC',
+  excludes: %w[examples/ tests/]
+
 use_external_library 'https://github.com/avaneev/r8brain-free-src',
   tag: 'version-6.2',
   excludes: %w[DLL/ bench/ other/ pffft_double example.cpp],
