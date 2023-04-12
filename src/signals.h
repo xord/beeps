@@ -58,21 +58,12 @@ namespace Beeps
 			{
 				self->nsamples = nsamples;
 				self->samples.resize(nsamples * nchannels, 0);
-				for (uint i = 0; i < nchannels; ++i)
-					self->channels.push_back(&self->samples[nsamples * i]);
+				self->update_channels(nchannels);
 			}
 
 			SignalSamples (const Signals& signals)
 			{
-				append(signals);
-			}
-
-			void append (const Signals& signals)
-			{
 				if (!signals)
-					argument_error(__FILE__, __LINE__);
-
-				if (nchannels() > 0 && nchannels() != signals.nchannels())
 					argument_error(__FILE__, __LINE__);
 
 				const stk::StkFrames* f = Signals_get_frames(&signals);
@@ -82,7 +73,7 @@ namespace Beeps
 				uint nchannels = signals.nchannels();
 
 				auto& samples = self->samples;
-				samples.reserve(samples.size() + nsamples * nchannels);
+				samples.reserve(nsamples * nchannels);
 
 				for (uint channel = 0; channel < nchannels; ++channel)
 				{
@@ -90,27 +81,7 @@ namespace Beeps
 						samples.push_back((*f)(sample, channel));
 				}
 
-				self->nsamples += nsamples;
-				self->update_channels(nchannels);
-			}
-
-			void append (uint nsamples, uint nchannels = 0, T value = 0)
-			{
-				if (nchannels <= 0) nchannels = this->nchannels();
-
-				if (nchannels == 0)
-					invalid_state_error(__FILE__, __LINE__);
-
-				auto& samples = self->samples;
-				samples.reserve(samples.size() + nsamples * nchannels);
-
-				for (uint channel = 0; channel < nchannels; ++channel)
-				{
-					for (uint sample = 0; sample < nsamples; ++sample)
-						samples.push_back(value);
-				}
-
-				self->nsamples += nsamples;
+				self->nsamples = nsamples;
 				self->update_channels(nchannels);
 			}
 
@@ -124,20 +95,14 @@ namespace Beeps
 				return self->nsamples;
 			}
 
-			T* const* channels ()
-			{
-				return &self->channels[0];
-			}
+			      T* const* channels () {return &self->channels[0];}
 
 			const T* const* channels () const
 			{
 				return const_cast<This*>(this)->channels();
 			}
 
-			T* channel (uint index)
-			{
-				return self->channels[index];
-			}
+			      T* channel (uint index) {return self->channels[index];}
 
 			const T* channel (uint index) const
 			{
