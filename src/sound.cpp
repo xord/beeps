@@ -208,6 +208,14 @@ namespace Beeps
 			OpenAL_check_error(__FILE__, __LINE__);
 		}
 
+		void rewind ()
+		{
+			if (!*this) return;
+
+			alSourceRewind(self->id);
+			OpenAL_check_error(__FILE__, __LINE__);
+		}
+
 		void stop ()
 		{
 			if (!*this) return;
