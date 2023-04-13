@@ -11,6 +11,7 @@ void Init_beeps_time_stretch ();
 void Init_beeps_pitch_shift ();
 
 void Init_beeps_sound ();
+void Init_beeps_sound_player ();
 
 
 extern "C" void
@@ -34,6 +35,7 @@ extern "C" void
 	Init_beeps_pitch_shift();
 
 	Init_beeps_sound();
+	Init_beeps_sound_player();
 
 	RUCY_CATCH
 }
