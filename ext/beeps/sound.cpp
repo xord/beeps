@@ -23,16 +23,9 @@ RUCY_DEF4(setup, processor, seconds, nchannels, sample_rate)
 {
 	CHECK;
 
-	Beeps::Processor* proc = to<Beeps::Processor*>(processor);
-	float secs             = seconds ? to<float>(seconds) : 0;
-
-	if (!nchannels && !sample_rate)
-		*THIS = Beeps::Sound(proc, secs);
-	else if (nchannels && !sample_rate)
-		*THIS = Beeps::Sound(proc, secs, to<uint>(nchannels));
-	else
-		*THIS = Beeps::Sound(proc, secs, to<uint>(nchannels), to<double>(sample_rate));
-
+	*THIS = Beeps::Sound(
+		to<Beeps::Processor*>(processor),
+		to<float>(seconds), to<uint>(nchannels), to<double>(sample_rate));
 	return self;
 }
 RUCY_END
@@ -42,8 +35,7 @@ RUCY_DEF0(play)
 {
 	CHECK;
 
-	THIS->play();
-	return self;
+	return value(THIS->play());
 }
 RUCY_END
 

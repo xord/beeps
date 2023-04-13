@@ -457,7 +457,7 @@ namespace Beeps
 			LOG("new player");
 		}
 
-		if (!player)
+		if (!player && !global::players.empty())
 		{
 			player = reuse_player(&global::players.front());
 			LOG("reuse oldest player");
