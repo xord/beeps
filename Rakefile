@@ -13,7 +13,7 @@ require 'beeps/extension'
 
 
 EXTENSIONS  = [Xot, Rucy, Beeps]
-TESTS_ALONE = ['test/test_beeps.rb']
+TESTS_ALONE = ['test/test_beeps_init.rb']
 
 use_external_library 'https://github.com/thestk/stk',
   tag:      '4.6.2',
