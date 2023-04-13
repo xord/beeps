@@ -36,13 +36,13 @@ class TestSound < Test::Unit::TestCase
     assert_in_epsilon 96000, sound(sample_rate: 96000).sample_rate
   end
 
-  def _test_load()
+  def test_load()
     assert_nothing_raised {
-      sound(0.1, nchannels: 2, sample_rate: 48000).save PATH
+      sound(0.1, nchannels: 2, sample_rate: 96000).save PATH
     }
 
     s = S.load PATH
-    assert_in_epsilon 48000, s.sample_rate
+    assert_in_epsilon 44100, s.sample_rate # FileIn converts sample_rate
     assert_equal      2,     s.nchannels
     assert_in_epsilon 0.1,   s.seconds
     assert_nothing_raised {s.play}

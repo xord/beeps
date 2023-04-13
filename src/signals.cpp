@@ -273,6 +273,7 @@ namespace Beeps
 	Signals_save (const Signals& signals, const char* path)
 	{
 		AudioFile<float> file;
+		file.setSampleRate(signals.sample_rate());
 		make_audio_buffer(&file.samples, signals);
 		file.save(path);
 	}
