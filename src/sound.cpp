@@ -148,11 +148,8 @@ namespace Beeps
 			set_gain(1);
 			set_loop(false);
 
-			while (unqueue());
-
 			SoundSource source;
-			source.self->id = self->id;
-			self->id = -1;
+			source.self.swap(self);
 			return source;
 		}
 
@@ -217,6 +214,18 @@ namespace Beeps
 
 			alSourceStop(self->id);
 			OpenAL_check_error(__FILE__, __LINE__);
+
+			ALint type = 0;
+			alGetSourcei(self->id, AL_SOURCE_TYPE, &type);
+			OpenAL_check_error(__FILE__, __LINE__);
+
+			if (type == AL_STREAMING)
+				while (unqueue());
+			else if (type == AL_STATIC)
+			{
+				alSourcei(self->id, AL_BUFFER, 0);
+				OpenAL_check_error(__FILE__, __LINE__);
+			}
 		}
 
 		bool is_playing () const
