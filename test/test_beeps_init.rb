@@ -6,7 +6,7 @@ $BEEPS_NOAUTOINIT = true
 require_relative 'helper'
 
 
-class TestBeeps < Test::Unit::TestCase
+class TestBeepsInit < Test::Unit::TestCase
 
   def test_init!()
     assert_raise(Beeps::BeepsError) {Beeps.fin!}
@@ -15,4 +15,4 @@ class TestBeeps < Test::Unit::TestCase
     assert Beeps.fin!
   end
 
-end# TestBeeps
+end# TestBeepsInit
