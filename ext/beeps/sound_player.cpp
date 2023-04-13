@@ -68,6 +68,15 @@ RUCY_DEF0(is_playing)
 RUCY_END
 
 static
+RUCY_DEF0(is_paused)
+{
+	CHECK;
+
+	return value(THIS->is_paused());
+}
+RUCY_END
+
+static
 RUCY_DEF0(is_stopped)
 {
 	CHECK;
@@ -129,6 +138,7 @@ Init_beeps_sound_player ()
 	cSoundPlayer.define_method("rewind", rewind);
 	cSoundPlayer.define_method("stop",   stop);
 	cSoundPlayer.define_method("playing?", is_playing);
+	cSoundPlayer.define_method("paused?",  is_paused);
 	cSoundPlayer.define_method("stopped?", is_stopped);
 	cSoundPlayer.define_method("gain=", set_gain);
 	cSoundPlayer.define_method("gain",  get_gain);

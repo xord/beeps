@@ -34,6 +34,8 @@ namespace Beeps
 
 			bool is_playing () const;
 
+			bool is_paused () const;
+
 			bool is_stopped () const;
 
 			void set_gain (float gain);

@@ -529,6 +529,12 @@ namespace Beeps
 	}
 
 	bool
+	SoundPlayer::is_paused () const
+	{
+		return !is_playing() && !is_stopped();
+	}
+
+	bool
 	SoundPlayer::is_stopped () const
 	{
 		return self->source.is_stopped() && !self->is_streaming();
