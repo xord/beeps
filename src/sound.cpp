@@ -247,6 +247,17 @@ namespace Beeps
 			return state == AL_PLAYING;
 		}
 
+		bool is_paused () const
+		{
+			if (!*this) return false;
+
+			ALint state = 0;
+			alGetSourcei(self->id, AL_SOURCE_STATE, &state);
+			OpenAL_check_error(__FILE__, __LINE__);
+
+			return state == AL_PAUSED;
+		}
+
 		bool is_stopped () const
 		{
 			if (!*this) return true;
@@ -555,7 +566,7 @@ namespace Beeps
 	bool
 	SoundPlayer::is_paused () const
 	{
-		return !is_playing() && !is_stopped();
+		return self->source.is_paused();
 	}
 
 	bool
