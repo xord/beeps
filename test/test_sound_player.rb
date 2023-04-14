@@ -7,12 +7,11 @@ require_relative 'helper'
 class TestSoundPlayer < Test::Unit::TestCase
 
   B = Beeps
-  S = B::Sound
 
   PATH = 'test.wav'
 
   def sound(seconds = 0.1, processor: B::Oscillator.new, **kwargs)
-    S.new processor, seconds, nchannels: 2, **kwargs
+    B::Sound.new processor, seconds, nchannels: 2, **kwargs
   end
 
   def stream_sound()

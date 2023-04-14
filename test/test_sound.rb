@@ -7,12 +7,11 @@ require_relative 'helper'
 class TestSound < Test::Unit::TestCase
 
   B = Beeps
-  S = B::Sound
 
   PATH = 'test.wav'
 
   def sound(seconds = 0.1, processor: B::Oscillator.new, **kwargs)
-    S.new processor, seconds, **kwargs
+    B::Sound.new processor, seconds, **kwargs
   end
 
   def teardown()
@@ -27,7 +26,7 @@ class TestSound < Test::Unit::TestCase
     assert_false          File.exist?(PATH)
     assert_nothing_raised {sound.save PATH}
     assert_true           File.exist?(PATH)
-    assert_nothing_raised {S.load PATH}
+    assert_nothing_raised {B::Sound.load PATH}
   end
 
   def test_sample_rate()
@@ -41,7 +40,7 @@ class TestSound < Test::Unit::TestCase
       sound(0.1, nchannels: 2, sample_rate: 96000).save PATH
     }
 
-    s = S.load PATH
+    s = B::Sound.load PATH
     assert_in_epsilon 96000, s.sample_rate
     assert_equal      2,     s.nchannels
     assert_in_epsilon 0.1,   s.seconds
