@@ -123,6 +123,13 @@ RUCY_DEF0(get_loop)
 }
 RUCY_END
 
+static
+RUCY_DEF0(stop_all)
+{
+	Beeps::stop_all_sound_players();
+}
+RUCY_END
+
 
 static Class cSoundPlayer;
 
@@ -144,6 +151,7 @@ Init_beeps_sound_player ()
 	cSoundPlayer.define_method("gain",  get_gain);
 	cSoundPlayer.define_method("loop=", set_loop);
 	cSoundPlayer.define_method("loop",  get_loop);
+	cSoundPlayer.define_singleton_method("stop_all", stop_all);
 }
 
 

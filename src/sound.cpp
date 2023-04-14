@@ -504,6 +504,13 @@ namespace Beeps
 		global::players.clear();
 	}
 
+	void
+	stop_all_sound_players ()
+	{
+		for (auto& player : global::players)
+			player.stop();
+	}
+
 
 	SoundPlayer::SoundPlayer ()
 	{

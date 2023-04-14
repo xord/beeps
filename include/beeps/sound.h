@@ -91,6 +91,8 @@ namespace Beeps
 	};// Sound
 
 
+	void stop_all_sound_players ();
+
 	Sound load_sound (const char* path);
 
 

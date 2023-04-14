@@ -24,6 +24,7 @@ class TestSoundPlayer < Test::Unit::TestCase
   end
 
   def teardown()
+    B::SoundPlayer.stop_all
     File.delete PATH if File.exist?(PATH)
   end
 
@@ -32,12 +33,11 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
     p.pause
     assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
-=begin
+
     p = stream_sound.play
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
     p.pause
     assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
-=end
   end
 
   def test_stop()
@@ -45,27 +45,27 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
     p.stop
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
-=begin
+
     p = stream_sound.play
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
     p.stop
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
-=end
   end
 
   def test_play_end_then_stop()
-    s = sound
+    s   = sound
+    sec = s.seconds
+
     p = s.play
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
-    sleep s.seconds * 2
+    sleep sec * 2
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
-=begin
+
     s = stream_sound
     p = s.play
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
-    sleep s.seconds * 2
+    sleep sec * 2
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
-=end
   end
 
   def test_play_after_pause()
@@ -74,13 +74,12 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
     p.play
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
-=begin
+
     p = stream_sound.play
     p.pause
     assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
     p.play
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
-=end
   end
 
   def test_stop_after_pause()
@@ -89,13 +88,21 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
     p.stop
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
-=begin
+
     p = stream_sound.play
     p.pause
     assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
     p.stop
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
-=end
+  end
+
+  def test_stop_all()
+    s = sound
+    players = 10.times.map {s.play}
+    assert_true players.all? {|p| p.playing?}
+
+    B::SoundPlayer.stop_all
+    assert_true players.all? {|p| p.stopped?}
   end
 
 end# TestSoundPlayer
