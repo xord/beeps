@@ -43,6 +43,11 @@ namespace Beeps
 			self->id = id;
 		}
 
+		void clear ()
+		{
+			self->clear();
+		}
+
 		uint write (const Signals& signals)
 		{
 			assert(signals);
@@ -139,7 +144,15 @@ namespace Beeps
 
 		void create ()
 		{
-			self->create();
+			ALuint id_ = 0;
+			alGenSources(1, &id_);
+			if (OpenAL_no_error()) self->id = id_;
+		}
+
+		void clear ()
+		{
+			stop();
+			self->clear();
 		}
 
 		SoundSource reuse ()
@@ -327,13 +340,6 @@ namespace Beeps
 				clear();
 			}
 
-			void create ()
-			{
-				ALuint id_ = 0;
-				alGenSources(1, &id_);
-				if (OpenAL_no_error()) id = id_;
-			}
-
 			void clear ()
 			{
 				if (id < 0) return;
@@ -362,6 +368,14 @@ namespace Beeps
 		Processor::Ref processor;
 
 		std::unique_ptr<ProcessorContext> processor_context;
+
+		void clear ()
+		{
+			source.clear();
+
+			for (auto& buffer : buffers) buffer.clear();
+			buffers.clear();
+		}
 
 		void attach_signals (const Signals& signals)
 		{
@@ -512,6 +526,9 @@ namespace Beeps
 	void
 	SoundPlayer_clear_all ()
 	{
+		for (auto& player : global::players)
+			player.self->clear();
+
 		global::players.clear();
 	}
 
