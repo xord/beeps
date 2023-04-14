@@ -25,7 +25,7 @@ RUCY_DEF1(set_scale, scale)
 	CHECK;
 
 	THIS->set_scale(to<float>(scale));
-	return self;
+	return scale;
 }
 RUCY_END
 

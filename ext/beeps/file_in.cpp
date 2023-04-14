@@ -25,7 +25,7 @@ RUCY_DEF1(set_path, path)
 	CHECK;
 
 	THIS->set_path(path.c_str());
-	return self;
+	return path;
 }
 RUCY_END
 

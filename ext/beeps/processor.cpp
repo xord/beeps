@@ -35,7 +35,7 @@ RUCY_DEF1(set_input, input)
 	CHECK;
 
 	THIS->set_input(input ? to<Beeps::Processor*>(input) : NULL);
-	return self;
+	return input;
 }
 RUCY_END
 

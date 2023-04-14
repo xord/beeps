@@ -25,7 +25,7 @@ RUCY_DEF1(set_type, type)
 	CHECK;
 
 	THIS->set_type((Beeps::Oscillator::Type) to<uint>(type));
-	return self;
+	return type;
 }
 RUCY_END
 
@@ -44,7 +44,7 @@ RUCY_DEF1(set_frequency, frequency)
 	CHECK;
 
 	THIS->set_frequency(to<float>(frequency));
-	return self;
+	return frequency;
 }
 RUCY_END
 
