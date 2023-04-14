@@ -13,11 +13,6 @@ module Beeps
       setup processor, seconds, nchannels, sample_rate
     end
 
-    def self.load(path)
-      f = FileIn.new path
-      Sound.new f, f.seconds, nchannels: f.nchannels
-    end
-
   end# Sound
 
 

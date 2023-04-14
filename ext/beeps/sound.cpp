@@ -76,6 +76,13 @@ RUCY_DEF0(get_seconds)
 }
 RUCY_END
 
+static
+RUCY_DEF1(load_sound, path)
+{
+	return value(Beeps::load_sound(to<const char*>(path)));
+}
+RUCY_END
+
 
 static Class cSound;
 
@@ -92,6 +99,7 @@ Init_beeps_sound ()
 	cSound.define_method("sample_rate", get_sample_rate);
 	cSound.define_method("nchannels",   get_nchannels);
 	cSound.define_method("seconds",     get_seconds);
+	cSound.define_singleton_method("load", load_sound);
 }
 
 

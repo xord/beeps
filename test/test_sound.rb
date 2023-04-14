@@ -42,7 +42,7 @@ class TestSound < Test::Unit::TestCase
     }
 
     s = S.load PATH
-    assert_in_epsilon 44100, s.sample_rate # FileIn converts sample_rate
+    assert_in_epsilon 96000, s.sample_rate
     assert_equal      2,     s.nchannels
     assert_in_epsilon 0.1,   s.seconds
     assert_nothing_raised {s.play}
