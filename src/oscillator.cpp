@@ -100,9 +100,9 @@ namespace Beeps
 	{
 		Super::generate(context, signals, offset);
 
-		stk::StkFrames* frames = Signals_get_frames(signals);
+		Frames* frames = Signals_get_frames(signals);
 		if (!frames)
-			invalid_state_error(__FILE__, __LINE__);
+			argument_error(__FILE__, __LINE__);
 
 		switch (self->type)
 		{

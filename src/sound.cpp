@@ -60,7 +60,7 @@ namespace Beeps
 			uint nsamples      = signals.nsamples();
 			assert(sample_rate > 0 && nchannels > 0 && nsamples > 0);
 
-			const stk::StkFrames* frames = Signals_get_frames(&signals);
+			const Frames* frames = Signals_get_frames(&signals);
 			assert(frames);
 
 			std::vector<short> buffer;

@@ -16,14 +16,14 @@ namespace Beeps
 	struct Signals::Data
 	{
 
-		std::unique_ptr<stk::StkFrames> frames;
+		std::unique_ptr<Frames> frames;
 
 		uint nsamples = 0;
 
 	};// Signals::Data
 
 
-	stk::StkFrames*
+	Frames*
 	Signals_get_frames (Signals* signals)
 	{
 		if (!signals)
@@ -32,7 +32,7 @@ namespace Beeps
 		return signals->self->frames.get();
 	}
 
-	const stk::StkFrames*
+	const Frames*
 	Signals_get_frames (const Signals* signals)
 	{
 		return Signals_get_frames(const_cast<Signals*>(signals));
@@ -47,7 +47,7 @@ namespace Beeps
 		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
 
 		Signals s;
-		s.self->frames.reset(new stk::StkFrames(capacity, nchannels));
+		s.self->frames.reset(new Frames(capacity, nchannels));
 		s.self->frames->setDataRate(sample_rate);
 		return s;
 	}
@@ -62,7 +62,7 @@ namespace Beeps
 
 		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
 
-		stk::StkFrames* frames = new stk::StkFrames(nsamples, nchannels);
+		Frames* frames = new Frames(nsamples, nchannels);
 		frames->setDataRate(sample_rate);
 
 		for (uint channel = 0; channel < nchannels; ++channel)
@@ -99,8 +99,8 @@ namespace Beeps
 			std::min(from_offset + to_nsamples, from_nsamples)
 			- from_offset;
 
-		      stk::StkFrames*   to_frames = Signals_get_frames(to);
-		const stk::StkFrames* from_frames = Signals_get_frames(&from);
+		      Frames*   to_frames = Signals_get_frames(to);
+		const Frames* from_frames = Signals_get_frames(&from);
 		assert(to_frames && from_frames);
 
 		for (uint channel = 0; channel < to_frames->channels(); ++channel)
@@ -150,8 +150,8 @@ namespace Beeps
 			from.sample_rate(), to->sample_rate(), from_nsamples);
 		r8b::CFixedBuffer<double> from_buf(from_nsamples), to_buf(to_nsamples);
 
-		      stk::StkFrames*   to_frames = Signals_get_frames(to);
-		const stk::StkFrames* from_frames = Signals_get_frames(&from);
+		      Frames*   to_frames = Signals_get_frames(to);
+		const Frames* from_frames = Signals_get_frames(&from);
 		assert(to_frames && from_frames);
 
 		for (uint channel = 0; channel < to_frames->channels(); ++channel)
@@ -202,7 +202,7 @@ namespace Beeps
 			argument_error(__FILE__, __LINE__);
 		}
 
-		stk::StkFrames* f = Signals_get_frames(signals);
+		Frames* f = Signals_get_frames(signals);
 		assert(f);
 
 		for (uint channel = 0; channel < signals->nchannels(); ++channel)
@@ -252,7 +252,7 @@ namespace Beeps
 	{
 		assert(buffer && signals);
 
-		const stk::StkFrames* frames = Signals_get_frames(&signals);
+		const Frames* frames = Signals_get_frames(&signals);
 		assert(frames);
 
 		buffer->clear();
@@ -292,7 +292,7 @@ namespace Beeps
 	{
 		Signals t;
 		if (self->frames)
-			t.self->frames.reset(new stk::StkFrames(*self->frames));
+			t.self->frames.reset(new Frames(*self->frames));
 		t.self->nsamples = self->nsamples;
 		return t;
 	}
@@ -323,7 +323,7 @@ namespace Beeps
 
 	Signals::operator bool () const
 	{
-		const stk::StkFrames* f = self->frames.get();
+		const Frames* f = self->frames.get();
 		return f && f->dataRate() > 0 && f->channels() > 0 && f->frames() > 0;
 	}
 

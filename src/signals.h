@@ -15,12 +15,14 @@ namespace Beeps
 {
 
 
+	class Frames;
+
 	template <typename T> class SignalSamples;
 
 
-	      stk::StkFrames* Signals_get_frames (      Signals* signals);
+	      Frames* Signals_get_frames (      Signals* signals);
 
-	const stk::StkFrames* Signals_get_frames (const Signals* signals);
+	const Frames* Signals_get_frames (const Signals* signals);
 
 	Signals Signals_create (
 		uint capacity, uint nchannels = 1, double sample_rate = 0);
@@ -46,6 +48,55 @@ namespace Beeps
 	Signals Signals_load (const char* path);
 
 
+	class Frames : public stk::StkFrames
+	{
+
+		public:
+
+			Frames (unsigned int nFrames = 0, unsigned int nChannels = 0)
+			:	stk::StkFrames(nFrames, nChannels)
+			{
+			}
+
+			size_t slice (size_t start, size_t length)
+			{
+				assert(!saved_data_);
+
+				size_t end = start + length;
+				assert(start <= nFrames_ && end <= nFrames_);
+
+				saved_data_       = data_;
+				saved_nFrames_    = nFrames_;
+				saved_size_       = size_;
+				saved_bufferSize_ = bufferSize_;
+
+				data_      += start * nChannels_;
+				nFrames_    = length;
+				size_       = length * nChannels_;
+				bufferSize_ = size_;
+
+				return end;
+			}
+
+			void unslice ()
+			{
+				assert(saved_data_);
+
+				data_       = saved_data_;
+				nFrames_    = saved_nFrames_;
+				size_       = saved_size_;
+				bufferSize_ = saved_bufferSize_;
+			}
+
+		private:
+
+			stk::StkFloat* saved_data_ = NULL;
+
+			size_t saved_nFrames_ = 0, saved_size_ = 0, saved_bufferSize_ = 0;
+
+	};// Frames
+
+
 	template <typename T>
 	class SignalSamples
 	{
@@ -66,7 +117,7 @@ namespace Beeps
 				if (!signals)
 					argument_error(__FILE__, __LINE__);
 
-				const stk::StkFrames* f = Signals_get_frames(&signals);
+				const Frames* f = Signals_get_frames(&signals);
 				assert(f);
 
 				uint nsamples  = signals.nsamples();
