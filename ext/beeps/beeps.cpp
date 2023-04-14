@@ -38,7 +38,7 @@ Init_beeps ()
 	mBeeps = define_module("Beeps");
 	mBeeps.define_singleton_method("init!", init);
 	mBeeps.define_singleton_method("fin!",  fin);
-	mBeeps.define_singleton_method("process_streams", process_streams);
+	mBeeps.define_singleton_method("process_streams!", process_streams);
 }
 
 
