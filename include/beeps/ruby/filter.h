@@ -18,6 +18,9 @@ namespace Beeps
 {
 
 
+	Rucy::Class gain_class ();
+	// class Beeps::Gain
+
 	Rucy::Class time_stretch_class ();
 	// class Beeps::TimeStretch
 
@@ -31,6 +34,12 @@ namespace Beeps
 namespace Rucy
 {
 
+
+	template <> inline Class
+	get_ruby_class<Beeps::Gain> ()
+	{
+		return Beeps::gain_class();
+	}
 
 	template <> inline Class
 	get_ruby_class<Beeps::TimeStretch> ()

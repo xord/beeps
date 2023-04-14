@@ -11,6 +11,31 @@ namespace Beeps
 {
 
 
+	class Gain : public Filter
+	{
+
+		typedef Filter Super;
+
+		public:
+
+			Gain (Processor* input = NULL);
+
+			virtual ~Gain ();
+
+			virtual void set_gain (float gain);
+
+			virtual float    gain () const;
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// Gain
+
+
 	class TimeStretch : public Filter
 	{
 

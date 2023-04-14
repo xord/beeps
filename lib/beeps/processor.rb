@@ -71,6 +71,18 @@ module Beeps
   end# FileIn
 
 
+  class Gain
+
+    def initialize(input = nil, *args, **kwargs, &block)
+      super(*args, **kwargs, &block)
+      self.input = input
+    end
+
+    universal_accessor :gain
+
+  end# Gain
+
+
   class TimeStretch
 
     def initialize(input = nil, *args, **kwargs, &block)
