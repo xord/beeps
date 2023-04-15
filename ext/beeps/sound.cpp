@@ -132,7 +132,7 @@ Init_beeps_sound ()
 	cSound = mBeeps.define_class("Sound");
 	cSound.define_alloc_func(alloc);
 	cSound.define_private_method("setup", setup);
-	cSound.define_method("play", play);
+	cSound.define_private_method("play!", play);
 	cSound.define_method("save", save);
 	cSound.define_method("sample_rate", get_sample_rate);
 	cSound.define_method("nchannels",   get_nchannels);

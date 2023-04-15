@@ -12,15 +12,20 @@ module Beeps
 
   class Sound
 
-    def initialize(processor, seconds = 0, nchannels: 1, sample_rate: 0, &block)
+    include Xot::Setter
+
+    def initialize(
+      processor, seconds = 0, nchannels: 1, sample_rate: 0, **options, &block)
+
       setup processor, seconds, nchannels, sample_rate
-      Xot::BlockUtil.instance_evan_or_block_call self, &block if block
+      set(**options) unless options.empty?
+      Xot::BlockUtil.instance_eval_or_block_call self, &block if block
     end
 
-    def play(options = nil, &block)
-      play!.tap {|player|
-        player.set options if options
-        Xot::BlockUtil.instance_evan_or_block_call player, &block if block
+    def play(**options, &block)
+      play!.tap do |player|
+        player.set(**options) unless options.empty?
+        Xot::BlockUtil.instance_eval_or_block_call player, &block if block
       end
     end
 

@@ -10,19 +10,31 @@ class TestSound < Test::Unit::TestCase
 
   PATH = 'test.wav'
 
-  def sound(seconds = 0.1, processor: B::Oscillator.new, **kwargs)
-    B::Sound.new processor, seconds, **kwargs
+  def sound(seconds = 0.1, processor: osc, **kwargs, &block)
+    B::Sound.new processor, seconds, gain: 0, **kwargs, &block
+  end
+
+  def osc()
+    B::Oscillator.new
   end
 
   def teardown()
     File.delete PATH if File.exist?(PATH)
   end
 
+  def test_initialize()
+    assert_in_epsilon 1, B::Sound.new(osc, 1).gain
+    assert_false         B::Sound.new(osc, 1).loop
+
+    assert_true B::Sound.new(osc, 1, loop: true).loop
+    assert_true B::Sound.new(osc, 1) {loop true}.loop
+  end
+
   def test_play()
     assert_nothing_raised {sound.play}
 
-    assert_equal 0.1, sound.play(gain: 0.1).gain
-    assert_equal 0.1, sound.play {gain 0.1}
+    assert_true sound.play(loop: true).loop
+    assert_true sound.play {loop true}.loop
   end
 
   def test_save()

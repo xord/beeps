@@ -10,12 +10,16 @@ class TestSoundPlayer < Test::Unit::TestCase
 
   PATH = 'test.wav'
 
-  def sound(seconds = 0.1, processor: B::Oscillator.new, **kwargs)
-    B::Sound.new processor, seconds, nchannels: 2, **kwargs
+  def sound(seconds = 0.1, processor: osc, **kwargs)
+    B::Sound.new processor, seconds, gain: 0, **kwargs
   end
 
-  def stream_sound()
-    sound 0, processor: B::FileIn.new(PATH)
+  def stream_sound(**kwargs)
+    sound 0, processor: B::FileIn.new(PATH), **kwargs
+  end
+
+  def osc()
+    B::Oscillator.new
   end
 
   def setup()
@@ -25,6 +29,11 @@ class TestSoundPlayer < Test::Unit::TestCase
   def teardown()
     B::SoundPlayer.stop_all
     File.delete PATH if File.exist?(PATH)
+  end
+
+  def test_initialize()
+    assert_in_epsilon 1, B::Sound.new(osc, 1).play.gain
+    assert_false         B::Sound.new(osc, 1).play.loop
   end
 
   def test_pause()
