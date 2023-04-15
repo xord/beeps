@@ -458,6 +458,7 @@ namespace Beeps
 	{
 		SoundPlayer newplayer;
 		newplayer.self->source = player->self->source.reuse();
+		player->self->clear();
 		return newplayer;
 	}
 
@@ -474,9 +475,11 @@ namespace Beeps
 	remove_inactive_players ()
 	{
 		auto it = std::remove_if(
-			global::players.begin(),
-			global::players.end(),
+			global::players.begin(), global::players.end(),
 			[](auto& player) {return !player || player.is_stopped();});
+
+		for (auto jt = it; jt != global::players.end(); ++jt)
+			jt->self->clear();
 
 		global::players.erase(it, global::players.end());
 	}
