@@ -24,6 +24,8 @@ module Beeps
       end
     end
 
+    universal_accessor :gain, :loop
+
   end# Sound
 
 

@@ -284,6 +284,9 @@ namespace Beeps
 
 		void set_gain (float gain)
 		{
+			if (gain < 0)
+				argument_error(__FILE__, __LINE__);
+
 			if (!*this) return;
 
 			alSourcef(self->id, AL_GAIN, gain);
@@ -630,6 +633,10 @@ namespace Beeps
 
 	struct Sound::Data {
 
+		float gain = 1;
+
+		bool loop  = false;
+
 		virtual ~Data ()
 		{
 		}
@@ -814,6 +821,9 @@ namespace Beeps
 		if (!player)
 			invalid_state_error(__FILE__, __LINE__);
 
+		player.set_gain(gain());
+		player.set_loop(loop());
+
 		self->attach_to(&player);
 		player.play();
 
@@ -849,6 +859,33 @@ namespace Beeps
 	Sound::seconds () const
 	{
 		return self->seconds();
+	}
+
+	void
+	Sound::set_gain (float gain)
+	{
+		if (gain < 0)
+			argument_error(__FILE__, __LINE__);
+
+		self->gain = gain;
+	}
+
+	float
+	Sound::gain () const
+	{
+		return self->gain;
+	}
+
+	void
+	Sound::set_loop (bool loop)
+	{
+		self->loop = loop;
+	}
+
+	bool
+	Sound::loop () const
+	{
+		return self->loop;
 	}
 
 	Sound::operator bool () const

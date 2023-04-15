@@ -95,6 +95,28 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
   end
 
+  def test_gain()
+    p = sound.play
+    assert_in_epsilon 0, p.gain
+
+    p.gain = 0.1
+    assert_in_epsilon 0.1, p.gain
+
+    p.gain 0.2
+    assert_in_epsilon 0.2, p.gain
+  end
+
+  def test_loop()
+    p = sound.play
+    assert_false p.loop
+
+    p.loop = true
+    assert_true  p.loop
+
+    p.loop false
+    assert_false p.loop
+  end
+
   def test_stop_all()
     s = sound
     players = 10.times.map {s.play}

@@ -80,6 +80,14 @@ namespace Beeps
 
 			float seconds () const;
 
+			void set_gain (float gain);
+
+			float    gain () const;
+
+			void set_loop (bool loop);
+
+			bool     loop () const;
+
 			operator bool () const;
 
 			bool operator ! () const;

@@ -38,6 +38,34 @@ class TestSound < Test::Unit::TestCase
     assert_in_epsilon 96000, sound(sample_rate: 96000).sample_rate
   end
 
+  def test_gain()
+    s = sound
+    assert_in_epsilon 0, s     .gain
+    assert_in_epsilon 0, s.play.gain
+
+    s.gain = 0.1
+    assert_in_epsilon 0.1, s     .gain
+    assert_in_epsilon 0.1, s.play.gain
+
+    s.gain 0.2
+    assert_in_epsilon 0.2, s     .gain
+    assert_in_epsilon 0.2, s.play.gain
+  end
+
+  def test_loop()
+    s = sound
+    assert_false s     .loop
+    assert_false s.play.loop
+
+    s.loop = true
+    assert_true  s     .loop
+    assert_true  s.play.loop
+
+    s.loop false
+    assert_false s     .loop
+    assert_false s.play.loop
+  end
+
   def test_load()
     assert_nothing_raised {
       sound(0.1, nchannels: 2, sample_rate: 96000).save PATH
@@ -50,4 +78,4 @@ class TestSound < Test::Unit::TestCase
     assert_nothing_raised {s.play}
   end
 
-end# TestBeeps
+end# TestSound
