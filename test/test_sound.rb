@@ -10,12 +10,8 @@ class TestSound < Test::Unit::TestCase
 
   PATH = 'test.wav'
 
-  def sound(seconds = 0.1, processor: osc, **kwargs, &block)
-    B::Sound.new processor, seconds, gain: 0, **kwargs, &block
-  end
-
-  def osc()
-    B::Oscillator.new
+  def sound(seconds = 0.1, processor: B::Oscillator.new, **kwargs, &block)
+    B::Sound.new processor >> B::Gain.new(gain: 0), seconds, **kwargs, &block
   end
 
   def teardown()
@@ -24,11 +20,11 @@ class TestSound < Test::Unit::TestCase
   end
 
   def test_initialize()
-    assert_in_epsilon 1, B::Sound.new(osc, 1).gain
-    assert_false         B::Sound.new(osc, 1).loop
+    assert_in_epsilon 1, sound.gain
+    assert_false         sound.loop
 
-    assert_true B::Sound.new(osc, 1, loop: true).loop
-    assert_true B::Sound.new(osc, 1) {loop true}.loop
+    assert_true sound(loop: true).loop
+    assert_true sound {loop true}.loop
   end
 
   def test_play()
@@ -65,8 +61,8 @@ class TestSound < Test::Unit::TestCase
 
   def test_gain()
     s = sound
-    assert_in_epsilon 0, s     .gain
-    assert_in_epsilon 0, s.play.gain
+    assert_in_epsilon 1,   s     .gain
+    assert_in_epsilon 1,   s.play.gain
 
     s.gain = 0.1
     assert_in_epsilon 0.1, s     .gain
