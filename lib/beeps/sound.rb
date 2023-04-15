@@ -34,4 +34,13 @@ module Beeps
   end# Sound
 
 
+  class SoundPlayer
+
+    include Xot::Setter
+
+    universal_accessor :gain, :loop
+
+  end# SoundPlayer
+
+
 end# Beeps
