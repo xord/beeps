@@ -57,10 +57,10 @@ class TestSound < Test::Unit::TestCase
   end
 
   def test_seconds()
-    assert_in_epsilon 0.2, sound(0.2).seconds
-    assert_in_epsilon 0,   sound(0)  .seconds
-    assert_in_epsilon -1,  sound(-1) .seconds
-    assert_in_epsilon -1,  sound(-2) .seconds
+    assert_in_epsilon 0.2,  sound(0.2).seconds
+    assert_in_epsilon (-1), sound(0)  .seconds
+    assert_in_epsilon (-1), sound(-1) .seconds
+    assert_in_epsilon (-1), sound(-2) .seconds
   end
 
   def test_gain()

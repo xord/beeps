@@ -15,7 +15,7 @@ module Beeps
     include Xot::Setter
 
     def initialize(
-      processor, seconds = 0, nchannels: 1, sample_rate: 0, **options, &block)
+      processor, seconds, nchannels: 1, sample_rate: 0, **options, &block)
 
       setup processor, seconds, nchannels, sample_rate
       set(**options) unless options.empty?
