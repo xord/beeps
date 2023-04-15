@@ -36,6 +36,49 @@ namespace Beeps
 	};// Gain
 
 
+	class ADSR : public Filter
+	{
+
+		typedef Filter Super;
+
+		public:
+
+			ADSR (Processor* input = NULL);
+
+			virtual ~ADSR ();
+
+			virtual void note_on  (float delay = 0);
+
+			virtual void note_off (float delay = 0);
+
+			virtual void set_attack_time (float time);
+
+			virtual float    attack_time () const;
+
+			virtual void set_decay_time (float time);
+
+			virtual float    decay_time () const;
+
+			virtual void set_sustain_level (float level);
+
+			virtual float    sustain_level () const;
+
+			virtual void set_release_time (float time);
+
+			virtual float    release_time () const;
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
+
+			virtual operator bool () const override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// ADSR
+
+
 	class TimeStretch : public Filter
 	{
 

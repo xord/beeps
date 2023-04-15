@@ -15,6 +15,9 @@ namespace Beeps
 {
 
 
+	typedef stk::StkFloat Float;
+
+
 	class Frames;
 
 	template <typename T> class SignalSamples;
@@ -31,9 +34,15 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, double sample_rate = 0);
 
-	void  Signals_clear (Signals* signals);
+	void Signals_resize (Signals* signals, uint capacity);
+
+	void Signals_resize (Signals* signals, uint nsamples, Float value);
+
+	void Signals_clear (Signals* signals);
 
 	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
+
+	void Signals_apply (Signals* signals, const Signals& multiplier);
 
 	template <typename T>
 	void Signals_write_samples (
@@ -90,7 +99,7 @@ namespace Beeps
 
 		private:
 
-			stk::StkFloat* saved_data_ = NULL;
+			Float* saved_data_ = NULL;
 
 			size_t saved_nFrames_ = 0, saved_size_ = 0, saved_bufferSize_ = 0;
 

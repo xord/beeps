@@ -83,6 +83,35 @@ module Beeps
   end# Gain
 
 
+  class ADSR
+
+    def initialize(input = nil, *args, **kwargs, &block)
+      super(*args, **kwargs, &block)
+      self.input = input
+    end
+
+    def note_on(delay = 0)
+      note_on! delay
+    end
+
+    def note_off(delay = 0)
+      note_off! delay
+    end
+
+    universal_accessor :attack_time, :decay_time, :sustain_level, :release_time
+
+    alias  attack=  attack_time=
+    alias  attack   attack_time
+    alias   decay=   decay_time=
+    alias   decay    decay_time
+    alias sustain= sustain_level=
+    alias sustain  sustain_level
+    alias release= release_time=
+    alias release  release_time
+
+  end# ADSR
+
+
   class TimeStretch
 
     def initialize(input = nil, *args, **kwargs, &block)

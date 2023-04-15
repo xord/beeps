@@ -12,6 +12,7 @@ void Init_beeps_oscillator ();
 void Init_beeps_file_in ();
 
 void Init_beeps_gain ();
+void Init_beeps_adsr ();
 void Init_beeps_time_stretch ();
 void Init_beeps_pitch_shift ();
 
@@ -38,9 +39,9 @@ extern "C" void
 	Init_beeps_file_in();
 
 	Init_beeps_gain();
+	Init_beeps_adsr();
 	Init_beeps_time_stretch();
 	Init_beeps_pitch_shift();
-
 
 	RUCY_CATCH
 }
