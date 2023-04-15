@@ -51,6 +51,18 @@ class TestSound < Test::Unit::TestCase
     assert_in_epsilon 96000, sound(sample_rate: 96000).sample_rate
   end
 
+  def test_nchannels()
+    assert_equal 1, sound              .nchannels
+    assert_equal 2, sound(nchannels: 2).nchannels
+  end
+
+  def test_seconds()
+    assert_in_epsilon 0.2, sound(0.2).seconds
+    assert_in_epsilon 0,   sound(0)  .seconds
+    assert_in_epsilon -1,  sound(-1) .seconds
+    assert_in_epsilon -1,  sound(-2) .seconds
+  end
+
   def test_gain()
     s = sound
     assert_in_epsilon 0, s     .gain
