@@ -73,10 +73,16 @@ namespace Beeps
 		set_updated();
 	}
 
+	Processor*
+	Processor::input ()
+	{
+		return self->input;
+	}
+
 	const Processor*
 	Processor::input () const
 	{
-		return self->input;
+		return const_cast<Processor*>(this)->input();
 	}
 
 	Processor::operator bool () const

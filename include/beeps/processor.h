@@ -33,6 +33,8 @@ namespace Beeps
 
 			virtual void         set_input (Processor* input);
 
+			virtual       Processor* input ();
+
 			virtual const Processor* input () const;
 
 			virtual operator bool () const;
