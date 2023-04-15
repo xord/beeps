@@ -19,6 +19,7 @@ class TestSound < Test::Unit::TestCase
   end
 
   def teardown()
+    B::SoundPlayer.stop_all
     File.delete PATH if File.exist?(PATH)
   end
 
