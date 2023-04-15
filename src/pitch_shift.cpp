@@ -21,9 +21,9 @@ namespace Beeps
 
 
 	PitchShift::PitchShift (Processor* input)
-	:	Super(1)
+	:	Super(input)
 	{
-		set_input(input);
+		set_buffering_seconds(1);
 	}
 
 	PitchShift::~PitchShift ()

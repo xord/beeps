@@ -44,10 +44,9 @@ namespace Beeps
 	}
 
 
-	Processor::Processor (bool generator, float buffering_seconds)
+	Processor::Processor (bool generator)
 	{
-		self->generator         = generator;
-		self->buffering_seconds = buffering_seconds;
+		self->generator = generator;
 	}
 
 	Processor::~Processor ()
@@ -147,9 +146,18 @@ namespace Beeps
 	}
 
 
-	Filter::Filter (uint buffering_seconds)
-	:	Super(false, buffering_seconds)
+	Filter::Filter (Processor* input)
+	:	Super(false)
 	{
+		if (input) set_input(input);
+	}
+
+	void
+	Filter::set_buffering_seconds (float seconds)
+	{
+		Super::self->buffering_seconds = seconds;
+
+		set_updated();
 	}
 
 	void

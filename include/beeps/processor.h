@@ -47,7 +47,7 @@ namespace Beeps
 
 		protected:
 
-			Processor (bool generator = false, float buffering_seconds = 0);
+			Processor (bool generator = false);
 
 			virtual void process (Context* context, Signals* signals, uint* offset) final;
 
@@ -86,7 +86,9 @@ namespace Beeps
 
 		protected:
 
-			Filter (uint buffering_seconds = 0);
+			Filter (Processor* input = NULL);
+
+			void set_buffering_seconds (float seconds);
 
 		private:
 

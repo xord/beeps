@@ -17,8 +17,8 @@ namespace Beeps
 
 
 	Gain::Gain (Processor* input)
+	:	Super(input)
 	{
-		set_input(input);
 	}
 
 	Gain::~Gain ()
