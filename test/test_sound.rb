@@ -20,6 +20,9 @@ class TestSound < Test::Unit::TestCase
 
   def test_play()
     assert_nothing_raised {sound.play}
+
+    assert_equal 0.1, sound.play(gain: 0.1).gain
+    assert_equal 0.1, sound.play {gain 0.1}
   end
 
   def test_save()
