@@ -484,22 +484,22 @@ namespace Beeps
 	static SoundPlayer
 	get_next_player ()
 	{
-		SoundPlayer player;
+		SoundPlayer player = create_player();
 
-		for (auto& p : global::players)
-		{
-			if (p && p.is_stopped())
-			{
-				player = reuse_player(&p);
-				LOG("reuse stopped player");
-				break;
-			}
-		}
+		if (player)
+			LOG("new player");
 
 		if (!player)
 		{
-			player = create_player();
-			LOG("new player");
+			for (auto& p : global::players)
+			{
+				if (p && p.is_stopped())
+				{
+					player = reuse_player(&p);
+					LOG("reuse stopped player");
+					break;
+				}
+			}
 		}
 
 		if (!player && !global::players.empty())
