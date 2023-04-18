@@ -97,6 +97,16 @@ namespace Beeps
 				bufferSize_ = saved_bufferSize_;
 			}
 
+			uint nchannels () const
+			{
+				return nChannels_;
+			}
+
+			uint nsamples () const
+			{
+				return nFrames_;
+			}
+
 		private:
 
 			Float* saved_data_ = NULL;
