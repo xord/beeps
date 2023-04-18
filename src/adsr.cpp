@@ -149,7 +149,7 @@ namespace Beeps
 		Float sample_rate = frames->dataRate();
 		size_t len        = length_sec >= 0
 			?	length_sec * sample_rate
-			:	frames->frames() - start;
+			:	frames->nframes() - start;
 		assert(0 < len && (start + len) < frames->nsamples());
 
 		return frames->slice(start, len);

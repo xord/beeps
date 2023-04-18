@@ -102,7 +102,7 @@ namespace Beeps
 				return nChannels_;
 			}
 
-			uint nsamples () const
+			uint nframes () const
 			{
 				return nFrames_;
 			}

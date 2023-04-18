@@ -130,7 +130,7 @@ namespace Beeps
 				break;
 		}
 
-		Signals_set_nsamples(signals, frames->frames());
+		Signals_set_nsamples(signals, frames->nframes());
 	}
 
 	Oscillator::operator bool () const

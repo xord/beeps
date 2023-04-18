@@ -129,9 +129,9 @@ namespace Beeps
 		const Frames* from_frames = Signals_get_frames(&from);
 		assert(to_frames && from_frames);
 
-		for (uint channel = 0; channel < to_frames->channels(); ++channel)
+		for (uint channel = 0; channel < to_frames->nchannels(); ++channel)
 		{
-			uint from_channel = channel < from_frames->channels() ? channel : 0;
+			uint from_channel = channel < from_frames->nchannels() ? channel : 0;
 
 			for (uint i = 0; i < copy_nsamples; ++i)
 			{
@@ -180,9 +180,9 @@ namespace Beeps
 		const Frames* from_frames = Signals_get_frames(&from);
 		assert(to_frames && from_frames);
 
-		for (uint channel = 0; channel < to_frames->channels(); ++channel)
+		for (uint channel = 0; channel < to_frames->nchannels(); ++channel)
 		{
-			uint from_channel = channel < from_frames->channels() ? channel : 0;
+			uint from_channel = channel < from_frames->nchannels() ? channel : 0;
 
 			for (uint i = 0; i < from_nsamples; ++i)
 				from_buf[i] = (*from_frames)(from_offset + i, from_channel);
@@ -226,12 +226,12 @@ namespace Beeps
 		Frames* sigf = Signals_get_frames(signals);
 		Frames* mulf = Signals_get_frames(const_cast<Signals*>(&multiplier));
 
-		for (uint ch = 0; ch < sigf->channels(); ++ch)
+		for (uint ch = 0; ch < sigf->nchannels(); ++ch)
 		{
 			Float* sigp  = &(*sigf)(0, ch);
 			Float* mulp  = &(*mulf)(0, 0);
-			uint nframes = sigf->frames();
-			uint stride  = sigf->channels();
+			uint nframes = sigf->nframes();
+			uint stride  = sigf->nchannels();
 			for (uint i = 0; i < nframes; ++i, sigp += stride, ++mulp)
 				*sigp *= *mulp;
 		}
@@ -305,12 +305,12 @@ namespace Beeps
 		assert(frames);
 
 		buffer->clear();
-		for (uint ch = 0; ch < frames->channels(); ++ch)
+		for (uint ch = 0; ch < frames->nchannels(); ++ch)
 		{
 			buffer->emplace_back(std::vector<float>());
 			auto& channel = buffer->back();
 
-			uint nframes = frames->frames();
+			uint nframes = frames->nframes();
 			channel.reserve(nframes);
 
 			for (uint i = 0; i < nframes; ++i)
@@ -355,7 +355,7 @@ namespace Beeps
 	uint
 	Signals::nchannels () const
 	{
-		return self->frames ? self->frames->channels() : 0;
+		return self->frames ? self->frames->nchannels() : 0;
 	}
 
 	uint
@@ -367,13 +367,13 @@ namespace Beeps
 	uint
 	Signals::capacity () const
 	{
-		return self->frames ? self->frames->frames() : 0;
+		return self->frames ? self->frames->nframes() : 0;
 	}
 
 	Signals::operator bool () const
 	{
 		const Frames* f = self->frames.get();
-		return f && f->dataRate() > 0 && f->channels() > 0 && f->frames() > 0;
+		return f && f->dataRate() > 0 && f->nchannels() > 0 && f->nframes() > 0;
 	}
 
 	bool
