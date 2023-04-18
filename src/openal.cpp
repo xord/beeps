@@ -94,6 +94,7 @@ namespace Beeps
 			case ALC_INVALID_DEVICE:  return "ALC_INVALID_DEVICE";
 			case ALC_INVALID_CONTEXT: return "ALC_INVALID_CONTEXT";
 			case ALC_INVALID_ENUM:    return "ALC_INVALID_ENUM";
+			case ALC_INVALID_VALUE:   return "ALC_INVALID_VALUE";
 			case ALC_OUT_OF_MEMORY:   return "ALC_OUT_OF_MEMORY";
 			default:                  return "UNKNOWN ERROR";
 		}
