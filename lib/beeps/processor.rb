@@ -15,9 +15,9 @@ module Beeps
 
     include Xot::Setter
 
-    def initialize(options = nil, &block)
+    def initialize(**options, &block)
       super()
-      set options if options
+      set options unless options.empty?
       Xot::BlockUtil.instance_eval_or_block_call self, &block if block
     end
 
@@ -73,22 +73,12 @@ module Beeps
 
   class Gain
 
-    def initialize(input = nil, *args, **kwargs, &block)
-      super(*args, **kwargs, &block)
-      self.input = input
-    end
-
     universal_accessor :gain
 
   end# Gain
 
 
   class ADSR
-
-    def initialize(input = nil, *args, **kwargs, &block)
-      super(*args, **kwargs, &block)
-      self.input = input
-    end
 
     def note_on(delay = 0)
       note_on! delay
@@ -114,22 +104,12 @@ module Beeps
 
   class TimeStretch
 
-    def initialize(input = nil, *args, **kwargs, &block)
-      super(*args, **kwargs, &block)
-      self.input = input
-    end
-
     universal_accessor :scale
 
   end# TimeStretch
 
 
   class PitchShift
-
-    def initialize(input = nil, *args, **kwargs, &block)
-      super(*args, **kwargs, &block)
-      self.input = input
-    end
 
     universal_accessor :shift
 
