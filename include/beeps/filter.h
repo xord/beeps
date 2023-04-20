@@ -4,6 +4,7 @@
 #define __BEEPS_FILTER_H__
 
 
+#include <vector>
 #include <beeps/processor.h>
 
 
@@ -135,6 +136,41 @@ namespace Beeps
 			Xot::PImpl<Data> self;
 
 	};// PitchShift
+
+
+	class Analyser : public Filter
+	{
+
+		typedef Filter Super;
+
+		public:
+
+			typedef std::vector<float> Spectrum;
+
+			Analyser (uint fft_size = 1024, Processor* input = NULL);
+
+			virtual ~Analyser ();
+
+			virtual void set_fft_size (uint size);
+
+			virtual uint     fft_size () const;
+
+			virtual float resolution () const;
+
+			virtual const Signals&  signals () const;
+
+			virtual const Spectrum& spectrum () const;
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
+
+			virtual operator bool () const override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// Analyser
 
 
 }// Beeps

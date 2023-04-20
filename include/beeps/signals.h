@@ -31,6 +31,8 @@ namespace Beeps
 
 			uint capacity () const;
 
+			const double* samples () const;
+
 			operator bool () const;
 
 			bool operator ! () const;

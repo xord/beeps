@@ -30,6 +30,9 @@ namespace Beeps
 	Rucy::Class pitch_shift_class ();
 	// class Beeps::PitchShift
 
+	Rucy::Class analyser_class ();
+	// class Beeps::Analyser
+
 
 }// Beeps
 
@@ -60,6 +63,12 @@ namespace Rucy
 	get_ruby_class<Beeps::PitchShift> ()
 	{
 		return Beeps::pitch_shift_class();
+	}
+
+	template <> inline Class
+	get_ruby_class<Beeps::Analyser> ()
+	{
+		return Beeps::analyser_class();
 	}
 
 

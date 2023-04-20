@@ -107,6 +107,11 @@ namespace Beeps
 				return nFrames_;
 			}
 
+			const Float* data () const
+			{
+				return data_;
+			}
+
 		private:
 
 			Float* saved_data_ = NULL;

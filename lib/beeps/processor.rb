@@ -116,4 +116,15 @@ module Beeps
   end# PitchShift
 
 
+  class Analyser
+
+    def each_signal(nsamples = fft_size, &block)
+      each_signal!(nsamples, &block)
+    end
+
+    universal_accessor :fft_size
+
+  end# Analyser
+
+
 end# Beeps

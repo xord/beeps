@@ -15,6 +15,7 @@ void Init_beeps_gain ();
 void Init_beeps_adsr ();
 void Init_beeps_time_stretch ();
 void Init_beeps_pitch_shift ();
+void Init_beeps_analyser ();
 
 
 extern "C" void
@@ -42,6 +43,7 @@ extern "C" void
 	Init_beeps_adsr();
 	Init_beeps_time_stretch();
 	Init_beeps_pitch_shift();
+	Init_beeps_analyser();
 
 	RUCY_CATCH
 }
