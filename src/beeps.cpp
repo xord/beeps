@@ -6,6 +6,7 @@
 #include "beeps/exception.h"
 #include "openal.h"
 #include "sound.h"
+#include "mic_in.h"
 
 
 namespace Beeps
@@ -29,6 +30,7 @@ namespace Beeps
 	void
 	process_streams ()
 	{
+		MicIn_process_streams();
 		SoundPlayer_process_streams();
 	}
 

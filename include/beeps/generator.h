@@ -83,6 +83,37 @@ namespace Beeps
 	};// FileIn
 
 
+	class MicIn : public Generator
+	{
+
+		typedef Generator Super;
+
+		public:
+
+			MicIn (uint nchannels = 1, double sample_rate = 0);
+
+			virtual ~MicIn ();
+
+			virtual void start ();
+
+			virtual void stop ();
+
+			virtual double sample_rate () const;
+
+			virtual uint nchannels () const;
+
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
+
+			virtual operator bool () const override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// MicIn
+
+
 }// Beeps
 
 

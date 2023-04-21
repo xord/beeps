@@ -10,6 +10,7 @@ void Init_beeps_processor ();
 
 void Init_beeps_oscillator ();
 void Init_beeps_file_in ();
+void Init_beeps_mic_in ();
 
 void Init_beeps_gain ();
 void Init_beeps_adsr ();
@@ -38,6 +39,7 @@ extern "C" void
 
 	Init_beeps_oscillator();
 	Init_beeps_file_in();
+	Init_beeps_mic_in();
 
 	Init_beeps_gain();
 	Init_beeps_adsr();

@@ -24,6 +24,9 @@ namespace Beeps
 	Rucy::Class file_in_class ();
 	// class Beeps::FileIn
 
+	Rucy::Class mic_in_class ();
+	// class Beeps::MicIn
+
 
 }// Beeps
 
@@ -42,6 +45,12 @@ namespace Rucy
 	get_ruby_class<Beeps::FileIn> ()
 	{
 		return Beeps::file_in_class();
+	}
+
+	template <> inline Class
+	get_ruby_class<Beeps::MicIn> ()
+	{
+		return Beeps::mic_in_class();
 	}
 
 

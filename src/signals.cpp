@@ -370,6 +370,12 @@ namespace Beeps
 		return self->frames ? self->frames->nframes() : 0;
 	}
 
+	bool
+	Signals::empty () const
+	{
+		return self->nsamples == 0;
+	}
+
 	const double*
 	Signals::samples () const
 	{
