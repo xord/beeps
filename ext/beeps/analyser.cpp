@@ -115,8 +115,8 @@ Init_beeps_analyser ()
 	cAnalyser.define_method("fft_size=",  set_fft_size);
 	cAnalyser.define_method("fft_size",   get_fft_size);
 	cAnalyser.define_method("resolution", get_resolution);
-	cAnalyser.define_private_method("each_signal!",  each_signal);
-	cAnalyser.define_method(        "each_spectrum", each_spectrum);
+	cAnalyser.define_private_method("each_signal!",   each_signal);
+	cAnalyser.define_private_method("each_spectrum!", each_spectrum);
 }
 
 

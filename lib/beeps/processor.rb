@@ -119,7 +119,13 @@ module Beeps
   class Analyser
 
     def each_signal(nsamples = fft_size, &block)
+      return enum_for(:each_signal, nsamples) unless block
       each_signal!(nsamples, &block)
+    end
+
+    def each_spectrum(&block)
+      return enum_for(:each_spectrum) unless block
+      each_spectrum!(&block)
     end
 
     universal_accessor :fft_size
