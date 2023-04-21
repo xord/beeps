@@ -1,6 +1,14 @@
 # beeps ChangeLog
 
 
+## [v0.1.33] - 2023-04-22
+
+- Stream playback is now supported.
+- Pause, resume, and stop after playback, as well as methods to check the status of the playback.
+- Support for saving and loading sound files
+- Added Oscillator, MicIn, Gain, ADSR, TimeStretch, PitchShift, and Analyser classes.
+
+
 ## [v0.1.32] - 2023-03-01
 
 - fix bugs
