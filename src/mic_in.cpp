@@ -81,7 +81,7 @@ namespace Beeps
 
 		void get_signals (Signals* signals, uint* gen_offset)
 		{
-			assert(signals && signals->empty() && generate_offset);
+			assert(signals && signals->empty() && gen_offset);
 
 			if (!is_valid()) return;
 

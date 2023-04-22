@@ -150,7 +150,7 @@ namespace Beeps
 		size_t len        = length_sec >= 0
 			?	length_sec * sample_rate
 			:	frames->nframes() - start;
-		assert(0 < len && (start + len) < frames->nsamples());
+		assert(0 < len && (start + len) < frames->nframes());
 
 		return frames->slice(start, len);
 	}

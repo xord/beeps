@@ -244,7 +244,7 @@ namespace Beeps
 	Signals
 	ProcessorContext::process_signals (Processor* processor)
 	{
-		assert(result && processor);
+		assert(processor);
 
 		Signals_clear(&signals);
 		process(processor, &signals, &offset);

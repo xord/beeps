@@ -217,7 +217,7 @@ namespace Beeps
 		uint from_nsamples = from.nsamples();
 		uint from_start    = from_nsamples > to_cap ? from_nsamples - to_cap : 0;
 		uint nsamples      = from_nsamples - from_start;
-		assert(to_nsamples + nsamples <= to_capacity);
+		assert(to_nsamples + nsamples <= to_cap);
 
 		for (uint ch = 0; ch < tof->nchannels(); ++ch)
 		{
