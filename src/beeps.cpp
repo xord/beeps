@@ -24,6 +24,9 @@ namespace Beeps
 	void
 	fin ()
 	{
+		MicIn_clear_streams();
+		SoundPlayer_clear_streams();
+
 		OpenAL_fin();
 	}
 

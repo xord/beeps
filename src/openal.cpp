@@ -23,8 +23,6 @@ namespace Beeps
 	static void
 	cleanup ()
 	{
-		SoundPlayer_clear_all();
-
 		alcMakeContextCurrent(NULL);
 
 		if (global::context)

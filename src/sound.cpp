@@ -530,7 +530,7 @@ namespace Beeps
 	}
 
 	void
-	SoundPlayer_clear_all ()
+	SoundPlayer_clear_streams ()
 	{
 		for (auto& player : global::players)
 			player.self->clear();

@@ -13,6 +13,8 @@ namespace Beeps
 
 	void MicIn_process_streams ();
 
+	void MicIn_clear_streams ();
+
 
 }// Beeps
 

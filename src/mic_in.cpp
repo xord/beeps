@@ -190,8 +190,17 @@ namespace Beeps
 	void
 	MicIn_process_streams ()
 	{
-		for (Mic& mic : global::mics)
+		for (auto& mic : global::mics)
 			mic.buffer_samples();
+	}
+
+	void
+	MinIn_clear_streams ()
+	{
+		for (auto& mic : global::mics)
+			mic.stop();
+
+		global::mics.clear();
 	}
 
 
