@@ -195,7 +195,7 @@ namespace Beeps
 	}
 
 	void
-	MinIn_clear_streams ()
+	MicIn_clear_streams ()
 	{
 		for (auto& mic : global::mics)
 			mic.stop();
