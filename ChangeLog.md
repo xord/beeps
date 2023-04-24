@@ -1,6 +1,12 @@
 # beeps ChangeLog
 
 
+## [v0.1.34] - 2023-04-25
+
+- Clear mic streams on exit
+- Fix compile errors on assert lines
+
+
 ## [v0.1.33] - 2023-04-22
 
 - Stream playback is now supported.
