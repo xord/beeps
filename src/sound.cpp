@@ -649,11 +649,6 @@ namespace Beeps
 			not_implemented_error(__FILE__, __LINE__);
 		}
 
-		virtual void save (const char* path) const
-		{
-			not_implemented_error(__FILE__, __LINE__);
-		}
-
 		virtual double sample_rate () const
 		{
 			return 0;
@@ -667,6 +662,11 @@ namespace Beeps
 		virtual float seconds () const
 		{
 			return 0;
+		}
+
+		virtual void save (const char* path) const
+		{
+			not_implemented_error(__FILE__, __LINE__);
 		}
 
 		virtual bool is_valid () const
@@ -706,14 +706,6 @@ namespace Beeps
 			player->self->attach_signals(signals);
 		}
 
-		void save (const char* path) const override
-		{
-			if (!signals)
-				invalid_state_error(__FILE__, __LINE__);
-
-			Signals_save(signals, path);
-		}
-
 		double sample_rate () const override
 		{
 			return signals ? signals.sample_rate() : Super::sample_rate();
@@ -727,6 +719,14 @@ namespace Beeps
 		float seconds () const override
 		{
 			return signals ? Signals_get_seconds(signals) : Super::seconds();
+		}
+
+		void save (const char* path) const override
+		{
+			if (!signals)
+				invalid_state_error(__FILE__, __LINE__);
+
+			Signals_save(signals, path);
 		}
 
 		bool is_valid () const override
@@ -840,12 +840,6 @@ namespace Beeps
 		return player;
 	}
 
-	void
-	Sound::save (const char* path) const
-	{
-		self->save(path);
-	}
-
 	double
 	Sound::sample_rate () const
 	{
@@ -889,6 +883,12 @@ namespace Beeps
 	Sound::loop () const
 	{
 		return self->loop;
+	}
+
+	void
+	Sound::save (const char* path) const
+	{
+		self->save(path);
 	}
 
 	Sound::operator bool () const

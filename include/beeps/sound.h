@@ -72,8 +72,6 @@ namespace Beeps
 
 			SoundPlayer play ();
 
-			void save (const char* path) const;
-
 			double sample_rate () const;
 
 			uint nchannels () const;
@@ -87,6 +85,8 @@ namespace Beeps
 			void set_loop (bool loop);
 
 			bool     loop () const;
+
+			void save (const char* path) const;
 
 			operator bool () const;
 

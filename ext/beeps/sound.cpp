@@ -40,16 +40,6 @@ RUCY_DEF0(play)
 RUCY_END
 
 static
-RUCY_DEF1(save, path)
-{
-	CHECK;
-
-	THIS->save(path.c_str());
-	return self;
-}
-RUCY_END
-
-static
 RUCY_DEF0(get_sample_rate)
 {
 	CHECK;
@@ -115,6 +105,16 @@ RUCY_DEF0(get_loop)
 RUCY_END
 
 static
+RUCY_DEF1(save, path)
+{
+	CHECK;
+
+	THIS->save(path.c_str());
+	return self;
+}
+RUCY_END
+
+static
 RUCY_DEF1(load, path)
 {
 	return value(Beeps::load_sound(to<const char*>(path)));
@@ -133,7 +133,6 @@ Init_beeps_sound ()
 	cSound.define_alloc_func(alloc);
 	cSound.define_private_method("setup", setup);
 	cSound.define_private_method("play!", play);
-	cSound.define_method("save", save);
 	cSound.define_method("sample_rate", get_sample_rate);
 	cSound.define_method("nchannels",   get_nchannels);
 	cSound.define_method("seconds",     get_seconds);
@@ -141,6 +140,7 @@ Init_beeps_sound ()
 	cSound.define_method("gain",  get_gain);
 	cSound.define_method("loop=", set_loop);
 	cSound.define_method("loop",  get_loop);
+	cSound.define_method("save", save);
 	cSound.define_singleton_method("load", load);
 }
 
