@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.1.35] - 2023-04-30
+
+- Place the save() method next to load()
+
+
 ## [v0.1.34] - 2023-04-25
 
 - Clear mic streams on exit
