@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 require 'beeps/ext'
 require 'beeps/sound'
 require 'beeps/processor'

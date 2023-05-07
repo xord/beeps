@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 $BEEPS_NOAUTOINIT = true
 
 require_relative 'helper'

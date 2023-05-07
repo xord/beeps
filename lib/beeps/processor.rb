@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 require 'xot/setter'
 require 'xot/const_symbol_accessor'
 require 'xot/universal_accessor'

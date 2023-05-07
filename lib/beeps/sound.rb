@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 require 'xot/setter'
 require 'xot/universal_accessor'
 require 'xot/block_util'
