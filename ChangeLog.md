@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.1.36] - 2023-05-08
+
+- Update dependencies
+
+
 ## [v0.1.35] - 2023-04-30
 
 - Place the save() method next to load()
