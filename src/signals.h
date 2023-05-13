@@ -7,8 +7,8 @@
 #include <vector>
 #include <Stk.h>
 #include <xot/pimpl.h>
-#include <beeps/signals.h>
-#include <beeps/exception.h>
+#include "beeps/signals.h"
+#include "beeps/exception.h"
 
 
 namespace Beeps

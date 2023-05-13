@@ -4,7 +4,7 @@
 #define __BEEPS_SRC_MIC_IN_H__
 
 
-#include <beeps/generator.h>
+#include "beeps/generator.h"
 
 
 namespace Beeps

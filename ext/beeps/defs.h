@@ -5,8 +5,8 @@
 
 
 #include <rucy.h>
-#include <beeps/defs.h>
-#include <beeps/ruby/defs.h>
+#include "beeps/defs.h"
+#include "beeps/ruby/defs.h"
 
 
 using namespace Rucy;

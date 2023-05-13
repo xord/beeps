@@ -4,7 +4,7 @@
 #define __BEEPS_SRC_SOUND_H__
 
 
-#include <beeps/sound.h>
+#include "beeps/sound.h"
 
 
 namespace Beeps

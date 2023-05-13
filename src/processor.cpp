@@ -1,7 +1,7 @@
 #include "processor.h"
 
 
-#include "xot/time.h"
+#include <xot/time.h>
 #include "beeps/exception.h"
 
 

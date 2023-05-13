@@ -12,7 +12,7 @@
 	#include <AL/alc.h>
 #endif
 
-#include <beeps/defs.h>
+#include "beeps/defs.h"
 
 
 namespace Beeps
