@@ -17,13 +17,13 @@ Gem::Specification.new do |s|
   rdocs = glob.call *%w[README .doc/ext/**/*.cpp]
 
   s.name        = name
+  s.version     = ext.version
+  s.license     = 'MIT'
   s.summary     = 'Plays beep sound.'
   s.description = 'Synthesize and play beep sounds.'
-  s.version     = ext.version
-
-  s.authors  = %w[xordog]
-  s.email    = 'xordog@gmail.com'
-  s.homepage = "https://github.com/xord/beeps"
+  s.authors     = %w[xordog]
+  s.email       = 'xordog@gmail.com'
+  s.homepage    = "https://github.com/xord/beeps"
 
   s.platform              = Gem::Platform::RUBY
   s.required_ruby_version = '>= 2.7.0'
