@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.1.40] - 2023-05-29
+
+- Update dependencies
+
+
 ## [v0.1.39] - 2023-05-29
 
 - Update dependencies
