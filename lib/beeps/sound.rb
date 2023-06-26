@@ -43,6 +43,18 @@ module Beeps
       stopped: STOPPED
     }
 
+    def playing?()
+      state == :playing
+    end
+
+    def paused?()
+      state == :paused
+    end
+
+    def stopped?()
+      state == :stopped
+    end
+
     universal_accessor :gain, :loop
 
   end# SoundPlayer

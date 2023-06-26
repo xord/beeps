@@ -460,7 +460,10 @@ namespace Beeps
 	{
 		auto it = std::remove_if(
 			global::players.begin(), global::players.end(),
-			[](auto& player) {return !player || player.is_stopped();});
+			[](auto& player)
+			{
+				return !player || player.state() == SoundPlayer::STOPPED;
+			});
 
 		for (auto jt = it; jt != global::players.end(); ++jt)
 			jt->self->clear();
@@ -480,7 +483,7 @@ namespace Beeps
 		{
 			for (auto& p : global::players)
 			{
-				if (p && p.is_stopped())
+				if (p && p.state() == SoundPlayer::STOPPED)
 				{
 					player = reuse_player(&p);
 					LOG("reuse stopped player");
@@ -569,24 +572,6 @@ namespace Beeps
 		if (s == STOPPED && self->is_streaming())
 			return PLAYING;
 		return s;
-	}
-
-	bool
-	SoundPlayer::is_playing () const
-	{
-		return state() == PLAYING;
-	}
-
-	bool
-	SoundPlayer::is_paused () const
-	{
-		return state() == PAUSED;
-	}
-
-	bool
-	SoundPlayer::is_stopped () const
-	{
-		return state() == STOPPED;
 	}
 
 	void
@@ -824,7 +809,7 @@ namespace Beeps
 #if 0
 		std::string ox = "";
 		for (auto& player : global::players)
-			ox += player.is_playing() ? 'o' : 'x';
+			ox += player.state() == SoundPlayer::PLAYING ? 'o' : 'x';
 		LOG("%d players. (%s)", global::players.size(), ox.c_str());
 #endif
 
