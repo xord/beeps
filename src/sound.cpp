@@ -456,11 +456,14 @@ namespace Beeps
 
 
 	static void
-	remove_reused_players ()
+	remove_inactive_players ()
 	{
 		auto it = std::remove_if(
 			global::players.begin(), global::players.end(),
-			[](auto& player) {return !player;});
+			[](auto& player)
+			{
+				return !player || player.state() == SoundPlayer::STOPPED;
+			});
 
 		global::players.erase(it, global::players.end());
 	}
@@ -468,21 +471,22 @@ namespace Beeps
 	static SoundPlayer
 	get_next_player ()
 	{
-		static const SoundPlayer INVALID;
-		SoundPlayer player = INVALID;
-
-		for (auto& p : global::players)
-		{
-			if (p && p.state() == SoundPlayer::STOPPED)
-			{
-				player = reuse_player(&p);
-				LOG("reuse stopped player");
-				break;
-			}
-		}
+		SoundPlayer player = create_player();
+		if (player)
+			LOG("new player");
 
 		if (!player)
-			player = create_player();
+		{
+			for (auto& p : global::players)
+			{
+				if (p && p.state() == SoundPlayer::STOPPED)
+				{
+					player = reuse_player(&p);
+					LOG("reuse stopped player");
+					break;
+				}
+			}
+		}
 
 		if (!player && !global::players.empty())
 		{
@@ -490,7 +494,7 @@ namespace Beeps
 			LOG("reuse oldest player");
 		}
 
-		remove_reused_players();
+		remove_inactive_players();
 
 		if (player)
 			global::players.emplace_back(player);
