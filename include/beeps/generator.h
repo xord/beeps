@@ -18,7 +18,7 @@ namespace Beeps
 
 		public:
 
-			enum Type {NONE = 0, SINE, TRIANGLE, SQUARE, SAWTOOTH};
+			enum Type {TYPE_NONE = 0, SINE, TRIANGLE, SQUARE, SAWTOOTH};
 
 			Oscillator (Type type = SINE);
 

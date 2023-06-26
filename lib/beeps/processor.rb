@@ -36,7 +36,7 @@ module Beeps
   class Oscillator
 
     const_symbol_accessor :type, **{
-      none:     NONE,
+      none:     TYPE_NONE,
       sine:     SINE,
       triangle: TRIANGLE,
       square:   SQUARE,

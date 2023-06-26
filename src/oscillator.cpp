@@ -15,7 +15,7 @@ namespace Beeps
 	struct Oscillator::Data
 	{
 
-		Type type       = NONE;
+		Type type       = TYPE_NONE;
 
 		float frequency = 440;
 
@@ -137,7 +137,7 @@ namespace Beeps
 	{
 		if (!Super::operator bool()) return false;
 		return
-			self->type != NONE && self->frequency > 0 &&
+			self->type != TYPE_NONE && self->frequency > 0 &&
 			(self->sine || self->square || self->saw);
 	}
 

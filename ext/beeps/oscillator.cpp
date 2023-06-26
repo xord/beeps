@@ -71,11 +71,12 @@ Init_beeps_oscillator ()
 	cOscillator.define_method("type",  get_type);
 	cOscillator.define_method("frequency=", set_frequency);
 	cOscillator.define_method("frequency",  get_frequency);
-	cOscillator.define_const("NONE",     Beeps::Oscillator::NONE);
-	cOscillator.define_const("SINE",     Beeps::Oscillator::SINE);
-	cOscillator.define_const("TRIANGLE", Beeps::Oscillator::TRIANGLE);
-	cOscillator.define_const("SQUARE",   Beeps::Oscillator::SQUARE);
-	cOscillator.define_const("SAWTOOTH", Beeps::Oscillator::SAWTOOTH);
+
+	cOscillator.define_const("TYPE_NONE", Beeps::Oscillator::TYPE_NONE);
+	cOscillator.define_const("SINE",      Beeps::Oscillator::SINE);
+	cOscillator.define_const("TRIANGLE",  Beeps::Oscillator::TRIANGLE);
+	cOscillator.define_const("SQUARE",    Beeps::Oscillator::SQUARE);
+	cOscillator.define_const("SAWTOOTH",  Beeps::Oscillator::SAWTOOTH);
 }
 
 
