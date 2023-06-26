@@ -1,6 +1,13 @@
 # beeps ChangeLog
 
 
+## [v0.1.41] - 2023-06-27
+
+- Add SoundPlayer#state()
+- Delete SoundPlayer#is_playing(), is_paused(), and is_stopped()
+- NONE -> TYPE_NONE
+
+
 ## [v0.1.40] - 2023-05-29
 
 - Update dependencies
