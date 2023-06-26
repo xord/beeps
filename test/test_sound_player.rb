@@ -31,26 +31,26 @@ class TestSoundPlayer < Test::Unit::TestCase
 
   def test_pause()
     p = sound.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
     p.pause
-    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :paused,  p.state
 
     p = stream_sound.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
     p.pause
-    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :paused,  p.state
   end
 
   def test_stop()
     p = sound.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
     p.stop
-    assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
+    assert_equal :stopped, p.state
 
     p = stream_sound.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
     p.stop
-    assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
+    assert_equal :stopped, p.state
   end
 
   def test_play_end_then_stop()
@@ -58,42 +58,68 @@ class TestSoundPlayer < Test::Unit::TestCase
     sec = s.seconds
 
     p = s.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
     sleep sec * 2
-    assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
+    assert_equal :stopped, p.state
 
     s = stream_sound
     p = s.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
     sleep sec * 2
-    assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
+    assert_equal :stopped, p.state
   end
 
   def test_play_after_pause()
     p = sound.play
     p.pause
-    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :paused,  p.state
     p.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
 
     p = stream_sound.play
     p.pause
-    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :paused,  p.state
     p.play
-    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :playing, p.state
   end
 
   def test_stop_after_pause()
     p = sound.play
     p.pause
-    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :paused,  p.state
     p.stop
-    assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
+    assert_equal :stopped, p.state
 
     p = stream_sound.play
     p.pause
-    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+    assert_equal :paused,  p.state
     p.stop
+    assert_equal :stopped, p.state
+  end
+
+  def test_state()
+    p = sound.play
+    assert_equal :playing, p.state
+    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+
+    p.pause
+    assert_equal :paused,  p.state
+    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+
+    p.stop
+    assert_equal :stopped, p.state
+    assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
+
+    p = stream_sound.play
+    assert_equal :playing, p.state
+    assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]
+
+    p.pause
+    assert_equal :paused,  p.state
+    assert_equal [false, true,  false], [p.playing?, p.paused?, p.stopped?]
+
+    p.stop
+    assert_equal :stopped, p.state
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
   end
 

@@ -249,37 +249,21 @@ namespace Beeps
 			}
 		}
 
-		bool is_playing () const
+		SoundPlayer::State state () const
 		{
-			if (!*this) return false;
+			if (!*this) return SoundPlayer::STATE_UNKNOWN;
 
 			ALint state = 0;
 			alGetSourcei(self->id, AL_SOURCE_STATE, &state);
 			OpenAL_check_error(__FILE__, __LINE__);
 
-			return state == AL_PLAYING;
-		}
-
-		bool is_paused () const
-		{
-			if (!*this) return false;
-
-			ALint state = 0;
-			alGetSourcei(self->id, AL_SOURCE_STATE, &state);
-			OpenAL_check_error(__FILE__, __LINE__);
-
-			return state == AL_PAUSED;
-		}
-
-		bool is_stopped () const
-		{
-			if (!*this) return true;
-
-			ALint state = 0;
-			alGetSourcei(self->id, AL_SOURCE_STATE, &state);
-			OpenAL_check_error(__FILE__, __LINE__);
-
-			return state == AL_STOPPED;
+			switch (state)
+			{
+				case AL_PLAYING: return SoundPlayer::PLAYING;
+				case AL_PAUSED:  return SoundPlayer::PAUSED;
+				case AL_STOPPED: return SoundPlayer::STOPPED;
+				default:         return SoundPlayer::STATE_UNKNOWN;
+			}
 		}
 
 		void set_gain (float gain)
@@ -433,7 +417,7 @@ namespace Beeps
 					return;
 
 				source.queue(buffer);
-				if (source.is_stopped()) source.play();
+				if (source.state() == STOPPED) source.play();
 			}
 		}
 
@@ -578,24 +562,31 @@ namespace Beeps
 		self->source.stop();
 	}
 
+	SoundPlayer::State
+	SoundPlayer::state () const
+	{
+		State s = self->source.state();
+		if (s == STOPPED && self->is_streaming())
+			return PLAYING;
+		return s;
+	}
+
 	bool
 	SoundPlayer::is_playing () const
 	{
-		return
-			self->source.is_playing() ||
-			(self->is_streaming() && self->source.is_stopped());
+		return state() == PLAYING;
 	}
 
 	bool
 	SoundPlayer::is_paused () const
 	{
-		return self->source.is_paused();
+		return state() == PAUSED;
 	}
 
 	bool
 	SoundPlayer::is_stopped () const
 	{
-		return self->source.is_stopped() && !self->is_streaming();
+		return state() == STOPPED;
 	}
 
 	void

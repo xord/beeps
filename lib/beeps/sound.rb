@@ -1,4 +1,5 @@
 require 'xot/setter'
+require 'xot/const_symbol_accessor'
 require 'xot/universal_accessor'
 require 'xot/block_util'
 require 'beeps/ext'
@@ -34,6 +35,13 @@ module Beeps
   class SoundPlayer
 
     include Xot::Setter
+
+    const_symbol_reader :state, **{
+      unknown: STATE_UNKNOWN,
+      playing: PLAYING,
+      paused:  PAUSED,
+      stopped: STOPPED
+    }
 
     universal_accessor :gain, :loop
 

@@ -59,6 +59,15 @@ RUCY_DEF0(stop)
 RUCY_END
 
 static
+RUCY_DEF0(get_state)
+{
+	CHECK;
+
+	return value(THIS->state());
+}
+RUCY_END
+
+static
 RUCY_DEF0(is_playing)
 {
 	CHECK;
@@ -144,6 +153,7 @@ Init_beeps_sound_player ()
 	cSoundPlayer.define_method("pause",  pause);
 	cSoundPlayer.define_method("rewind", rewind);
 	cSoundPlayer.define_method("stop",   stop);
+	cSoundPlayer.define_method("state",    get_state);
 	cSoundPlayer.define_method("playing?", is_playing);
 	cSoundPlayer.define_method("paused?",  is_paused);
 	cSoundPlayer.define_method("stopped?", is_stopped);
@@ -152,6 +162,11 @@ Init_beeps_sound_player ()
 	cSoundPlayer.define_method("loop=", set_loop);
 	cSoundPlayer.define_method("loop",  get_loop);
 	cSoundPlayer.define_singleton_method("stop_all", stop_all);
+
+	cSoundPlayer.define_const("STATE_UNKNOWN", Beeps::SoundPlayer::STATE_UNKNOWN);
+	cSoundPlayer.define_const("PLAYING",       Beeps::SoundPlayer::PLAYING);
+	cSoundPlayer.define_const("PAUSED",        Beeps::SoundPlayer::PAUSED);
+	cSoundPlayer.define_const("STOPPED",       Beeps::SoundPlayer::STOPPED);
 }
 
 

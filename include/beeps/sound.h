@@ -20,6 +20,19 @@ namespace Beeps
 
 		public:
 
+			enum State
+			{
+
+				STATE_UNKNOWN = 0,
+
+				PLAYING,
+
+				PAUSED,
+
+				STOPPED
+
+			};// State
+
 			SoundPlayer ();
 
 			~SoundPlayer ();
@@ -31,6 +44,8 @@ namespace Beeps
 			void rewind ();
 
 			void stop ();
+
+			State state () const;
 
 			bool is_playing () const;
 
