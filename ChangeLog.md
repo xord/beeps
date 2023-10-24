@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.1.42] - 2023-10-25
+
+- Add '#include <assert.h>' to Fix compile errors
+
+
 ## [v0.1.41] - 2023-06-27
 
 - Add SoundPlayer#state()
