@@ -1,6 +1,7 @@
 #include "signals.h"
 
 
+#include <assert.h>
 #include <memory>
 #include <algorithm>
 #include <AudioFile.h>

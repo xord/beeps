@@ -4,6 +4,7 @@
 #define __BEEPS_SRC_SIGNALS_H__
 
 
+#include <assert.h>
 #include <vector>
 #include <Stk.h>
 #include <xot/pimpl.h>

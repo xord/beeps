@@ -2,6 +2,7 @@
 
 
 #include <limits.h>
+#include <assert.h>
 #include <memory>
 #include <algorithm>
 #include "Stk.h"

@@ -1,6 +1,7 @@
 #include "beeps/generator.h"
 
 
+#include <assert.h>
 #include "SineWave.h"
 #include "BlitSquare.h"
 #include "BlitSaw.h"

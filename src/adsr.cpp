@@ -1,6 +1,7 @@
 #include "beeps/filter.h"
 
 
+#include <assert.h>
 #include <ADSR.h>
 #include "signals.h"
 

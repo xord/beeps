@@ -1,6 +1,7 @@
 #include "processor.h"
 
 
+#include <assert.h>
 #include <xot/time.h>
 #include "beeps/exception.h"
 

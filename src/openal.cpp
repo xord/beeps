@@ -1,6 +1,7 @@
 #include "openal.h"
 
 
+#include <assert.h>
 #include "beeps/exception.h"
 #include "beeps/debug.h"
 #include "sound.h"

@@ -2,6 +2,7 @@
 
 
 #include <math.h>
+#include <assert.h>
 #include <algorithm>
 #include "pffft.h"
 #include "beeps/beeps.h"
