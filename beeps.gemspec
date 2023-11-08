@@ -25,8 +25,8 @@ Gem::Specification.new do |s|
   s.platform              = Gem::Platform::RUBY
   s.required_ruby_version = '>= 3.0.0'
 
-  s.add_runtime_dependency 'xot',  '~> 0.1.39'
-  s.add_runtime_dependency 'rucy', '~> 0.1.40'
+  s.add_runtime_dependency 'xot',  '~> 0.1.40'
+  s.add_runtime_dependency 'rucy', '~> 0.1.41'
 
   s.files            = `git ls-files`.split $/
   s.executables      = s.files.grep(%r{^bin/}) {|f| File.basename f}
