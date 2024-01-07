@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.1.45] - 2024-01-08
+
+- Update dependencies
+
+
 ## [v0.1.44] - 2023-12-09
 
 - Trigger github actions on all pull_request
