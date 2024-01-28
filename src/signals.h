@@ -105,7 +105,7 @@ namespace Beeps
 
 			uint nframes () const
 			{
-				return nFrames_;
+				return (uint) nFrames_;
 			}
 
 			const Float* data () const
