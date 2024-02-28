@@ -12,7 +12,7 @@ Init_beeps_exception ()
 {
 	Module mBeeps = define_module("Beeps");
 
-	cBeepsError  = mBeeps.define_class("BeepsError", rb_eRuntimeError);
+	cBeepsError  = mBeeps.define_class("BeepsError", rb_eStandardError);
 	cOpenALError = mBeeps.define_class("OpenALError", cBeepsError);
 }
 
