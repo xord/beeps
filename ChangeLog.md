@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.2] - 2024-03-14
+
+- Change the super class for exception class from RuntimeError to StandardError
+
+
 ## [v0.1.46] - 2024-02-07
 
 - Fix compile warnings
