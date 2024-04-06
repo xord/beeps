@@ -11,6 +11,8 @@
 
 #include <beeps/signals.h>
 #include <beeps/processor.h>
+#include <beeps/generator.h>
+#include <beeps/filter.h>
 #include <beeps/sound.h>
 
 
