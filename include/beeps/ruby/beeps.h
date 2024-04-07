@@ -12,7 +12,7 @@ namespace Beeps
 {
 
 
-	Rucy::Module beeps_module ();
+	BEEPS_EXPORT Rucy::Module beeps_module ();
 	// module Beeps
 
 

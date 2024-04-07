@@ -5,7 +5,7 @@
 #include "defs.h"
 
 
-RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(Beeps::Gain)
+RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Gain)
 
 #define THIS  to<Beeps::Gain*>(self)
 

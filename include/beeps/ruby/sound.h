@@ -9,19 +9,19 @@
 #include <beeps/sound.h>
 
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::SoundPlayer)
+RUCY_DECLARE_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::SoundPlayer)
 
-RUCY_DECLARE_VALUE_FROM_TO(Beeps::Sound)
+RUCY_DECLARE_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Sound)
 
 
 namespace Beeps
 {
 
 
-	Rucy::Class sound_player_class ();
+	BEEPS_EXPORT Rucy::Class sound_player_class ();
 	// class Beeps::SoundPlayer
 
-	Rucy::Class sound_class ();
+	BEEPS_EXPORT Rucy::Class sound_class ();
 	// class Beeps::Sound
 
 

@@ -5,7 +5,7 @@
 #include "defs.h"
 
 
-RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(Beeps::TimeStretch)
+RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::TimeStretch)
 
 #define THIS  to<Beeps::TimeStretch*>(self)
 

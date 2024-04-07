@@ -9,22 +9,22 @@
 #include <beeps/generator.h>
 
 
-RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::Oscillator)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Oscillator)
 
-RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::FileIn)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::FileIn)
 
 
 namespace Beeps
 {
 
 
-	Rucy::Class oscillator_class ();
+	BEEPS_EXPORT Rucy::Class oscillator_class ();
 	// class Beeps::Oscillator
 
-	Rucy::Class file_in_class ();
+	BEEPS_EXPORT Rucy::Class file_in_class ();
 	// class Beeps::FileIn
 
-	Rucy::Class mic_in_class ();
+	BEEPS_EXPORT Rucy::Class mic_in_class ();
 	// class Beeps::MicIn
 
 
