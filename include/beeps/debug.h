@@ -5,7 +5,6 @@
 
 
 #include <xot/debug.h>
-#include <beeps/defs.h>
 
 
 namespace Beeps
