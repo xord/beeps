@@ -54,13 +54,23 @@ class TestSoundPlayer < Test::Unit::TestCase
   end
 
   def test_play_end_then_stop()
+pp [1, Time.now.to_f]
     s   = sound
+pp [2, Time.now.to_f]
     sec = s.seconds
+pp [3, Time.now.to_f]
+    p(sec:)
+    p(method(:sleep))
 
+pp [4, Time.now.to_f]
     p = s.play
+pp [5, Time.now.to_f]
     assert_equal :playing, p.state
+pp [6, Time.now.to_f]
     sleep sec * 2
+pp [7, Time.now.to_f]
     assert_equal :stopped, p.state
+pp [8, Time.now.to_f]
 
     s = stream_sound
     p = s.play
