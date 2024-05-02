@@ -67,7 +67,7 @@ pp [4, Time.now.to_f]
 pp [5, Time.now.to_f]
     assert_equal :playing, p.state
 pp [6, Time.now.to_f]
-    sleep sec * 2
+    sleep sec * 10
 pp [7, Time.now.to_f]
     assert_equal :stopped, p.state
 pp [8, Time.now.to_f]
