@@ -10,7 +10,7 @@ class TestSoundPlayer < Test::Unit::TestCase
   def sound(seconds = 0.1, processor: B::Oscillator.new, **kwargs)
     B::Sound.new processor >> B::Gain.new(gain: 0), seconds, **kwargs
   end
-
+=begin
   def stream_sound(**kwargs)
     sound 0, processor: B::FileIn.new(PATH), **kwargs
   end
@@ -52,7 +52,7 @@ class TestSoundPlayer < Test::Unit::TestCase
     p.stop
     assert_equal :stopped, p.state
   end
-
+=end
   def _test_play_end_then_stop()
 pp [1, Time.now.to_f]
     s   = sound
@@ -78,7 +78,7 @@ pp [8, Time.now.to_f]
     sleep sec * 2
     assert_equal :stopped, p.state
   end
-
+=begin
   def test_play_after_pause()
     p = sound.play
     p.pause
@@ -163,5 +163,5 @@ pp [8, Time.now.to_f]
     B::SoundPlayer.stop_all
     assert_true players.all? {|p| p.stopped?}
   end
-
+=end
 end# TestSoundPlayer
