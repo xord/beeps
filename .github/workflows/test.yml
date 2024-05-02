@@ -25,4 +25,4 @@ jobs:
         run: "ruby -I.github/workflows -rutils -e 'setup_dependencies'"
 
       - name: test
-        run: bundle exec rake test
+        run: bundle exec rake ext && ruby test/test_sound_player.rb
