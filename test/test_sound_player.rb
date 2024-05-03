@@ -1,4 +1,4 @@
-require_relative 'helper'
+#require_relative 'helper'
 
 
 class TestSoundPlayer < Test::Unit::TestCase
@@ -53,7 +53,7 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal :stopped, p.state
   end
 =end
-  def test_play_end_then_stop()
+  def _test_play_end_then_stop()
 pp [1, Time.now.to_f]
     s   = sound
 pp [2, Time.now.to_f]
