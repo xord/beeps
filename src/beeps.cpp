@@ -17,9 +17,9 @@ namespace Beeps
 	void
 	init ()
 	{
-		printf("a %f\n", time(NULL) / 60.f);
+		printf("a %lf\n", (double) time(NULL));
 		OpenAL_init();
-		printf("b %f\n", time(NULL) / 60.f);
+		printf("b %lf\n", (double) time(NULL));
 
 		stk::Stk::setSampleRate(44100);
 	}
@@ -27,14 +27,14 @@ namespace Beeps
 	void
 	fin ()
 	{
-		printf("c %f\n", time(NULL) / 60.f);
+		printf("c %lf\n", (double) time(NULL));
 		MicIn_clear_streams();
-		printf("d %f\n", time(NULL) / 60.f);
+		printf("d %lf\n", (double) time(NULL));
 		SoundPlayer_clear_streams();
-		printf("e %f\n", time(NULL) / 60.f);
+		printf("e %lf\n", (double) time(NULL));
 
 		OpenAL_fin();
-		printf("f %f\n", time(NULL) / 60.f);
+		printf("f %lf\n", (double) time(NULL));
 	}
 
 	void
