@@ -3,7 +3,7 @@
   .each {|s| $:.unshift s if !$:.include?(s) && File.directory?(s)}
 
 require 'xot/test'
-require 'beeps/ext'
+require 'beeps'
 
 require 'test/unit'
 
