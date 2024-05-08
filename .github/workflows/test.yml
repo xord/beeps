@@ -10,6 +10,11 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      - name: xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
       - name: ruby 3.2
         uses: ruby/setup-ruby@v1
         with:
