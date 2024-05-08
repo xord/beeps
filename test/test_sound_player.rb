@@ -64,12 +64,15 @@ pp [3, Time.now.to_f]
 
 pp [4, Time.now.to_f]
     p = s.play
+    assert_false p.loop
 pp [5, Time.now.to_f]
     assert_equal :playing, p.state
+    assert_false p.loop
 pp [6, Time.now.to_f]
     sleep sec * 10
 pp [7, Time.now.to_f]
     assert_equal :stopped, p.state
+    assert_false p.loop
 pp [8, Time.now.to_f]
 
     s = stream_sound
