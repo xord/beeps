@@ -16,5 +16,5 @@ p [14, Time.now.to_f]
 
 
 unless defined?($BEEPS_NOAUTOINIT) && $BEEPS_NOAUTOINIT
-  #def Beeps.fin!() end
+  def Beeps.fin!() end
 end
