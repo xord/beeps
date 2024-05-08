@@ -10,7 +10,7 @@ class TestSoundPlayer < Test::Unit::TestCase
   def sound(seconds = 0.1, processor: B::Oscillator.new, **kwargs)
     B::Sound.new processor >> B::Gain.new(gain: 0), seconds, **kwargs
   end
-=begin
+
   def stream_sound(**kwargs)
     sound 0, processor: B::FileIn.new(PATH), **kwargs
   end
@@ -23,7 +23,7 @@ class TestSoundPlayer < Test::Unit::TestCase
     B::SoundPlayer.stop_all
     File.delete PATH if File.exist?(PATH)
   end
-
+=begin
   def test_initialize()
     assert_in_epsilon 1, sound.play.gain
     assert_false         sound.play.loop
