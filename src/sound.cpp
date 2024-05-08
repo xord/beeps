@@ -566,8 +566,8 @@ namespace Beeps
 	SoundPlayer::state () const
 	{
 		State s = self->source.state();
-		if (s == STOPPED && self->is_streaming())
-			return PLAYING;
+		//if (s == STOPPED && self->is_streaming())
+		//return PLAYING;
 		return s;
 	}
 
