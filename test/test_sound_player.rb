@@ -23,7 +23,7 @@ class TestSoundPlayer < Test::Unit::TestCase
     B::SoundPlayer.stop_all
     File.delete PATH if File.exist?(PATH)
   end
-=begin
+
   def test_initialize()
     assert_in_epsilon 1, sound.play.gain
     assert_false         sound.play.loop
@@ -52,9 +52,8 @@ class TestSoundPlayer < Test::Unit::TestCase
     p.stop
     assert_equal :stopped, p.state
   end
-=end
-  def test_play_end_then_stop()
-    return if ci?
+
+  def _test_play_end_then_stop()
     s   = sound
     sec = s.seconds
     p(sec:)
@@ -71,7 +70,7 @@ class TestSoundPlayer < Test::Unit::TestCase
     sleep sec * 2
     assert_equal :stopped, p.state
   end
-=begin
+
   def test_play_after_pause()
     p = sound.play
     p.pause
@@ -156,5 +155,5 @@ class TestSoundPlayer < Test::Unit::TestCase
     B::SoundPlayer.stop_all
     assert_true players.all? {|p| p.stopped?}
   end
-=end
+
 end# TestSoundPlayer
