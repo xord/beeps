@@ -67,8 +67,10 @@ namespace Beeps
 			std::vector<short> buffer;
 			buffer.reserve(nsamples * nchannels);
 			for (uint sample = 0; sample < nsamples; ++sample)
+			{
 				for (uint channel = 0; channel < nchannels; ++channel)
 					buffer.push_back((*frames)(sample, channel) * SHRT_MAX);
+			}
 
 			alBufferData(
 				self->id,
