@@ -54,6 +54,10 @@ class TestSoundPlayer < Test::Unit::TestCase
   end
 
   def test_play_end_then_stop()
+    # FIXME: not tested because it fails due to GHA's "Null Audio Device".
+    # https://github.com/xord/beeps/actions/runs/9044146493/job/24852497305
+    return if ci?
+
     s   = sound
     sec = s.seconds
 
