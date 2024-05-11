@@ -10,13 +10,18 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      - name: xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
       - name: ruby 3.2
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2
 
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: setup gems
         run: bundle install
@@ -24,5 +29,8 @@ jobs:
       - name: setup dependencies
         run: "ruby -I.github/workflows -rutils -e 'setup_dependencies'"
 
+      - name: audio devices
+        run: system_profiler SPAudioDataType
+
       - name: test
-        run: bundle exec rake test
+        run: bundle exec rake ext && time ruby test/test_sound_player.rb

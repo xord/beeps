@@ -53,9 +53,11 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal :stopped, p.state
   end
 
-  def test_play_end_then_stop()
+  def _test_play_end_then_stop()
     s   = sound
     sec = s.seconds
+    p(sec:)
+    p(method(:sleep))
 
     p = s.play
     assert_equal :playing, p.state

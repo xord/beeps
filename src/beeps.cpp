@@ -2,6 +2,7 @@
 #include "beeps/beeps.h"
 
 
+#include <time.h>
 #include "Stk.h"
 #include "beeps/exception.h"
 #include "openal.h"

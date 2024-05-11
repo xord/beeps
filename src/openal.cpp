@@ -42,17 +42,23 @@ namespace Beeps
 	void
 	OpenAL_init ()
 	{
+		printf("a %lf\n", (double) time(NULL));
 		if (global::device || global::context)
 			beeps_error(__FILE__, __LINE__, "already initialized.");
+		printf("b %lf\n", (double) time(NULL));
 
 		global::device = alcOpenDevice(NULL);
+		printf("c %lf\n", (double) time(NULL));
 		if (!global::device) goto FAILED;
 
+		printf("d %lf\n", (double) time(NULL));
 		global::context = alcCreateContext(global::device, NULL);
+		printf("e %lf\n", (double) time(NULL));
 		if (!global::context) goto FAILED;
 
 		if (!alcMakeContextCurrent(global::context))
 			goto FAILED;
+		printf("f %lf\n", (double) time(NULL));
 
 		return;
 
