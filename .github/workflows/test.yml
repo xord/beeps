@@ -29,5 +29,8 @@ jobs:
       - name: setup dependencies
         run: "ruby -I.github/workflows -rutils -e 'setup_dependencies'"
 
+      - name: audio devices
+        run: system_profiler SPAudioDataType
+
       - name: test
         run: bundle exec rake ext && time ruby test/test_sound_player.rb
