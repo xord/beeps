@@ -24,10 +24,6 @@ namespace Beeps
 	template <typename T> class SignalSamples;
 
 
-	      Frames* Signals_get_frames (      Signals* signals);
-
-	const Frames* Signals_get_frames (const Signals* signals);
-
 	Signals Signals_create (
 		uint capacity, uint nchannels = 1, double sample_rate = 0);
 
@@ -52,6 +48,10 @@ namespace Beeps
 	void  Signals_set_nsamples (Signals* signals, uint nsamples);
 
 	float Signals_get_seconds (const Signals& signals);
+
+	      Frames* Signals_get_frames (      Signals* signals);
+
+	const Frames* Signals_get_frames (const Signals* signals);
 
 	void    Signals_save (const Signals& signals, const char* path);
 

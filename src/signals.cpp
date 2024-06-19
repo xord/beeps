@@ -24,21 +24,6 @@ namespace Beeps
 	};// Signals::Data
 
 
-	Frames*
-	Signals_get_frames (Signals* signals)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-
-		return signals->self->frames.get();
-	}
-
-	const Frames*
-	Signals_get_frames (const Signals* signals)
-	{
-		return Signals_get_frames(const_cast<Signals*>(signals));
-	}
-
 	Signals
 	Signals_create (uint capacity, uint nchannels, double sample_rate)
 	{
@@ -67,8 +52,10 @@ namespace Beeps
 		frames->setDataRate(sample_rate);
 
 		for (uint channel = 0; channel < nchannels; ++channel)
+		{
 			for (uint sample = 0; sample < nsamples; ++sample)
 				(*frames)(sample, channel) = channels[channel][sample];
+		}
 
 		Signals s;
 		s.self->frames.reset(frames);
@@ -294,6 +281,21 @@ namespace Beeps
 	Signals_get_seconds (const Signals& signals)
 	{
 		return (float) (signals.nsamples() / signals.sample_rate());
+	}
+
+	Frames*
+	Signals_get_frames (Signals* signals)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+
+		return signals->self->frames.get();
+	}
+
+	const Frames*
+	Signals_get_frames (const Signals* signals)
+	{
+		return Signals_get_frames(const_cast<Signals*>(signals));
 	}
 
 	static void
