@@ -1,5 +1,5 @@
 // -*- objc -*-
-#include "beeps/beeps.h"
+#include "beeps.h"
 
 
 #include "Stk.h"
@@ -16,6 +16,7 @@ namespace Beeps
 	void
 	init ()
 	{
+		Beeps_init();
 		OpenAL_init();
 
 		stk::Stk::setSampleRate(44100);
@@ -28,6 +29,7 @@ namespace Beeps
 		SoundPlayer_clear_streams();
 
 		OpenAL_fin();
+		Beeps_fin();
 	}
 
 	void

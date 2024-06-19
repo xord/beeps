@@ -15,7 +15,7 @@ Xot::ExtConf.new Xot, Rucy, Beeps do
 
     if win32?
       headers    << 'AL/al.h'     << 'AL/alc.h'
-      libs       << 'openal'
+      libs       << 'openal' << 'ole32' << 'mf' << 'mfplat' << 'mfreadwrite' << 'mfuuid'
     elsif osx?
       headers    << 'OpenAL/al.h' << 'OpenAL/alc.h'
       frameworks << 'OpenAL'      << 'AVFoundation'
