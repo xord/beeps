@@ -8,8 +8,3 @@ require 'beeps'
 require 'test/unit'
 
 include Xot::Test
-
-
-unless defined?($BEEPS_NOAUTOINIT) && $BEEPS_NOAUTOINIT
-  def Beeps.fin!() end
-end
