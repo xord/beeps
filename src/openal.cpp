@@ -70,6 +70,12 @@ namespace Beeps
 		cleanup();
 	}
 
+	void*
+	OpenAL_get_context ()
+	{
+		return global::context;
+	}
+
 	ALCenum
 	OpenAL_get_error ()
 	{

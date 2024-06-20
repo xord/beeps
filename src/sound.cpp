@@ -96,9 +96,11 @@ namespace Beeps
 		struct Data
 		{
 
-			ALint id   = -1;
+			void* context = NULL;
 
-			bool owner = false;
+			ALint id      = -1;
+
+			bool owner    = false;
 
 			~Data ()
 			{
@@ -113,26 +115,28 @@ namespace Beeps
 				alGenBuffers(1, &id_);
 				OpenAL_check_error(__FILE__, __LINE__);
 
-				id    = id_;
-				owner = true;
+				context = OpenAL_get_context();
+				id      = id_;
+				owner   = true;
 			}
 
 			void clear ()
 			{
-				if (owner && id >= 0)
+				if (owner && is_valid())
 				{
 					ALuint id_ = id;
 					alDeleteBuffers(1, &id_);
 					OpenAL_check_error(__FILE__, __LINE__);
 				}
 
-				id    = -1;
-				owner = false;
+				context = NULL;
+				id      = -1;
+				owner   = false;
 			}
 
 			bool is_valid () const
 			{
-				return id >= 0;
+				return id >= 0 && context == OpenAL_get_context();
 			}
 
 		};// Data
@@ -147,9 +151,7 @@ namespace Beeps
 
 		void create ()
 		{
-			ALuint id_ = 0;
-			alGenSources(1, &id_);
-			if (OpenAL_no_error()) self->id = id_;
+			self->create();
 		}
 
 		void clear ()
@@ -312,7 +314,7 @@ namespace Beeps
 
 		operator bool () const
 		{
-			return self->id >= 0;
+			return self->is_valid();
 		}
 
 		bool operator ! () const
@@ -323,22 +325,41 @@ namespace Beeps
 		struct Data
 		{
 
-			ALint id = -1;
+			void* context = NULL;
+
+			ALint id      = -1;
 
 			~Data ()
 			{
 				clear();
 			}
 
+			void create ()
+			{
+				ALuint id_ = 0;
+				alGenSources(1, &id_);
+				if (!OpenAL_no_error()) return;
+
+				context = OpenAL_get_context();
+				id      = id_;
+			}
+
 			void clear ()
 			{
-				if (id < 0) return;
+				if (is_valid())
+				{
+					ALuint id_ = id;
+					alDeleteSources(1, &id_);
+					OpenAL_check_error(__FILE__, __LINE__);
+				}
 
-				ALuint id_ = id;
-				alDeleteSources(1, &id_);
-				OpenAL_check_error(__FILE__, __LINE__);
+				context = NULL;
+				id      = -1;
+			}
 
-				id = -1;
+			bool is_valid () const
+			{
+				return id >= 0 && context == OpenAL_get_context();
 			}
 
 		};// Data

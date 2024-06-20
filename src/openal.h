@@ -23,6 +23,8 @@ namespace Beeps
 
 	void OpenAL_fin ();
 
+	void* OpenAL_get_context ();
+
 	ALCenum OpenAL_get_error();
 
 	bool OpenAL_no_error();
