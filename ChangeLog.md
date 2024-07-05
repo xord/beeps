@@ -1,6 +1,16 @@
 # beeps ChangeLog
 
 
+## [v0.2.1] - 2024-07-05
+
+- Do not delete OpenAL objects after calling OpenAL_fin()
+- Do not redefine fin!() methods, they are no longer needed
+- Skip 'test_play_end_then_stop' on GitHub Actions
+- Update workflows for test
+- Update to actions/checkout@v4
+- Fix 'github_actions?'
+
+
 ## [v0.2] - 2024-03-14
 
 - Change the super class for exception class from RuntimeError to StandardError
