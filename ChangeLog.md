@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.3] - 2024-07-06
+
+- Support Windows
+
+
 ## [v0.2.1] - 2024-07-05
 
 - Do not delete OpenAL objects after calling OpenAL_fin()
