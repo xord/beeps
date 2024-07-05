@@ -9,28 +9,28 @@
 #include <beeps/filter.h>
 
 
-RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::TimeStretch)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::TimeStretch)
 
-RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::PitchShift)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::PitchShift)
 
 
 namespace Beeps
 {
 
 
-	Rucy::Class gain_class ();
+	BEEPS_EXPORT Rucy::Class gain_class ();
 	// class Beeps::Gain
 
-	Rucy::Class adsr_class ();
+	BEEPS_EXPORT Rucy::Class adsr_class ();
 	// class Beeps::ADSR
 
-	Rucy::Class time_stretch_class ();
+	BEEPS_EXPORT Rucy::Class time_stretch_class ();
 	// class Beeps::TimeStretch
 
-	Rucy::Class pitch_shift_class ();
+	BEEPS_EXPORT Rucy::Class pitch_shift_class ();
 	// class Beeps::PitchShift
 
-	Rucy::Class analyser_class ();
+	BEEPS_EXPORT Rucy::Class analyser_class ();
 	// class Beeps::Analyser
 
 

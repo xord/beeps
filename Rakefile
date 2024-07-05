@@ -15,6 +15,8 @@ require 'beeps/extension'
 EXTENSIONS  = [Xot, Rucy, Beeps]
 TESTS_ALONE = ['test/test_beeps_init.rb']
 
+install_packages win32: %w[MINGW_PACKAGE_PREFIX-openal]
+
 use_external_library 'https://github.com/thestk/stk',
   tag:      '4.6.2',
   incdirs:  'include',
@@ -47,6 +49,6 @@ default_tasks :ext
 use_bundler
 build_native_library
 build_ruby_extension
-test_ruby_extension
+test_ruby_extension unless github_actions? && win32?
 generate_documents
 build_ruby_gem

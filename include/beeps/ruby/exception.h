@@ -12,10 +12,10 @@ namespace Beeps
 {
 
 
-	Rucy::Class beeps_error_class ();
+	BEEPS_EXPORT Rucy::Class beeps_error_class ();
 	// class Beeps::BeepsError
 
-	Rucy::Class openal_error_class ();
+	BEEPS_EXPORT Rucy::Class openal_error_class ();
 	// class Beeps::OpenALError
 
 

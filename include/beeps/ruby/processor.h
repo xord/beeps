@@ -9,14 +9,14 @@
 #include <beeps/processor.h>
 
 
-RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(Beeps::Processor)
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Processor)
 
 
 namespace Beeps
 {
 
 
-	Rucy::Class processor_class ();
+	BEEPS_EXPORT Rucy::Class processor_class ();
 	// class Beeps::Processor
 
 

@@ -4,7 +4,7 @@
 #include "defs.h"
 
 
-RUCY_DEFINE_VALUE_FROM_TO(Beeps::SoundPlayer)
+RUCY_DEFINE_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::SoundPlayer)
 
 #define THIS  to<Beeps::SoundPlayer*>(self)
 

@@ -9,6 +9,8 @@
 #include "beeps/ruby/defs.h"
 
 
+using namespace Xot::Types;
+
 using namespace Rucy;
 
 
