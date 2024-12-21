@@ -31,15 +31,15 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, double sample_rate = 0);
 
-	void Signals_resize (Signals* signals, uint capacity);
+	void Signals_clear (Signals* signals);
+
+	void Signals_clear (Signals* signals, uint capacity);
 
 	void Signals_resize (Signals* signals, uint nsamples, Float value);
 
-	void Signals_clear (Signals* signals);
-
 	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
 
-	void Signals_apply (Signals* signals, const Signals& multiplier);
+	void Signals_multiply (Signals* signals, const Signals& multiplier);
 
 	template <typename T>
 	void Signals_write_samples (

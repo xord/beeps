@@ -59,7 +59,8 @@ namespace Beeps
 			double sample_rate = signals.sample_rate();
 			uint nchannels     = signals.nchannels();
 			uint nsamples      = signals.nsamples();
-			assert(sample_rate > 0 && nchannels > 0 && nsamples > 0);
+			assert(sample_rate > 0 && nchannels > 0);
+			if (nsamples <= 0) return 0;
 
 			const Frames* frames = Signals_get_frames(&signals);
 			assert(frames);
@@ -378,7 +379,7 @@ namespace Beeps
 
 		Processor::Ref processor;
 
-		std::unique_ptr<ProcessorContext> processor_context;
+		std::unique_ptr<StreamContext> stream_context;
 
 		void clear ()
 		{
@@ -403,8 +404,8 @@ namespace Beeps
 			assert(processor && *processor && nchannels > 0 && sample_rate > 0);
 
 			this->processor = processor;
-			processor_context.reset(
-				new ProcessorContext(sample_rate / 10, nchannels, sample_rate));
+			stream_context.reset(
+				new StreamContext(sample_rate / 10, nchannels, sample_rate));
 
 			for (int i = 0; i < 2; ++i)
 			{
@@ -418,13 +419,11 @@ namespace Beeps
 
 		bool process_stream (SoundBuffer* buffer)
 		{
-			assert(buffer && processor && processor_context);
+			assert(buffer && processor && stream_context);
 
-			Signals signals = processor_context->process_signals(processor);
-			if (!signals) return false;
-
-			if (processor_context->is_finished())
-				processor_context.reset();
+			Signals signals = stream_context->process_next(processor);
+			if (stream_context->is_finished())
+				stream_context.reset();
 
 			return buffer->write(signals) > 0;
 		}
@@ -447,7 +446,7 @@ namespace Beeps
 
 		bool is_streaming () const
 		{
-			return processor && processor_context && *processor_context;
+			return processor && stream_context;
 		}
 
 	};// SoundPlayer::Data
@@ -687,12 +686,8 @@ namespace Beeps
 				processor && *processor &&
 				seconds > 0 && nchannels > 0 && sample_rate > 0);
 
-			ProcessorContext context(seconds * sample_rate, nchannels, sample_rate);
-			Signals signals = context.process_signals(processor);
-			if (!signals)
-				beeps_error(__FILE__, __LINE__, "failed to process signals");
-
-			this->signals = signals;
+			StreamContext context(seconds * sample_rate, nchannels, sample_rate);
+			this->signals = context.process_next(processor);
 		}
 
 		void attach_to (SoundPlayer* player) override

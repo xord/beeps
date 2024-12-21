@@ -16,6 +16,8 @@ namespace Beeps
 	class ProcessorContext;
 
 
+	ProcessorContext* Processor_get_context (Processor::Context* context);
+
 	float Processor_get_buffering_seconds (Processor* processor);
 
 
@@ -56,14 +58,34 @@ namespace Beeps
 
 		public:
 
-			ProcessorContext (
-				uint nsamples_per_process, uint nchannels, double sample_rate);
-
-			Signals process_signals (Processor* processor);
+			ProcessorContext (uint nchannels, double sample_rate);
 
 			void process (
 				Processor* processor, Signals* signals, uint* offset,
 				bool ignore_buffer = false);
+
+		private:
+
+			double sample_rate;
+
+			uint nchannels;
+
+			std::map<uintptr_t, std::unique_ptr<SignalsBuffer>> buffers;
+
+			SignalsBuffer* get_buffer (Processor* processor);
+
+	};// ProcessorContext
+
+
+	class StreamContext
+	{
+
+		public:
+
+			StreamContext (
+				uint nsamples_per_process, uint nchannels, double sample_rate);
+
+			Signals process_next (Processor* processor);
 
 			//void push_offset (uint offset);
 
@@ -71,25 +93,19 @@ namespace Beeps
 
 			bool is_finished () const;
 
-			operator bool () const;
-
-			bool operator ! () const;
-
 		private:
+
+			ProcessorContext context;
 
 			Signals signals;
 
-			uint offset = 0;
+			uint offset   = 0;
 
 			bool finished = false;
 
 			//std::vector<uint> offset_stack;
 
-			std::map<uintptr_t, std::unique_ptr<SignalsBuffer>> buffers;
-
-			SignalsBuffer* get_buffer (Processor* processor);
-
-	};// ProcessorContext
+	};// StreamContext
 
 
 }// Beeps

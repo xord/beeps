@@ -10,13 +10,6 @@ namespace Beeps
 {
 
 
-	static ProcessorContext*
-	get_context(Processor::Context* context)
-	{
-		return (ProcessorContext*) context;
-	}
-
-
 	struct Processor::Data
 	{
 
@@ -35,6 +28,12 @@ namespace Beeps
 
 	};// Processor::Data
 
+
+	ProcessorContext*
+	Processor_get_context(Processor::Context* context)
+	{
+		return (ProcessorContext*) context;
+	}
 
 	float
 	Processor_get_buffering_seconds (Processor* processor)
@@ -125,7 +124,7 @@ namespace Beeps
 			invalid_state_error(__FILE__, __LINE__);
 
 		if (self->input)
-			get_context(context)->process(self->input, signals, offset);
+			Processor_get_context(context)->process(self->input, signals, offset);
 	}
 
 	void
@@ -235,25 +234,9 @@ namespace Beeps
 	}
 
 
-	ProcessorContext::ProcessorContext (
-		uint nsamples_per_process, uint nchannels, double sample_rate)
-	:	signals(Signals_create(nsamples_per_process, nchannels, sample_rate))
+	ProcessorContext::ProcessorContext (uint nchannels, double sample_rate)
+	:	sample_rate(sample_rate), nchannels(nchannels)
 	{
-		assert(*this);
-	}
-
-	Signals
-	ProcessorContext::process_signals (Processor* processor)
-	{
-		assert(processor);
-
-		Signals_clear(&signals);
-		process(processor, &signals, &offset);
-
-		if (signals.nsamples() < signals.capacity())
-			finished = true;
-
-		return signals.nsamples() > 0 ? signals : Signals();
 	}
 
 	void
@@ -267,23 +250,6 @@ namespace Beeps
 			buffer->process(this, processor, signals, offset);
 		else
 			processor->process(this, signals, offset);
-	}
-
-	bool
-	ProcessorContext::is_finished () const
-	{
-		return finished;
-	}
-
-	ProcessorContext::operator bool () const
-	{
-		return signals && !finished;
-	}
-
-	bool
-	ProcessorContext::operator ! () const
-	{
-		return !operator bool();
 	}
 
 	static uintptr_t
@@ -304,12 +270,39 @@ namespace Beeps
 		auto it       = buffers.find(key);
 		if (it != buffers.end()) return it->second.get();
 
-		SignalsBuffer* buffer = new SignalsBuffer(
-			buffering_sec * signals.sample_rate(),
-			signals.nchannels(), signals.sample_rate());
+		SignalsBuffer* buffer =
+			new SignalsBuffer(buffering_sec * sample_rate, nchannels, sample_rate);
 
 		buffers.emplace(key, buffer);
 		return buffer;
+	}
+
+
+	StreamContext::StreamContext (
+		uint nsamples_per_process, uint nchannels, double sample_rate)
+	:	context(nchannels, sample_rate),
+		signals(Signals_create(nsamples_per_process, nchannels, sample_rate))
+	{
+	}
+
+	Signals
+	StreamContext::process_next (Processor* processor)
+	{
+		assert(processor);
+
+		Signals_clear(&signals);
+		context.process(processor, &signals, &offset);
+
+		if (signals.nsamples() < signals.capacity())
+			finished = true;
+
+		return signals;
+	}
+
+	bool
+	StreamContext::is_finished () const
+	{
+		return finished;
 	}
 
 

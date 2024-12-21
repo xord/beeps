@@ -228,7 +228,7 @@ namespace Beeps
 			Signals_resize(&self->adsr_signals, signals->nsamples(), 0);
 
 		process_envelope_signals(this, &self->adsr_signals);
-		Signals_apply(signals, self->adsr_signals);
+		Signals_multiply(signals, self->adsr_signals);
 	}
 
 	ADSR::operator bool () const

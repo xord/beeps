@@ -64,19 +64,28 @@ namespace Beeps
 	}
 
 	void
-	Signals_resize (Signals* signals, uint capacity)
+	Signals_clear (Signals* signals)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+
+		signals->self->nsamples = 0;
+	}
+
+	void
+	Signals_clear (Signals* signals, uint capacity)
 	{
 		if (!signals || !*signals || capacity <= 0)
 			argument_error(__FILE__, __LINE__);
 
-		signals->self->frames->resize(capacity, signals->nchannels());
 		Signals_clear(signals);
+		signals->self->frames->resize(capacity, signals->nchannels());
 	}
 
 	void
 	Signals_resize (Signals* signals, uint nsamples, Float value)
 	{
-		Signals_resize(signals, nsamples);
+		Signals_clear(signals, nsamples);
 
 		Frames* frames = Signals_get_frames(signals);
 		assert(frames);
@@ -87,15 +96,6 @@ namespace Beeps
 			*p++ = value;
 
 		Signals_set_nsamples(signals, nsamples);
-	}
-
-	void
-	Signals_clear (Signals* signals)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-
-		signals->self->nsamples = 0;
 	}
 
 	static uint
@@ -203,7 +203,7 @@ namespace Beeps
 	}
 
 	void
-	Signals_apply (Signals* signals, const Signals& multiplier)
+	Signals_multiply (Signals* signals, const Signals& multiplier)
 	{
 		if (!signals || multiplier.nchannels() != 1)
 			argument_error(__FILE__, __LINE__);
@@ -213,13 +213,13 @@ namespace Beeps
 
 		Frames* sigf = Signals_get_frames(signals);
 		Frames* mulf = Signals_get_frames(const_cast<Signals*>(&multiplier));
+		uint nframes = sigf->nframes();
+		uint stride  = sigf->nchannels();
 
 		for (uint ch = 0; ch < sigf->nchannels(); ++ch)
 		{
-			Float* sigp  = &(*sigf)(0, ch);
-			Float* mulp  = &(*mulf)(0, 0);
-			uint nframes = sigf->nframes();
-			uint stride  = sigf->nchannels();
+			Float* sigp = &(*sigf)(0, ch);
+			Float* mulp = &(*mulf)(0, 0);
 			for (uint i = 0; i < nframes; ++i, sigp += stride, ++mulp)
 				*sigp *= *mulp;
 		}
