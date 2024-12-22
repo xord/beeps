@@ -21,8 +21,8 @@ namespace Beeps
 	BEEPS_EXPORT Rucy::Class gain_class ();
 	// class Beeps::Gain
 
-	BEEPS_EXPORT Rucy::Class adsr_class ();
-	// class Beeps::ADSR
+	BEEPS_EXPORT Rucy::Class envelope_class ();
+	// class Beeps::Envelope
 
 	BEEPS_EXPORT Rucy::Class time_stretch_class ();
 	// class Beeps::TimeStretch
@@ -48,9 +48,9 @@ namespace Rucy
 	}
 
 	template <> inline Class
-	get_ruby_class<Beeps::ADSR> ()
+	get_ruby_class<Beeps::Envelope> ()
 	{
-		return Beeps::adsr_class();
+		return Beeps::envelope_class();
 	}
 
 	template <> inline Class

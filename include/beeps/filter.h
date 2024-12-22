@@ -37,16 +37,16 @@ namespace Beeps
 	};// Gain
 
 
-	class ADSR : public Filter
+	class Envelope : public Filter
 	{
 
 		typedef Filter Super;
 
 		public:
 
-			ADSR (Processor* input = NULL);
+			Envelope (Processor* input = NULL);
 
-			virtual ~ADSR ();
+			virtual ~Envelope ();
 
 			virtual void note_on  (float delay = 0);
 
@@ -77,7 +77,7 @@ namespace Beeps
 
 			Xot::PImpl<Data> self;
 
-	};// ADSR
+	};// Envelope
 
 
 	class TimeStretch : public Filter

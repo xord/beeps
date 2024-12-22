@@ -5,17 +5,17 @@
 #include "defs.h"
 
 
-RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::ADSR)
+RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Envelope)
 
-#define THIS  to<Beeps::ADSR*>(self)
+#define THIS  to<Beeps::Envelope*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::ADSR, self)
+#define CHECK RUCY_CHECK_OBJ(Beeps::Envelope, self)
 
 
 static
 RUCY_DEF_ALLOC(alloc, klass)
 {
-	return value(new Beeps::RubyProcessor<Beeps::ADSR>, klass);
+	return value(new Beeps::RubyProcessor<Beeps::Envelope>, klass);
 }
 RUCY_END
 
@@ -114,25 +114,25 @@ RUCY_DEF0(get_release_time)
 RUCY_END
 
 
-static Class cADSR;
+static Class cEnvelope;
 
 void
-Init_beeps_adsr ()
+Init_beeps_envelope ()
 {
 	Module mBeeps = define_module("Beeps");
 
-	cADSR = mBeeps.define_class("ADSR", Beeps::processor_class());
-	cADSR.define_alloc_func(alloc);
-	cADSR.define_private_method("note_on!",  note_on);
-	cADSR.define_private_method("note_off!", note_off);
-	cADSR.define_method( "attack_time=",   set_attack_time);
-	cADSR.define_method( "attack_time",    get_attack_time);
-	cADSR.define_method(  "decay_time=",    set_decay_time);
-	cADSR.define_method(  "decay_time",     get_decay_time);
-	cADSR.define_method("sustain_level=", set_sustain_level);
-	cADSR.define_method("sustain_level",  get_sustain_level);
-	cADSR.define_method("release_time=",  set_release_time);
-	cADSR.define_method("release_time",   get_release_time);
+	cEnvelope = mBeeps.define_class("Envelope", Beeps::processor_class());
+	cEnvelope.define_alloc_func(alloc);
+	cEnvelope.define_private_method("note_on!",  note_on);
+	cEnvelope.define_private_method("note_off!", note_off);
+	cEnvelope.define_method( "attack_time=",   set_attack_time);
+	cEnvelope.define_method( "attack_time",    get_attack_time);
+	cEnvelope.define_method(  "decay_time=",    set_decay_time);
+	cEnvelope.define_method(  "decay_time",     get_decay_time);
+	cEnvelope.define_method("sustain_level=", set_sustain_level);
+	cEnvelope.define_method("sustain_level",  get_sustain_level);
+	cEnvelope.define_method("release_time=",  set_release_time);
+	cEnvelope.define_method("release_time",   get_release_time);
 }
 
 
@@ -141,9 +141,9 @@ namespace Beeps
 
 
 	Class
-	adsr_class ()
+	envelope_class ()
 	{
-		return cADSR;
+		return cEnvelope;
 	}
 
 

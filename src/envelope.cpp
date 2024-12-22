@@ -10,7 +10,7 @@ namespace Beeps
 {
 
 
-	struct ADSR::Data
+	struct Envelope::Data
 	{
 
 		stk::ADSR adsr;
@@ -29,21 +29,21 @@ namespace Beeps
 			adsr.setReleaseTime( release_time == 0 ? 0.01 : release_time);
 		}
 
-	};// ADSR::Data
+	};// Envelope::Data
 
 
-	ADSR::ADSR (Processor* input)
+	Envelope::Envelope (Processor* input)
 	:	Super(input)
 	{
 		self->update_envelope();
 	}
 
-	ADSR::~ADSR ()
+	Envelope::~Envelope ()
 	{
 	}
 
 	void
-	ADSR::note_on (float delay)
+	Envelope::note_on (float delay)
 	{
 		if (delay < 0)
 			argument_error(__FILE__, __LINE__);
@@ -58,7 +58,7 @@ namespace Beeps
 	}
 
 	void
-	ADSR::note_off (float delay)
+	Envelope::note_off (float delay)
 	{
 		if (delay < 0)
 			argument_error(__FILE__, __LINE__);
@@ -73,7 +73,7 @@ namespace Beeps
 	}
 
 	void
-	ADSR::set_attack_time (float time)
+	Envelope::set_attack_time (float time)
 	{
 		if (time < 0)
 			argument_error(__FILE__, __LINE__);
@@ -85,13 +85,13 @@ namespace Beeps
 	}
 
 	float
-	ADSR::attack_time () const
+	Envelope::attack_time () const
 	{
 		return self->attack_time;
 	}
 
 	void
-	ADSR::set_decay_time (float time)
+	Envelope::set_decay_time (float time)
 	{
 		if (time < 0)
 			argument_error(__FILE__, __LINE__);
@@ -103,13 +103,13 @@ namespace Beeps
 	}
 
 	float
-	ADSR::decay_time () const
+	Envelope::decay_time () const
 	{
 		return self->decay_time;
 	}
 
 	void
-	ADSR::set_sustain_level (float level)
+	Envelope::set_sustain_level (float level)
 	{
 		if (level < 0)
 			argument_error(__FILE__, __LINE__);
@@ -121,13 +121,13 @@ namespace Beeps
 	}
 
 	float
-	ADSR::sustain_level () const
+	Envelope::sustain_level () const
 	{
 		return self->sustain_level;
 	}
 
 	void
-	ADSR::set_release_time (float time)
+	Envelope::set_release_time (float time)
 	{
 		if (time < 0)
 			argument_error(__FILE__, __LINE__);
@@ -139,7 +139,7 @@ namespace Beeps
 	}
 
 	float
-	ADSR::release_time () const
+	Envelope::release_time () const
 	{
 		return self->release_time;
 	}
@@ -157,11 +157,11 @@ namespace Beeps
 	}
 
 	static void
-	process_envelope_signals (ADSR* adsr, Signals* signals)
+	process_envelope_signals (Envelope* envelope, Signals* signals)
 	{
-		assert(adsr && signals && signals->nchannels() == 1);
+		assert(envelope && signals && signals->nchannels() == 1);
 
-		ADSR::Data* self = adsr->self.get();
+		Envelope::Data* self = envelope->self.get();
 
 		Frames* frames = Signals_get_frames(signals);
 		assert(frames);
@@ -214,7 +214,7 @@ namespace Beeps
 	}
 
 	void
-	ADSR::filter (Context* context, Signals* signals, uint* offset)
+	Envelope::filter (Context* context, Signals* signals, uint* offset)
 	{
 		Super::filter(context, signals, offset);
 
@@ -231,7 +231,7 @@ namespace Beeps
 		Signals_multiply(signals, self->adsr_signals);
 	}
 
-	ADSR::operator bool () const
+	Envelope::operator bool () const
 	{
 		if (!Super::operator bool()) return false;
 		return

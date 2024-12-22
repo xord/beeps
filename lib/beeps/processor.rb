@@ -75,7 +75,7 @@ module Beeps
   end# Gain
 
 
-  class ADSR
+  class Envelope
 
     def note_on(delay = 0)
       note_on! delay
@@ -96,7 +96,7 @@ module Beeps
     alias release= release_time=
     alias release  release_time
 
-  end# ADSR
+  end# Envelope
 
 
   class TimeStretch
