@@ -9,6 +9,7 @@ void Init_beeps_sound_player ();
 void Init_beeps_processor ();
 
 void Init_beeps_oscillator ();
+void Init_beeps_sequencer ();
 void Init_beeps_file_in ();
 void Init_beeps_mic_in ();
 
@@ -38,6 +39,7 @@ extern "C" void
 	Init_beeps_processor();
 
 	Init_beeps_oscillator();
+	Init_beeps_sequencer();
 	Init_beeps_file_in();
 	Init_beeps_mic_in();
 

@@ -46,6 +46,37 @@ namespace Beeps
 	};// Oscillator
 
 
+	class Sequencer : public Generator
+	{
+
+		typedef Generator Super;
+
+		public:
+
+			Sequencer ();
+
+			virtual ~Sequencer ();
+
+			virtual void add    (Processor* processor, float offset, float duration);
+
+			virtual void remove (Processor* processor, float offset);
+
+			virtual void set_time_scale (float scale);
+
+			virtual float    time_scale () const;
+
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
+
+			virtual operator bool () const override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// Sequencer
+
+
 	class FileIn : public Generator
 	{
 
