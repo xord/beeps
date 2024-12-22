@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include "SineWave.h"
+#include "Blit.h"
 #include "BlitSquare.h"
 #include "BlitSaw.h"
 #include "beeps/exception.h"
@@ -13,6 +14,70 @@ namespace Beeps
 {
 
 
+	class Osc
+	{
+
+		public:
+
+			virtual ~Osc () {}
+
+			virtual void reset () = 0;
+
+			virtual void tick (Frames* frames) = 0;
+
+			virtual void set_frequency (float freq) = 0;
+
+	};// Osc
+
+
+	template <typename OSC>
+	class StkOsc : public Osc
+	{
+
+		public:
+
+			void reset () override
+			{
+				osc.reset();
+			}
+
+			void tick (Frames* frames) override
+			{
+				osc.tick(*frames);
+			}
+
+			void set_frequency (float freq) override
+			{
+				osc.setFrequency(freq);
+			}
+
+		protected:
+
+			OSC osc;
+
+	};// StkOsc
+
+
+	typedef StkOsc<stk::SineWave>   SineOsc;
+
+	typedef StkOsc<stk::BlitSquare> SquareOsc;
+
+	typedef StkOsc<stk::BlitSaw>    SawtoothOsc;
+
+
+	class TriangleOsc : public StkOsc<stk::Blit>
+	{
+
+		public:
+
+			TriangleOsc ()
+			{
+				osc.setHarmonics(10);
+			}
+
+	};// TriangleOsc
+
+
 	struct Oscillator::Data
 	{
 
@@ -20,11 +85,7 @@ namespace Beeps
 
 		float frequency = 440;
 
-		std::unique_ptr<stk::SineWave> sine;
-
-		std::unique_ptr<stk::BlitSquare> square;
-
-		std::unique_ptr<stk::BlitSaw> saw;
+		std::unique_ptr<Osc> osc;
 
 	};// Oscillator::Data
 
@@ -42,10 +103,7 @@ namespace Beeps
 	Oscillator::reset ()
 	{
 		Super::reset();
-
-		if (self->sine)   self->sine->reset();
-		if (self->square) self->square->reset();
-		if (self->saw)    self->saw->reset();
+		self->osc->reset();
 	}
 
 	void
@@ -54,16 +112,14 @@ namespace Beeps
 		if (type == self->type) return;
 
 		self->type = type;
-
-		self->sine  .reset();
-		self->square.reset();
-		self->saw   .reset();
+		self->osc.reset();
 
 		switch (self->type)
 		{
-			case SINE:     self->sine  .reset(new stk::SineWave());   break;
-			case SQUARE:   self->square.reset(new stk::BlitSquare()); break;
-			case SAWTOOTH: self->saw   .reset(new stk::BlitSaw());    break;
+			case SINE:     self->osc.reset(new SineOsc());     break;
+			case TRIANGLE: self->osc.reset(new TriangleOsc()); break;
+			case SQUARE:   self->osc.reset(new SquareOsc());   break;
+			case SAWTOOTH: self->osc.reset(new SawtoothOsc()); break;
 			default:
 				argument_error(
 					__FILE__, __LINE__, "unknown oscilator type '%d'", self->type);
@@ -105,31 +161,8 @@ namespace Beeps
 		if (!frames)
 			argument_error(__FILE__, __LINE__);
 
-		switch (self->type)
-		{
-			case SINE:
-				assert(self->sine);
-				self->sine->setFrequency(self->frequency);
-				self->sine->tick(*frames);
-				break;
-
-			case SQUARE:
-				assert(self->square);
-				self->square->setFrequency(self->frequency);
-				self->square->tick(*frames);
-				break;
-
-			case SAWTOOTH:
-				assert(self->saw);
-				self->saw->setFrequency(self->frequency);
-				self->saw->tick(*frames);
-				break;
-
-			default:
-				invalid_state_error(
-					__FILE__, __LINE__, "unknown oscilator type '%d'", self->type);
-				break;
-		}
+		self->osc->set_frequency(self->frequency);
+		self->osc->tick(frames);
 
 		Signals_set_nsamples(signals, frames->nframes());
 	}
@@ -137,9 +170,7 @@ namespace Beeps
 	Oscillator::operator bool () const
 	{
 		if (!Super::operator bool()) return false;
-		return
-			self->type != TYPE_NONE && self->frequency > 0 &&
-			(self->sine || self->square || self->saw);
+		return self->type != TYPE_NONE && self->frequency > 0 && self->osc;
 	}
 
 
