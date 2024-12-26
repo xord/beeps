@@ -34,14 +34,9 @@ namespace Beeps
 
 		float time_scale = 1;
 
-		float to_time (const Signals& signals, uint nsamples) const
+		uint sec2nsample (const Signals& signals, float sec) const
 		{
-			return nsamples / signals.sample_rate() * time_scale;
-		}
-
-		uint from_time (const Signals& signals, float time) const
-		{
-			return time * signals.sample_rate() / time_scale;
+			return sec * signals.sample_rate() / time_scale;
 		}
 
 	};// Sequencer::Data
@@ -119,36 +114,40 @@ namespace Beeps
 		auto& signals = *psignals;
 		Signals_resize(&signals, signals.capacity(), 0);
 
-		float generate_begin = self->to_time(signals, *offset);
-		float generate_end   = self->to_time(signals, *offset + signals.capacity());
+		uint generate_begin  = *offset;
+		uint generate_end    = *offset + signals.capacity();
 		Signals note_signals = Signals_create(
 			signals.capacity(), signals.nchannels(), signals.sample_rate());
 
 		uint nsamples = 0;
 		for (auto& note : self->notes)
 		{
-			float note_begin = note.offset;
-			float note_end   = note.offset + note.duration;
-			if (note_end < generate_begin) continue;
-			if (generate_end < note_begin) break;
+			uint note_begin = self->sec2nsample(signals, note.offset);
+			uint note_end   = self->sec2nsample(signals, note.offset + note.duration);
+			if (note_end <= generate_begin) continue;
+			if (generate_end <= note_begin)
+			{
+				nsamples = generate_end - generate_begin;
+				break;
+			}
 
-			float begin = std::max(generate_begin, note_begin);
-			float end   = std::min(generate_end,   note_end);
-			if (begin == end) continue;
+			uint begin = std::max(generate_begin, note_begin);
+			uint end   = std::min(generate_end,   note_end);
+			assert(begin != end);
 
-			uint note_offset = self->from_time(signals, begin - note_begin);
-			Signals_clear(&note_signals, self->from_time(signals, end - begin));
+			uint note_offset = begin - note_begin;
+			Signals_clear(&note_signals, end - begin);
 			context.process(note.processor.get(), &note_signals, &note_offset);
 
-			uint note_begin_offset =
-				self->from_time(signals, note_begin - generate_begin);
-			mix(&signals, note_signals, note_begin_offset);
+			uint mix_offset  = begin - generate_begin;
+			mix(&signals, note_signals, mix_offset);
 
-			if (note_begin_offset + note_signals.nsamples() > nsamples)
-				nsamples = note_begin_offset + note_signals.nsamples();
+			if (mix_offset + note_signals.nsamples() > nsamples)
+				nsamples = mix_offset + note_signals.nsamples();
 		}
 
 		Signals_set_nsamples(&signals, nsamples);
+		*offset += nsamples;
 	}
 
 	Sequencer::operator bool () const
