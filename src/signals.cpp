@@ -27,7 +27,9 @@ namespace Beeps
 	Signals
 	Signals_create (uint capacity, uint nchannels, double sample_rate)
 	{
-		if (capacity <= 0 || nchannels <= 0)
+		if (capacity <= 0)
+			argument_error(__FILE__, __LINE__);
+		if (nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
 
 		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
@@ -43,7 +45,11 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, double sample_rate)
 	{
-		if (!channels || nsamples <= 0 || nchannels <= 0)
+		if (!channels)
+			argument_error(__FILE__, __LINE__);
+		if (nsamples <= 0)
+			argument_error(__FILE__, __LINE__);
+		if (nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
 
 		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
@@ -75,7 +81,11 @@ namespace Beeps
 	void
 	Signals_clear (Signals* signals, uint capacity)
 	{
-		if (!signals || !*signals || capacity <= 0)
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+		if (capacity <= 0)
 			argument_error(__FILE__, __LINE__);
 
 		Signals_clear(signals);
@@ -191,7 +201,11 @@ namespace Beeps
 	uint
 	Signals_copy (Signals* to, const Signals& from, uint from_offset)
 	{
-		if (!to || !*to || !from)
+		if (!to)
+			argument_error(__FILE__, __LINE__);
+		if (!*to)
+			argument_error(__FILE__, __LINE__);
+		if (!from)
 			argument_error(__FILE__, __LINE__);
 
 		Signals_clear(to);
@@ -205,9 +219,10 @@ namespace Beeps
 	void
 	Signals_multiply (Signals* signals, const Signals& multiplier)
 	{
-		if (!signals || multiplier.nchannels() != 1)
+		if (!signals)
 			argument_error(__FILE__, __LINE__);
-
+		if (multiplier.nchannels() != 1)
+			argument_error(__FILE__, __LINE__);
 		if (signals->capacity() != multiplier.capacity())
 			argument_error(__FILE__, __LINE__);
 
@@ -231,13 +246,14 @@ namespace Beeps
 	{
 		uint nsamples = nsamples_ < 0 ? samples.nsamples() : (uint) nsamples_;
 
-		if (
-			!signals || !*signals ||
-			signals->nchannels() != samples.nchannels() ||
-			signals->capacity() < nsamples)
-		{
+		if (!signals)
 			argument_error(__FILE__, __LINE__);
-		}
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+		if (signals->nchannels() != samples.nchannels())
+			argument_error(__FILE__, __LINE__);
+		if (signals->capacity() < nsamples)
+			argument_error(__FILE__, __LINE__);
 
 		Frames* f = Signals_get_frames(signals);
 		assert(f);

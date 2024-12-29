@@ -42,7 +42,9 @@ namespace Beeps
 	void
 	OpenAL_init ()
 	{
-		if (global::device || global::context)
+		if (global::device)
+			beeps_error(__FILE__, __LINE__, "already initialized.");
+		if (global::context)
 			beeps_error(__FILE__, __LINE__, "already initialized.");
 
 		global::device = alcOpenDevice(NULL);

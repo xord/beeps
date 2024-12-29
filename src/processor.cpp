@@ -107,17 +107,33 @@ namespace Beeps
 	void
 	Processor::generate (Context* context, Signals* signals, uint* offset)
 	{
-		if (!context || !signals || !*signals || signals->nsamples() > 0 || !offset)
+		if (!context)
+			argument_error(__FILE__, __LINE__);
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+		if (signals->nsamples() > 0)
+			argument_error(__FILE__, __LINE__);
+		if (!offset)
 			argument_error(__FILE__, __LINE__);
 
-		if (!*this || self->input)
+		if (!*this)
+			invalid_state_error(__FILE__, __LINE__);
+		if (self->input)
 			invalid_state_error(__FILE__, __LINE__);
 	}
 
 	void
 	Processor::filter (Context* context, Signals* signals, uint* offset)
 	{
-		if (!context || !signals || !*signals || !offset)
+		if (!context)
+			argument_error(__FILE__, __LINE__);
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+		if (!offset)
 			argument_error(__FILE__, __LINE__);
 
 		if (!*this)

@@ -799,7 +799,9 @@ namespace Beeps
 	{
 		Processor::Ref ref = processor;
 
-		if (!processor || !*processor)
+		if (!processor)
+			argument_error(__FILE__, __LINE__);
+		if (!*processor)
 			argument_error(__FILE__, __LINE__);
 
 		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
