@@ -9,6 +9,7 @@
 #include "beeps/beeps.h"
 #include "beeps/exception.h"
 #include "beeps/generator.h"
+#include "beeps/debug.h"
 #include "openal.h"
 #include "processor.h"
 #include "signals.h"
@@ -29,19 +30,19 @@ namespace Beeps
 	{
 
 		SoundBuffer (bool create = false)
+		:	self(new Data(create))
 		{
-			if (create) self->create();
 		}
 
 		SoundBuffer (const Signals& signals)
+		:	self(new Data(true))
 		{
-			self->create();
 			write(signals);
 		}
 
 		SoundBuffer (ALint id)
+		:	self(new Data(id))
 		{
-			self->id = id;
 		}
 
 		void clear ()
@@ -94,7 +95,7 @@ namespace Beeps
 			return !operator bool();
 		}
 
-		struct Data
+		struct Data : public Xot::NonCopyable
 		{
 
 			void* context = NULL;
@@ -103,14 +104,9 @@ namespace Beeps
 
 			bool owner    = false;
 
-			~Data ()
+			Data (bool create)
 			{
-				clear();
-			}
-
-			void create ()
-			{
-				clear();
+				if (!create) return;
 
 				ALuint id_ = 0;
 				alGenBuffers(1, &id_);
@@ -119,6 +115,16 @@ namespace Beeps
 				context = OpenAL_get_context();
 				id      = id_;
 				owner   = true;
+			}
+
+			Data (ALint id)
+			:	context(OpenAL_get_context()), id(id)
+			{
+			}
+
+			~Data ()
+			{
+				clear();
 			}
 
 			void clear ()
