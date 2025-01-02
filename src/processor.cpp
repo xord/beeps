@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <xot/time.h>
 #include "beeps/exception.h"
+#include "beeps/debug.h"
 
 
 namespace Beeps

@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <ADSR.h>
+#include "beeps/debug.h"
 #include "signals.h"
 
 
