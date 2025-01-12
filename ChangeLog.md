@@ -1,6 +1,14 @@
 # beeps ChangeLog
 
 
+## [v0.3.1] - 2025-01-13
+
+- Add Sequencer class
+- Add 'triangle' type to Oscillator
+- Add LICENSE file
+- Rename: ADSR -> Envelope
+
+
 ## [v0.3] - 2024-07-06
 
 - Support Windows
