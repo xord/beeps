@@ -1,6 +1,12 @@
 # beeps ChangeLog
 
 
+## [v0.3.2] - 2025-01-14
+
+- Update workflow files
+- Set minumum version for runtime dependency
+
+
 ## [v0.3.1] - 2025-01-13
 
 - Add Sequencer class
