@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.3.3] - 2025-01-23
+
+- Update dependencies
+
+
 ## [v0.3.2] - 2025-01-14
 
 - Update workflow files
