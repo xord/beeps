@@ -20,6 +20,8 @@ module Beeps
       Xot::BlockUtil.instance_eval_or_block_call self, &block if block
     end
 
+    universal_accessor :input
+
     def >>(o)
       o.input = self
       o
@@ -29,8 +31,6 @@ module Beeps
       self.input = o
       o
     end
-
-    universal_accessor :input
 
   end# Processor
 
@@ -81,14 +81,14 @@ module Beeps
 
     def initialize(
       attack = nil, decay = nil, sustain = nil, release = nil,
-      **kwargs, &block)
+      *args, **kwargs, &block)
 
       attack_time   attack  if attack
       decay_time    decay   if decay
       sustain_level sustain if sustain
       release_time  release if release
 
-      super(**kwargs, &block)
+      super(*args, **kwargs, &block)
     end
 
     def note_on(delay = 0)
@@ -129,6 +129,8 @@ module Beeps
 
   class Analyser
 
+    universal_accessor :fft_size
+
     def each_signal(nsamples = fft_size, &block)
       return enum_for(:each_signal, nsamples) unless block
       each_signal!(nsamples, &block)
@@ -138,8 +140,6 @@ module Beeps
       return enum_for(:each_spectrum) unless block
       each_spectrum!(&block)
     end
-
-    universal_accessor :fft_size
 
   end# Analyser
 
