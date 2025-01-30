@@ -34,6 +34,10 @@ namespace Beeps
 
 			virtual float    frequency () const;
 
+			virtual void set_phase (float phase);
+
+			virtual float    phase () const;
+
 			virtual void generate (
 				Context* context, Signals* signals, uint* offset) override;
 

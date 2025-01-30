@@ -1,6 +1,7 @@
 #include "beeps/generator.h"
 
 
+#include <cmath>
 #include <assert.h>
 #include "SineWave.h"
 #include "Blit.h"
@@ -12,6 +13,42 @@
 
 namespace Beeps
 {
+
+
+	class SineWave : public stk::SineWave
+	{
+
+		public:
+
+			void setPhase (stk::StkFloat phase)
+			{
+				time_ = std::fmod(phase, 1.f) * TABLE_SIZE;
+			}
+
+			stk::StkFloat getPhase () const
+			{
+				return time_ / TABLE_SIZE;
+			}
+
+	};// BlitSaw
+
+
+	class BlitSaw : public stk::BlitSaw
+	{
+
+		public:
+
+			void setPhase (stk::StkFloat phase)
+			{
+				phase_ = M_PI * phase;
+			}
+
+			stk::StkFloat getPhase () const
+			{
+				return phase_ / M_PI;
+			}
+
+	};// BlitSaw
 
 
 	class Osc
@@ -26,6 +63,10 @@ namespace Beeps
 			virtual void tick (Frames* frames) = 0;
 
 			virtual void set_frequency (float freq) = 0;
+
+			virtual void set_phase (float phase) = 0;
+
+			virtual float    phase () const = 0;
 
 	};// Osc
 
@@ -51,6 +92,16 @@ namespace Beeps
 				osc.setFrequency(freq);
 			}
 
+			void set_phase (float phase) override
+			{
+				osc.setPhase(phase);
+			}
+
+			float phase () const override
+			{
+				return osc.getPhase();
+			}
+
 		protected:
 
 			OSC osc;
@@ -58,11 +109,11 @@ namespace Beeps
 	};// StkOsc
 
 
-	typedef StkOsc<stk::SineWave>   SineOsc;
+	typedef StkOsc<SineWave>        SineOsc;
 
 	typedef StkOsc<stk::BlitSquare> SquareOsc;
 
-	typedef StkOsc<stk::BlitSaw>    SawtoothOsc;
+	typedef StkOsc<BlitSaw>         SawtoothOsc;
 
 
 	class TriangleOsc : public StkOsc<stk::Blit>
@@ -142,7 +193,6 @@ namespace Beeps
 			argument_error(__FILE__, __LINE__);
 
 		self->frequency = frequency;
-
 		set_updated();
 	}
 
@@ -150,6 +200,19 @@ namespace Beeps
 	Oscillator::frequency () const
 	{
 		return self->frequency;
+	}
+
+	void
+	Oscillator::set_phase (float phase)
+	{
+		self->osc->set_phase(phase);
+		set_updated();
+	}
+
+	float
+	Oscillator::phase () const
+	{
+		return self->osc->phase();
 	}
 
 	void

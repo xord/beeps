@@ -57,6 +57,25 @@ RUCY_DEF0(get_frequency)
 }
 RUCY_END
 
+static
+RUCY_DEF1(set_phase, phase)
+{
+	CHECK;
+
+	THIS->set_phase(to<float>(phase));
+	return phase;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_phase)
+{
+	CHECK;
+
+	return value(THIS->phase());
+}
+RUCY_END
+
 
 static Class cOscillator;
 
@@ -71,6 +90,8 @@ Init_beeps_oscillator ()
 	cOscillator.define_method("type",  get_type);
 	cOscillator.define_method("frequency=", set_frequency);
 	cOscillator.define_method("frequency",  get_frequency);
+	cOscillator.define_method("phase=", set_phase);
+	cOscillator.define_method("phase",  get_phase);
 
 	cOscillator.define_const("TYPE_NONE", Beeps::Oscillator::TYPE_NONE);
 	cOscillator.define_const("SINE",      Beeps::Oscillator::SINE);

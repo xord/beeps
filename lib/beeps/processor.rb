@@ -48,10 +48,10 @@ module Beeps
       self.type = type
     end
 
+    universal_accessor :type, :frequency, :phase
+
     alias freq= frequency=
     alias freq  frequency
-
-    universal_accessor :type, :frequency, :freq
 
   end# Oscillator
 
