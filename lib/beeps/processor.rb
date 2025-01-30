@@ -1,6 +1,7 @@
 require 'xot/setter'
 require 'xot/const_symbol_accessor'
 require 'xot/universal_accessor'
+require 'xot/hookable'
 require 'xot/block_util'
 require 'beeps/ext'
 
@@ -11,6 +12,7 @@ module Beeps
   class Processor
 
     include Xot::Setter
+    include Xot::Hookable
 
     def initialize(**options, &block)
       super()

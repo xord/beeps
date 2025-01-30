@@ -21,7 +21,23 @@ namespace Beeps
 
 
 	template <typename T>
-	class RubyProcessor : public Rucy::ClassWrapper<T> {};
+	class RubyProcessor : public Rucy::ClassWrapper<T>
+	{
+
+		typedef Rucy::ClassWrapper<T> Super;
+
+		public:
+
+			virtual void on_start ()
+			{
+				RUCY_SYM(on_start);
+				if (this->is_overridable())
+					this->value.call(on_start);
+				else
+					Super::on_start();
+			}
+
+	};// RubyProcessor
 
 
 }// Beeps

@@ -14,7 +14,7 @@ namespace Beeps
 	struct Processor::Data
 	{
 
-		bool generator = false;
+		bool generator = false, started = false;
 
 		float buffering_seconds = 0;
 
@@ -57,6 +57,7 @@ namespace Beeps
 	void
 	Processor::reset ()
 	{
+		self->started = false;
 		if (self->input) self->input->reset();
 
 		set_updated();
@@ -79,6 +80,11 @@ namespace Beeps
 		return self->input;
 	}
 
+	void
+	Processor::on_start ()
+	{
+	}
+
 	const Processor*
 	Processor::input () const
 	{
@@ -99,6 +105,12 @@ namespace Beeps
 	void
 	Processor::process (Context* context, Signals* signals, uint* offset)
 	{
+		if (!self->started)
+		{
+			self->started = true;
+			on_start();
+		}
+
 		if (self->generator)
 			generate(context, signals, offset);
 		else

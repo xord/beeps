@@ -11,6 +11,8 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Processor)
 
 #define CHECK RUCY_CHECK_OBJ(Beeps::Processor, self)
 
+#define CALL(fun) RUCY_CALL_SUPER(THIS, fun)
+
 
 static
 RUCY_DEF_ALLOC(alloc, klass)
@@ -48,6 +50,14 @@ RUCY_DEF0(get_input)
 }
 RUCY_END
 
+static
+RUCY_DEF0(on_start)
+{
+	CHECK;
+	CALL(on_start());
+}
+RUCY_END
+
 
 static Class cProcessor;
 
@@ -61,6 +71,7 @@ Init_beeps_processor ()
 	cProcessor.define_method("reset", reset);
 	cProcessor.define_method("input=", set_input);
 	cProcessor.define_method("input",  get_input);
+	cProcessor.define_method("on_start", on_start);
 }
 
 
