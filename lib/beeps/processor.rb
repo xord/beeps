@@ -79,6 +79,18 @@ module Beeps
 
   class Envelope
 
+    def initialize(
+      attack = nil, decay = nil, sustain = nil, release = nil,
+      **kwargs, &block)
+
+      attack_time   attack  if attack
+      decay_time    decay   if decay
+      sustain_level sustain if sustain
+      release_time  release if release
+
+      super(**kwargs, &block)
+    end
+
     def note_on(delay = 0)
       note_on! delay
     end
