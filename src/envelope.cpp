@@ -24,10 +24,10 @@ namespace Beeps
 
 		void update_envelope ()
 		{
-			adsr.setAttackTime(   attack_time == 0 ? 0.01 :  attack_time);
+			adsr.setAttackTime(   attack_time == 0 ? 0.005 :  attack_time);
 			adsr.setSustainLevel(sustain_level);
-			adsr.setDecayTime(     decay_time == 0 ? 0.01 :   decay_time);
-			adsr.setReleaseTime( release_time == 0 ? 0.01 : release_time);
+			adsr.setDecayTime(     decay_time == 0 ? 0.005 :   decay_time);
+			adsr.setReleaseTime( release_time == 0 ? 0.005 : release_time);
 		}
 
 	};// Envelope::Data
