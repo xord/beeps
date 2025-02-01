@@ -18,9 +18,14 @@ namespace Beeps
 
 		public:
 
-			enum Type {TYPE_NONE = 0, SINE, TRIANGLE, SQUARE, SAWTOOTH};
+			enum Type
+			{
+				TYPE_NONE = 0, SINE, TRIANGLE, SQUARE, SAWTOOTH, SAMPLES
+			};
 
 			Oscillator (Type type = SINE);
+
+			Oscillator (float* samples, size_t size);
 
 			virtual ~Oscillator ();
 
@@ -29,6 +34,12 @@ namespace Beeps
 			virtual void set_type (Type type);
 
 			virtual Type     type () const;
+
+			virtual void     set_samples (float* samples, size_t size);
+
+			virtual const float* samples () const;
+
+			virtual size_t      nsamples () const;
 
 			virtual void set_frequency (float frequency);
 

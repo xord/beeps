@@ -98,6 +98,11 @@ namespace Beeps
 				bufferSize_ = saved_bufferSize_;
 			}
 
+			uint sample_rate () const
+			{
+				return dataRate();
+			}
+
 			uint nchannels () const
 			{
 				return nChannels_;

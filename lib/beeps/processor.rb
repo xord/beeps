@@ -37,23 +37,36 @@ module Beeps
 
   class Oscillator
 
+    include Enumerable
+
     const_symbol_accessor :type, **{
       none:     TYPE_NONE,
       sine:     SINE,
       triangle: TRIANGLE,
       square:   SQUARE,
-      sawtooth: SAWTOOTH
+      sawtooth: SAWTOOTH,
+      samples:  SAMPLES
     }
 
-    def initialize(type = :sine, *args, **kwargs, &block)
+    def initialize(type = :sine, *args, samples: nil, **kwargs, &block)
       super(*args, **kwargs, &block)
-      self.type = type
+      if samples
+        self.samples = samples
+      else
+        self.type = type
+      end
     end
 
     universal_accessor :type, :frequency, :phase
 
     alias freq= frequency=
     alias freq  frequency
+
+    def each_sample(&block)
+      block ? each_sample!(&block) : enum_for(:each_sample!)
+    end
+
+    alias each each_sample
 
   end# Oscillator
 

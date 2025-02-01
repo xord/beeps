@@ -1,8 +1,9 @@
 #include "beeps/generator.h"
 
 
-#include <cmath>
 #include <assert.h>
+#include <cmath>
+#include <vector>
 #include "SineWave.h"
 #include "Blit.h"
 #include "BlitSquare.h"
@@ -69,6 +70,78 @@ namespace Beeps
 			virtual float    phase () const = 0;
 
 	};// Osc
+
+
+	class WaveformOsc : public Osc
+	{
+
+		public:
+
+			typedef std::vector<float> Table;
+
+			WaveformOsc (float* samples, size_t nsamples, float frequency)
+			:	table(samples, samples + nsamples), freq(frequency), time(0)
+			{
+			}
+
+			void reset () override
+			{
+				time = 0;
+			}
+
+			void tick (Frames* frames) override
+			{
+				size_t size = table.size();
+				float dt    = size * freq / frames->sample_rate();
+
+				uint nchannels = frames->nchannels();
+				uint nframes   = frames->nframes();
+				Float* pframe = &(*frames)(0, 0);
+				for (uint i = 0; i < nframes; ++i, ++pframe)
+				{
+					uint ch = i % nchannels;
+					if (ch == 0)
+					{
+						size_t index0 = (size_t) time;
+						size_t index1 = index0 == size - 1 ? 0 : index0 + 1;
+						float frac    = time - index0;
+						*pframe       = table[index0] * (1.f - frac) + table[index1] * frac;
+
+						time += dt;
+						while (time >= size) time -= size;
+					}
+					else
+						*pframe = pframe[-ch];
+				}
+			}
+
+			void set_frequency (float freq) override
+			{
+				this->freq = freq;
+			}
+
+			void set_phase (float phase) override
+			{
+				this->time = std::fmod(phase, 1.f) * table.size();
+			}
+
+			float phase () const override
+			{
+				return time / table.size();
+			}
+
+			const Table& samples () const
+			{
+				return table;
+			}
+
+		private:
+
+			Table table;
+
+			float freq, time;
+
+	};// WaveformOsc
 
 
 	template <typename OSC>
@@ -146,6 +219,11 @@ namespace Beeps
 		set_type(type);
 	}
 
+	Oscillator::Oscillator (float* samples, size_t size)
+	{
+		set_samples(samples, size);
+	}
+
 	Oscillator::~Oscillator ()
 	{
 	}
@@ -184,6 +262,38 @@ namespace Beeps
 	Oscillator::type () const
 	{
 		return self->type;
+	}
+
+	void
+	Oscillator::set_samples (float* samples, size_t size)
+	{
+		float phase = self->osc ? self->osc->phase() : 0;
+
+		self->type = SAMPLES;
+		self->osc.reset(new WaveformOsc(samples, size, frequency()));
+		self->osc->set_phase(phase);
+
+		set_updated();
+	}
+
+	const float*
+	Oscillator::samples () const
+	{
+		if (self->type != SAMPLES)
+			return NULL;
+
+		auto* osc = (const WaveformOsc*) self->osc.get();
+		return &osc->samples()[0];
+	}
+
+	size_t
+	Oscillator::nsamples () const
+	{
+		if (self->type != SAMPLES)
+			return 0;
+
+		auto* osc = (WaveformOsc*) self->osc.get();
+		return osc->samples().size();
 	}
 
 	void

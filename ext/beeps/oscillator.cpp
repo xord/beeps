@@ -39,6 +39,39 @@ RUCY_DEF0(get_type)
 RUCY_END
 
 static
+RUCY_DEF1(set_samples, samples)
+{
+	CHECK;
+
+	Value* array = samples.as_array();
+	size_t size  = samples.size();
+
+	std::vector<float> floats;
+	floats.reserve(size);
+	for (size_t i = 0; i < size; ++i)
+		floats.push_back(to<float>(array[i]));
+
+	THIS->set_samples(&floats[0], floats.size());
+}
+RUCY_END
+
+static
+RUCY_DEF0(each_sample)
+{
+	CHECK;
+
+	const float* floats = THIS->samples();
+	size_t size         = THIS->nsamples();
+	if (!floats || size == 0) return Qnil;
+
+	Value ret;
+	for (size_t i = 0; i < size; ++i)
+		ret = rb_yield(value(floats[i]));
+	return ret;
+}
+RUCY_END
+
+static
 RUCY_DEF1(set_frequency, frequency)
 {
 	CHECK;
@@ -88,6 +121,8 @@ Init_beeps_oscillator ()
 	cOscillator.define_alloc_func(alloc);
 	cOscillator.define_method("type=", set_type);
 	cOscillator.define_method("type",  get_type);
+	cOscillator.define_method(     "samples=", set_samples);
+	cOscillator.define_method("each_sample!", each_sample);
 	cOscillator.define_method("frequency=", set_frequency);
 	cOscillator.define_method("frequency",  get_frequency);
 	cOscillator.define_method("phase=", set_phase);
@@ -98,6 +133,7 @@ Init_beeps_oscillator ()
 	cOscillator.define_const("TRIANGLE",  Beeps::Oscillator::TRIANGLE);
 	cOscillator.define_const("SQUARE",    Beeps::Oscillator::SQUARE);
 	cOscillator.define_const("SAWTOOTH",  Beeps::Oscillator::SAWTOOTH);
+	cOscillator.define_const("SAMPLES",   Beeps::Oscillator::SAMPLES);
 }
 
 
