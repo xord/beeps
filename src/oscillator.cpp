@@ -268,6 +268,8 @@ namespace Beeps
 	{
 		if (type == self->type) return;
 
+		float phase = self->osc ? self->osc->phase() : 0;
+
 		self->type = type;
 		self->osc.reset();
 
@@ -283,6 +285,8 @@ namespace Beeps
 					__FILE__, __LINE__, "unknown oscilator type '%d'", self->type);
 				break;
 		}
+
+		self->osc->set_phase(phase);
 
 		set_updated();
 	}
