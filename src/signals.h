@@ -63,7 +63,7 @@ namespace Beeps
 
 		public:
 
-			Frames (unsigned int nframes = 0, unsigned int nchannels = 0)
+			Frames (unsigned int nframes = 0, unsigned int nchannels = 1)
 			:	stk::StkFrames(nframes, nchannels)
 			{
 			}

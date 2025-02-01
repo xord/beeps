@@ -170,7 +170,7 @@ namespace Beeps
 	};// WaveformOsc
 
 
-	template <typename OSC>
+	template <typename OSC, uint DROP_MSEC>
 	class StkOsc : public Osc
 	{
 
@@ -179,10 +179,18 @@ namespace Beeps
 			void reset () override
 			{
 				osc.reset();
+				drop_msec = DROP_MSEC;
 			}
 
 			void tick (Frames* frames) override
 			{
+				if (drop_msec > 0)
+				{
+					Frames f((uint) (frames->dataRate() * (drop_msec / 1000.0)));
+					osc.tick(f);
+					drop_msec = 0;
+				}
+
 				osc.tick(*frames);
 			}
 
@@ -205,16 +213,18 @@ namespace Beeps
 
 			OSC osc;
 
+			uint drop_msec = DROP_MSEC;
+
 	};// StkOsc
 
 
-	typedef StkOsc<SineWave>        SineOsc;
+	typedef StkOsc<SineWave,          0> SineOsc;
 
-	typedef StkOsc<stk::BlitSquare> SquareOsc;
+	typedef StkOsc<stk::BlitSquare, 100> SquareOsc;
 
-	typedef StkOsc<BlitSaw>         SawtoothOsc;
+	typedef StkOsc<BlitSaw,         200> SawtoothOsc;
 
-	typedef StkOsc<Noise>           NoiseOsc;
+	typedef StkOsc<Noise,             0> NoiseOsc;
 
 
 	class TriangleOsc : public StkOsc<stk::Blit>
