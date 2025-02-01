@@ -32,7 +32,7 @@ namespace Beeps
 				return time_ / TABLE_SIZE;
 			}
 
-	};// BlitSaw
+	};// SineWave
 
 
 	class BlitSaw : public stk::BlitSaw
@@ -96,6 +96,76 @@ namespace Beeps
 			virtual float    phase () const = 0;
 
 	};// Osc
+
+
+	template <typename OSC, uint DROP_MSEC>
+	class StkOsc : public Osc
+	{
+
+		public:
+
+			void reset () override
+			{
+				osc.reset();
+				drop_msec = DROP_MSEC;
+			}
+
+			void tick (Frames* frames) override
+			{
+				if (drop_msec > 0)
+				{
+					Frames f((uint) (frames->dataRate() * (drop_msec / 1000.0)));
+					osc.tick(f);
+					drop_msec = 0;
+				}
+
+				osc.tick(*frames);
+			}
+
+			void set_frequency (float freq) override
+			{
+				osc.setFrequency(freq);
+			}
+
+			void set_phase (float phase) override
+			{
+				osc.setPhase(phase);
+			}
+
+			float phase () const override
+			{
+				return osc.getPhase();
+			}
+
+		protected:
+
+			OSC osc;
+
+			uint drop_msec = DROP_MSEC;
+
+	};// StkOsc
+
+
+	typedef StkOsc<SineWave,          0> SineOsc;
+
+	typedef StkOsc<stk::BlitSquare, 100> SquareOsc;
+
+	typedef StkOsc<BlitSaw,         200> SawtoothOsc;
+
+	typedef StkOsc<Noise,             0> NoiseOsc;
+
+
+	class TriangleOsc : public StkOsc<stk::Blit, 0>
+	{
+
+		public:
+
+			TriangleOsc ()
+			{
+				osc.setHarmonics(10);
+			}
+
+	};// TriangleOsc
 
 
 	class WaveformOsc : public Osc
@@ -168,76 +238,6 @@ namespace Beeps
 			float freq, time;
 
 	};// WaveformOsc
-
-
-	template <typename OSC, uint DROP_MSEC>
-	class StkOsc : public Osc
-	{
-
-		public:
-
-			void reset () override
-			{
-				osc.reset();
-				drop_msec = DROP_MSEC;
-			}
-
-			void tick (Frames* frames) override
-			{
-				if (drop_msec > 0)
-				{
-					Frames f((uint) (frames->dataRate() * (drop_msec / 1000.0)));
-					osc.tick(f);
-					drop_msec = 0;
-				}
-
-				osc.tick(*frames);
-			}
-
-			void set_frequency (float freq) override
-			{
-				osc.setFrequency(freq);
-			}
-
-			void set_phase (float phase) override
-			{
-				osc.setPhase(phase);
-			}
-
-			float phase () const override
-			{
-				return osc.getPhase();
-			}
-
-		protected:
-
-			OSC osc;
-
-			uint drop_msec = DROP_MSEC;
-
-	};// StkOsc
-
-
-	typedef StkOsc<SineWave,          0> SineOsc;
-
-	typedef StkOsc<stk::BlitSquare, 100> SquareOsc;
-
-	typedef StkOsc<BlitSaw,         200> SawtoothOsc;
-
-	typedef StkOsc<Noise,             0> NoiseOsc;
-
-
-	class TriangleOsc : public StkOsc<stk::Blit>
-	{
-
-		public:
-
-			TriangleOsc ()
-			{
-				osc.setHarmonics(10);
-			}
-
-	};// TriangleOsc
 
 
 	struct Oscillator::Data
