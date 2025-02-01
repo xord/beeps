@@ -133,6 +133,7 @@ Init_beeps_oscillator ()
 	cOscillator.define_const("TRIANGLE",  Beeps::Oscillator::TRIANGLE);
 	cOscillator.define_const("SQUARE",    Beeps::Oscillator::SQUARE);
 	cOscillator.define_const("SAWTOOTH",  Beeps::Oscillator::SAWTOOTH);
+	cOscillator.define_const("NOISE",     Beeps::Oscillator::NOISE);
 	cOscillator.define_const("SAMPLES",   Beeps::Oscillator::SAMPLES);
 }
 

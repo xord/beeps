@@ -8,6 +8,7 @@
 #include "Blit.h"
 #include "BlitSquare.h"
 #include "BlitSaw.h"
+#include "Noise.h"
 #include "beeps/exception.h"
 #include "signals.h"
 
@@ -50,6 +51,31 @@ namespace Beeps
 			}
 
 	};// BlitSaw
+
+
+	class Noise : public stk::Noise
+	{
+
+		public:
+
+			void reset ()
+			{
+			}
+
+			void setFrequency (stk::StkFloat frequency)
+			{
+			}
+
+			void setPhase (stk::StkFloat phase)
+			{
+			}
+
+			stk::StkFloat getPhase () const
+			{
+				return 0;
+			}
+
+	};// Noise
 
 
 	class Osc
@@ -188,6 +214,8 @@ namespace Beeps
 
 	typedef StkOsc<BlitSaw>         SawtoothOsc;
 
+	typedef StkOsc<Noise>           NoiseOsc;
+
 
 	class TriangleOsc : public StkOsc<stk::Blit>
 	{
@@ -249,6 +277,7 @@ namespace Beeps
 			case TRIANGLE: self->osc.reset(new TriangleOsc()); break;
 			case SQUARE:   self->osc.reset(new SquareOsc());   break;
 			case SAWTOOTH: self->osc.reset(new SawtoothOsc()); break;
+			case NOISE:    self->osc.reset(new NoiseOsc());    break;
 			default:
 				argument_error(
 					__FILE__, __LINE__, "unknown oscilator type '%d'", self->type);

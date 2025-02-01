@@ -45,6 +45,7 @@ module Beeps
       triangle: TRIANGLE,
       square:   SQUARE,
       sawtooth: SAWTOOTH,
+      noise:    NOISE,
       samples:  SAMPLES
     }
 

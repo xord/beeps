@@ -20,7 +20,7 @@ namespace Beeps
 
 			enum Type
 			{
-				TYPE_NONE = 0, SINE, TRIANGLE, SQUARE, SAWTOOTH, SAMPLES
+				TYPE_NONE = 0, SINE, TRIANGLE, SQUARE, SAWTOOTH, NOISE, SAMPLES
 			};
 
 			Oscillator (Type type = SINE);
