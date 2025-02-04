@@ -22,11 +22,6 @@ namespace Beeps
 
 		Processor::Ref input;
 
-		bool has_generator () const
-		{
-			return generator || (input && input->self->has_generator());
-		}
-
 	};// Processor::Data
 
 
@@ -93,7 +88,7 @@ namespace Beeps
 
 	Processor::operator bool () const
 	{
-		return self->has_generator();
+		return self->generator || (self->input && *self->input);
 	}
 
 	bool

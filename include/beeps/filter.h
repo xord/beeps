@@ -37,6 +37,47 @@ namespace Beeps
 	};// Gain
 
 
+	class Mixer : public Filter
+	{
+
+		typedef Filter Super;
+
+		public:
+
+			typedef std::vector<Processor::Ref> InputList;
+
+			typedef InputList::      iterator       iterator;
+
+			typedef InputList::const_iterator const_iterator;
+
+			Mixer (Processor* input = NULL);
+
+			virtual ~Mixer ();
+
+			virtual void    add_input (Processor* input);
+
+			virtual void remove_input (Processor* input);
+
+			virtual       iterator begin ();
+
+			virtual const_iterator begin () const;
+
+			virtual       iterator end ();
+
+			virtual const_iterator end () const;
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
+
+			virtual operator bool () const override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// Mixer
+
+
 	class Envelope : public Filter
 	{
 

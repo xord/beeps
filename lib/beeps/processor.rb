@@ -91,6 +91,27 @@ module Beeps
   end# Gain
 
 
+  class Mixer
+
+    include Enumerable
+
+    def add_input(*inputs)
+      add_input! inputs.flatten.compact
+    end
+
+    def remove_input(*inputs)
+      remove_input! inputs.flatten.compact
+    end
+
+    def each_input(&block)
+      block ? each_input!(&block) : enum_for(:each_input!)
+    end
+
+    alias each each_input
+
+  end# Mixer
+
+
   class Envelope
 
     def initialize(

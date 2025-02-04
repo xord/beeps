@@ -217,6 +217,24 @@ namespace Beeps
 	}
 
 	void
+	Signals_add (Signals* signals, const Signals& add)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (signals->nchannels() != add.nchannels())
+			argument_error(__FILE__, __LINE__);
+
+		Frames* sigf = Signals_get_frames(signals);
+		Frames* addf = Signals_get_frames(const_cast<Signals*>(&add));
+		Float* sigp  = &(*sigf)(0, 0);
+		Float* addp  = &(*addf)(0, 0);
+		uint nframes = std::min(sigf->nframes(), addf->nframes());
+
+		for (uint i = 0; i < nframes; ++i, ++sigp, ++addp)
+			*sigp += *addp;
+	}
+
+	void
 	Signals_multiply (Signals* signals, const Signals& multiplier)
 	{
 		if (!signals)
@@ -226,16 +244,16 @@ namespace Beeps
 		if (signals->capacity() != multiplier.capacity())
 			argument_error(__FILE__, __LINE__);
 
-		Frames* sigf = Signals_get_frames(signals);
-		Frames* mulf = Signals_get_frames(const_cast<Signals*>(&multiplier));
-		uint nframes = sigf->nframes();
-		uint stride  = sigf->nchannels();
+		Frames* sigf   = Signals_get_frames(signals);
+		Frames* mulf   = Signals_get_frames(const_cast<Signals*>(&multiplier));
+		uint nchannels = sigf->nchannels();
+		uint nframes   = sigf->nframes();
 
-		for (uint ch = 0; ch < sigf->nchannels(); ++ch)
+		for (uint ch = 0; ch < nchannels; ++ch)
 		{
 			Float* sigp = &(*sigf)(0, ch);
 			Float* mulp = &(*mulf)(0, 0);
-			for (uint i = 0; i < nframes; ++i, sigp += stride, ++mulp)
+			for (uint i = 0; i < nframes; i += nchannels, sigp += nchannels, ++mulp)
 				*sigp *= *mulp;
 		}
 	}

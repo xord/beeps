@@ -39,6 +39,8 @@ namespace Beeps
 
 	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
 
+	void Signals_add (     Signals* signals, const Signals& add);
+
 	void Signals_multiply (Signals* signals, const Signals& multiplier);
 
 	template <typename T>
