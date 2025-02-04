@@ -55,8 +55,8 @@ module Beeps
       samples:  SAMPLES
     }
 
-    def initialize(type = :sine, *args, samples: nil, **kwargs, &block)
-      super(*args, **kwargs, &block)
+    def initialize(type = :sine, samples: nil, **kwargs, &block)
+      super(**kwargs, &block)
       if samples
         self.samples = samples
       else
@@ -80,8 +80,8 @@ module Beeps
 
   class FileIn
 
-    def initialize(path = nil, *args, **kwargs, &block)
-      super(*args, **kwargs, &block)
+    def initialize(path = nil, **kwargs, &block)
+      super(**kwargs, &block)
       self.path = path if path
     end
 
