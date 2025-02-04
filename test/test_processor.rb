@@ -34,7 +34,7 @@ class TestProcessor < Test::Unit::TestCase
     assert_equal gain1, gain2.input
   end
 
-  def test_shift_left()
+  def _test_shift_left()
     osc   = B::Oscillator.new
     gain1 = B::Gain.new
     gain2 = B::Gain.new

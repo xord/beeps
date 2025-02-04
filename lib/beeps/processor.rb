@@ -33,10 +33,10 @@ module Beeps
       processor
     end
 
-    def <<(processors)
-      self.add_input(*processors)
-      self
-    end
+    #def <<(processors)
+    #  self.add_input(*processors)
+    #  self
+    #end
 
   end# Processor
 
