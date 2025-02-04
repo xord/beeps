@@ -14,21 +14,27 @@ module Beeps
     include Xot::Setter
     include Xot::Hookable
 
-    def initialize(**options, &block)
+    def initialize(*inputs, **options, &block)
       super()
+      add_input(*inputs)
       set options unless options.empty?
       Xot::BlockUtil.instance_eval_or_block_call self, &block if block
     end
 
     universal_accessor :input
 
+    def add_input(*inputs)
+      last       = inputs.flatten.compact.last
+      self.input = last if last
+    end
+
     def >>(o)
-      o.input = self
+      o.add_input self
       o
     end
 
     def <<(o)
-      self.input = o
+      self.add_input(*o)
       o
     end
 
