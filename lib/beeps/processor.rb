@@ -28,14 +28,14 @@ module Beeps
       self.input = last if last
     end
 
-    def >>(o)
-      o.add_input self
-      o
+    def >>(processor)
+      processor.add_input self
+      processor
     end
 
-    def <<(o)
-      self.add_input(*o)
-      o
+    def <<(processors)
+      self.add_input(*processors)
+      self
     end
 
   end# Processor
