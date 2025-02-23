@@ -34,5 +34,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = rdocs.to_a
   s.has_rdoc         = true
 
+  s.metadata['msys2_mingw_dependencies'] = 'openal'
+
   s.extensions << 'Rakefile'
 end
