@@ -11,6 +11,9 @@ namespace Beeps
 {
 
 
+	static const float TIME_ZERO = 0.0000001;
+
+
 	struct Envelope::Data
 	{
 
@@ -18,16 +21,19 @@ namespace Beeps
 
 		Signals adsr_signals;
 
-		float attack_time = 0, decay_time = 0, sustain_level = 1, release_time = 0;
+		float attack_time   = 0.005;
+		float decay_time    = 0.005;
+		float sustain_level = 0.5;
+		float release_time  = 0.005;
 
 		float time = 0, note_on_time = -1, note_off_time = -1;
 
 		void update_envelope ()
 		{
-			adsr.setAttackTime(   attack_time == 0 ? 0.005 :  attack_time);
 			adsr.setSustainLevel(sustain_level);
-			adsr.setDecayTime(     decay_time == 0 ? 0.005 :   decay_time);
-			adsr.setReleaseTime( release_time == 0 ? 0.005 : release_time);
+			adsr.setAttackTime(  attack_time == 0 ? TIME_ZERO :  attack_time);
+			adsr.setDecayTime(    decay_time == 0 ? TIME_ZERO :   decay_time);
+			adsr.setReleaseTime(release_time == 0 ? TIME_ZERO : release_time);
 		}
 
 	};// Envelope::Data
@@ -54,6 +60,9 @@ namespace Beeps
 			self->note_off_time = -1;
 
 		self->note_on_time = on;
+
+		if (self->attack_time == 0)
+			self->adsr.setValue(self->sustain_level);// skip attack phase
 
 		set_updated();
 	}
