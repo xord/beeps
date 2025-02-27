@@ -92,6 +92,10 @@ module Beeps
 
   class Gain
 
+    def initialize(gain = 1, **kwargs, &block)
+      super(gain: gain, **kwargs, &block)
+    end
+
     universal_accessor :gain
 
   end# Gain
