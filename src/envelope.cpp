@@ -61,9 +61,6 @@ namespace Beeps
 
 		self->note_on_time = on;
 
-		if (self->attack_time == 0)
-			self->adsr.setValue(self->sustain_level);// skip attack phase
-
 		set_updated();
 	}
 
@@ -175,6 +172,9 @@ namespace Beeps
 
 		Frames* frames = Signals_get_frames(signals);
 		assert(frames);
+
+		if (self->time == 0 && self->attack_time == 0)
+			self->adsr.setValue(self->sustain_level);// skip attack phase
 
 		float start = self->time;
 		float end   = start + Signals_get_seconds(*signals);
