@@ -23,7 +23,7 @@ namespace Beeps
 
 		float attack_time   = 0.005;
 		float decay_time    = 0.005;
-		float sustain_level = 0.5;
+		float sustain_level = 1;
 		float release_time  = 0.005;
 
 		float time = 0, note_on_time = -1, note_off_time = -1;
