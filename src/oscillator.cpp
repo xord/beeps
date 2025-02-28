@@ -8,7 +8,6 @@
 #include "Blit.h"
 #include "BlitSquare.h"
 #include "BlitSaw.h"
-#include "Noise.h"
 #include "beeps/exception.h"
 #include "signals.h"
 
@@ -51,31 +50,6 @@ namespace Beeps
 			}
 
 	};// BlitSaw
-
-
-	class Noise : public stk::Noise
-	{
-
-		public:
-
-			void reset ()
-			{
-			}
-
-			void setFrequency (stk::StkFloat frequency)
-			{
-			}
-
-			void setPhase (stk::StkFloat phase)
-			{
-			}
-
-			stk::StkFloat getPhase () const
-			{
-				return 0;
-			}
-
-	};// Noise
 
 
 	class Osc
@@ -152,8 +126,6 @@ namespace Beeps
 
 	typedef StkOsc<BlitSaw,         200> SawtoothOsc;
 
-	typedef StkOsc<Noise,             0> NoiseOsc;
-
 
 	class TriangleOsc : public StkOsc<stk::Blit, 0>
 	{
@@ -166,6 +138,92 @@ namespace Beeps
 			}
 
 	};// TriangleOsc
+
+
+	class NoiseOsc : public Osc
+	{
+
+		public:
+
+			void reset () override
+			{
+				time = 0;
+			}
+
+			void tick (Frames* frames) override
+			{
+				if (0 < freq && (freq * 2) <= frames->sample_rate())
+					tick_with_freq(frames);
+				else
+					tick_without_freq(frames);
+			}
+
+			void set_frequency (float freq) override
+			{
+				this->freq = freq;
+			}
+
+			void set_phase (float phase) override
+			{
+				time = freq == 0 ? 0 : phase * (1.f / freq);
+			}
+
+			float phase () const override
+			{
+				return freq == 0 ? 0 : time / (1.f / freq);
+			}
+
+		private:
+
+			float freq  = 0;
+
+			double time = 0;
+
+			void tick_without_freq (Frames* frames)
+			{
+				uint nchannels = frames->nchannels();
+				uint nframes   = frames->nframes();
+				Float* pframe  = &(*frames)(0, 0);
+				for (uint i = 0; i < nframes; ++i, ++pframe)
+				{
+					uint ch = i % nchannels;
+					*pframe = ch == 0 ? noise() : pframe[-ch];
+				}
+			}
+
+			void tick_with_freq (Frames* frames)
+			{
+				float time_per_sample = 1.f / frames->sample_rate();
+				float time_per_freq   = 1.f / (freq * 2);
+
+				uint nchannels = frames->nchannels();
+				uint nframes   = frames->nframes();
+				Float* pframe  = &(*frames)(0, 0);
+				float value    = noise();
+				for (uint i = 0; i < nframes; ++i, ++pframe)
+				{
+					if (i % nchannels == 0)
+					{
+						*pframe = value;
+
+						time += time_per_sample;
+						while (time >= time_per_freq)
+						{
+							value = noise();
+							time -= time_per_freq;
+						}
+					}
+					else
+						*pframe = value;
+				}
+			}
+
+			double noise () const
+			{
+				return rand() / ((double) RAND_MAX + 1) * 2 - 1;
+			}
+
+	};// NoiseOsc
 
 
 	class WaveformOsc : public Osc
