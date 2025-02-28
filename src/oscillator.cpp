@@ -250,7 +250,7 @@ namespace Beeps
 
 				uint nchannels = frames->nchannels();
 				uint nframes   = frames->nframes();
-				Float* pframe = &(*frames)(0, 0);
+				Float* pframe  = &(*frames)(0, 0);
 				for (uint i = 0; i < nframes; ++i, ++pframe)
 				{
 					uint ch = i % nchannels;
