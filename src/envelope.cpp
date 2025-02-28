@@ -184,7 +184,7 @@ namespace Beeps
 		float off = self->note_off_time;
 		assert(on <= off);
 
-		bool has_on =  0 <= on  && start <= on  && on  < end;
+		bool has_on  = 0 <= on  && start <= on  && on  < end;
 		bool has_off = 0 <= off && start <= off && off < end;
 
 		if (!has_on && !has_off)
