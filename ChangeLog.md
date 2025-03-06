@@ -1,6 +1,29 @@
 # beeps ChangeLog
 
 
+## [v0.3.4] - 2025-03-07
+
+- Add Mixer class
+- Add Processor#add_input
+- Add Processor#on_start
+- Add new oscillator type NOISE
+- Add new oscillator type SAMPLES, and add Oscillator#samples=
+- Add Oscillator#phase/phase=
+- Add 'openal' to msys2_mingw_dependencies
+
+- Processor.new can take inputs
+- Processor#<< returns self
+- Square and sawtooth oscillators discard the first some amount of samples
+- Oscillator::set_type() takes over the phase value
+- Noise oscillator can take frequency parameter
+- Gain#initialize can take param for gain
+- Envelop's default attack, decay, and release time are changed from 0.01 to 0.005
+- Envelop#initialize can take attack, decay, sustain, and release params
+- The attack and release can be canceled by passing 0 to the attack_time and release_time of the Envelope
+
+- Temporarily delete Processor#<< to review specifications
+
+
 ## [v0.3.3] - 2025-01-23
 
 - Update dependencies
