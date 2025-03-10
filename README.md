@@ -28,17 +28,17 @@ It is designed to be lightweight and easy to use, making it perfect for adding a
 
 Add this line to your Gemfile:
 ```ruby
-gem 'beeps'
+$ gem 'beeps'
 ```
 
 Then, install gem:
 ```bash
- $ bundle install
+$ bundle install
 ```
 
 Or install it directly:
 ```bash
- $ gem install beeps
+$ gem install beeps
 ```
 
 ## 📜 License
