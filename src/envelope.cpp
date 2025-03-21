@@ -154,11 +154,10 @@ namespace Beeps
 	static size_t
 	slice (Frames* frames, size_t start, float length_sec = -1)
 	{
-		Float sample_rate = frames->dataRate();
-		size_t len        = length_sec >= 0
-			?	length_sec * sample_rate
-			:	frames->nframes() - start;
-		assert(0 < len && (start + len) < frames->nframes());
+		size_t max = frames->nframes() - start;
+		size_t len = length_sec >= 0 ? length_sec * frames->sample_rate() : max;
+		if (len > max) len = max;
+		assert(0 < len && (start + len) <= frames->nframes());
 
 		return frames->slice(start, len);
 	}

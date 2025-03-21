@@ -98,6 +98,11 @@ namespace Beeps
 				nFrames_    = saved_nFrames_;
 				size_       = saved_size_;
 				bufferSize_ = saved_bufferSize_;
+
+				saved_data_       = NULL;
+				saved_nFrames_    = 0;
+				saved_size_       = 0;
+				saved_bufferSize_ = 0;
 			}
 
 			uint sample_rate () const
