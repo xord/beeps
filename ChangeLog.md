@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.3.6] - 2025-04-08
+
+- Update dependencies: xot, rucy
+
+
 ## [v0.3.5] - 2025-03-24
 
 - Add PULL_REQUEST_TEMPLATE.md
