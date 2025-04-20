@@ -154,7 +154,6 @@ namespace Beeps
 		uint nchannels  = format.nChannels;
 		uint nsamples   = bytes.size() / Bps / nchannels;
 		Signals signals = Signals_create(nsamples, nchannels, format.nSamplesPerSec);
-		Frames* frames  = Signals_get_frames(&signals);
 
 		for (uint channel = 0; channel < nchannels; ++channel)
 		{
@@ -162,17 +161,19 @@ namespace Beeps
 			{
 				case 1:
 				{
-					const uchar* p = ((uchar*) &bytes[0]) + channel;
-					for (uint sample = 0; sample < nsamples; ++sample, p += nchannels)
-						(*frames)(sample, channel) = (*p - 128) / 128.f;
+					Sample*        to_p = Signals_at(&signals, 0, channel);
+					const uchar* from_p = ((uchar*) &bytes[0]) + channel;
+					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
+						*to_p = (*to_p - 128) / 128.f;
 					break;
 				}
 
 				case 2:
 				{
-					const ushort* p = ((ushort*) &bytes[0]) + channel;
-					for (uint sample = 0; sample < nsamples; ++sample, p += nchannels)
-						(*frames)(sample, channel) = *p / 32768.f;
+					Sample*         to_p = Signals_at(&signals, 0, channel);
+					const ushort* from_p = ((ushort*) &bytes[0]) + channel;
+					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
+						*to_p = *from_p / 32768.f;
 					break;
 				}
 			}

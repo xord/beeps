@@ -13,6 +13,87 @@ namespace Beeps
 {
 
 
+	class Frames : public stk::StkFrames
+	{
+
+		typedef stk::StkFrames Super;
+
+		public:
+
+			Frames (
+				unsigned int nframes   = 0,
+				unsigned int nchannels = 1,
+				double sample_rate     = 0)
+			:	Super(nframes, nchannels)
+			{
+				if (sample_rate == 0)
+					sample_rate = Beeps::sample_rate();
+
+				if (nframes <= 0)
+					argument_error(__FILE__, __LINE__);
+				if (nchannels <= 0)
+					argument_error(__FILE__, __LINE__);
+				if (sample_rate <= 0)
+					argument_error(__FILE__, __LINE__);
+
+				setDataRate(sample_rate);
+			}
+
+			Frames (const Frames& obj)
+			:	Super(obj)
+			{
+				setDataRate(obj.dataRate());
+			}
+
+			void slice (uint start_, uint end_)
+			{
+				assert(!saved_data_);
+
+				size_t start  = start_;
+				size_t end    = end_;
+				if (start > nFrames_ || end > nFrames_)
+					argument_error(__FILE__, __LINE__);
+
+				saved_data_       = data_;
+				saved_nFrames_    = nFrames_;
+				saved_size_       = size_;
+				saved_bufferSize_ = bufferSize_;
+
+				data_      += start * nChannels_;
+				nFrames_    = end - start;
+				size_       = nFrames_ * nChannels_;
+				bufferSize_ = size_;
+			}
+
+			void unslice ()
+			{
+				assert(saved_data_);
+
+				data_       = saved_data_;
+				nFrames_    = saved_nFrames_;
+				size_       = saved_size_;
+				bufferSize_ = saved_bufferSize_;
+
+				saved_data_       = NULL;
+				saved_nFrames_    = 0;
+				saved_size_       = 0;
+				saved_bufferSize_ = 0;
+			}
+
+			const Sample* data () const
+			{
+				return data_;
+			}
+
+		private:
+
+			Sample* saved_data_ = NULL;
+
+			size_t saved_nFrames_ = 0, saved_size_ = 0, saved_bufferSize_ = 0;
+
+	};// Frames
+
+
 	struct Signals::Data
 	{
 
@@ -40,16 +121,16 @@ namespace Beeps
 		if (!channels)
 			argument_error(__FILE__, __LINE__);
 
-		Frames* frames = new Frames(nsamples * nchannels, nchannels, sample_rate);
+		Signals s        = Signals_create(nsamples, nchannels, sample_rate);
+		s.self->nsamples = nsamples;
+
 		for (uint channel = 0; channel < nchannels; ++channel)
 		{
-			for (uint sample = 0; sample < nsamples; ++sample)
-				(*frames)(sample, channel) = channels[channel][sample];
+			Sample* p = Signals_at(&s, 0, channel);
+			for (uint i = 0; i < nsamples; ++i, p += nchannels)
+				*p = channels[channel][i];
 		}
 
-		Signals s;
-		s.self->frames.reset(frames);
-		s.self->nsamples = nsamples;
 		return s;
 	}
 
@@ -76,58 +157,90 @@ namespace Beeps
 		signals->self->frames->resize(capacity, signals->nchannels());
 	}
 
-	void
-	Signals_resize (Signals* signals, uint nsamples, Float value)
+	uint
+	Signals_tick (Signals* signals, std::function<void(stk::StkFrames*)> fun)
 	{
-		Signals_clear(signals, nsamples);
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
 
-		Frames* frames = Signals_get_frames(signals);
-		assert(frames);
+		fun(signals->self->frames.get());
+		Signals_set_nsamples(signals, signals->capacity());
+		return signals->nsamples();
+	}
 
-		Float* p    = &(*frames)(0, 0);
-		size_t size = frames->size();
+	uint
+	Signals_tick (
+		Signals* signals, uint start, uint end,
+		std::function<void(stk::StkFrames*)> fun)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+		if (start > end)
+			argument_error(__FILE__, __LINE__);
+
+		signals->self->frames->slice(start, end);
+		fun(signals->self->frames.get());
+		signals->self->frames->unslice();
+		Signals_set_nsamples(signals, end);
+		return end;
+	}
+
+	void
+	Signals_fill (Signals* signals, uint nsamples, Sample value)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+
+		Signals_clear(signals);
+		Signals_set_nsamples(signals, nsamples);
+
+		Sample* p   = Signals_at(signals, 0);
+		size_t size = nsamples * signals->nchannels();
 		for (size_t i = 0; i < size; ++i)
 			*p++ = value;
-
-		Signals_set_nsamples(signals, nsamples);
 	}
 
 	static uint
-	copy_frames (Signals* to, const Signals& from, uint from_offset)
+	copy_samples (Signals* to, const Signals& from, uint from_offset)
 	{
 		assert(to && *to && from);
 
 		if (from_offset >= from.nsamples())
 			return 0;
 
-		uint   to_offset   = to->nsamples();
-		uint   to_nsamples = to->capacity() - to_offset;
-		uint from_nsamples = from.nsamples();
-		uint copy_nsamples =
-			std::min(from_offset + to_nsamples, from_nsamples)
-			- from_offset;
+		uint   to_nchannels = to->nchannels();
+		uint from_nchannels = from.nchannels();
+		uint   to_offset    = to->nsamples();
+		uint   to_nsamples  = to->capacity() - to_offset;
+		uint from_nsamples  = from.nsamples();
+		uint copy_nsamples  =
+			std::min(from_offset + to_nsamples, from_nsamples) - from_offset;
 
-		      Frames*   to_frames = Signals_get_frames(to);
-		const Frames* from_frames = Signals_get_frames(&from);
-		assert(to_frames && from_frames);
-
-		for (uint channel = 0; channel < to_frames->nchannels(); ++channel)
+		for (uint channel = 0; channel < to_nchannels; ++channel)
 		{
-			uint from_channel = channel < from_frames->nchannels() ? channel : 0;
-
+			uint from_channel    = channel < from_nchannels ? channel : 0;
+			      Sample*   to_p = Signals_at(to,     to_offset,      channel);
+			const Sample* from_p = Signals_at(from, from_offset, from_channel);
 			for (uint i = 0; i < copy_nsamples; ++i)
 			{
-				(*to_frames)(      to_offset + i,      channel) =
-					(*from_frames)(from_offset + i, from_channel);
+				 *to_p  = *from_p;
+				  to_p +=    to_nchannels;
+				from_p +=  from_nchannels;
 			}
 		}
 
-		to->self->nsamples += copy_nsamples;
+		Signals_set_nsamples(to, to->self->nsamples + copy_nsamples);
 		return copy_nsamples;
 	}
 
 	static uint
-	resample_frames (Signals* to, const Signals& from, uint from_offset)
+	resample (Signals* to, const Signals& from, uint from_offset)
 	{
 		assert(to && *to && from);
 
@@ -158,16 +271,12 @@ namespace Beeps
 			from.sample_rate(), to->sample_rate(), from_nsamples);
 		r8b::CFixedBuffer<double> from_buf(from_nsamples), to_buf(to_nsamples);
 
-		      Frames*   to_frames = Signals_get_frames(to);
-		const Frames* from_frames = Signals_get_frames(&from);
-		assert(to_frames && from_frames);
-
-		for (uint channel = 0; channel < to_frames->nchannels(); ++channel)
+		for (uint channel = 0; channel < to->nchannels(); ++channel)
 		{
-			uint from_channel = channel < from_frames->nchannels() ? channel : 0;
+			uint from_channel = channel < from.nchannels() ? channel : 0;
 
 			for (uint i = 0; i < from_nsamples; ++i)
-				from_buf[i] = (*from_frames)(from_offset + i, from_channel);
+				from_buf[i] = *Signals_at(from, from_offset + i, from_channel);
 
 			resampler.clear();
 			resampler.oneshot(
@@ -175,10 +284,10 @@ namespace Beeps
 				      (double*)   to_buf,   to_nsamples);
 
 			for (uint i = 0; i < to_nsamples; ++i)
-				(*to_frames)(to_offset + i, channel) = to_buf[i];
+				*Signals_at(to, to_offset + i, channel) = to_buf[i];
 		}
 
-		to->self->nsamples += to_nsamples;
+		Signals_set_nsamples(to, to->self->nsamples + to_nsamples);
 		return from_nsamples;
 	}
 
@@ -195,9 +304,9 @@ namespace Beeps
 		Signals_clear(to);
 
 		if (to->sample_rate() == from.sample_rate())
-			return copy_frames(to, from, from_offset);
+			return copy_samples(to, from, from_offset);
 		else
-			return resample_frames(to, from, from_offset);
+			return resample(to, from, from_offset);
 	}
 
 	void
@@ -208,14 +317,13 @@ namespace Beeps
 		if (signals->nchannels() != add.nchannels())
 			argument_error(__FILE__, __LINE__);
 
-		Frames* sigf = Signals_get_frames(signals);
-		Frames* addf = Signals_get_frames(const_cast<Signals*>(&add));
-		Float* sigp  = &(*sigf)(0, 0);
-		Float* addp  = &(*addf)(0, 0);
-		uint nframes = std::min(sigf->nframes(), addf->nframes());
+		      Sample* sig_p = Signals_at(signals, 0);
+		const Sample* add_p = Signals_at(add,     0);
+		uint nsamples = std::min(signals->nsamples(), add.nsamples());
+		uint size     = nsamples * signals->nchannels();
 
-		for (uint i = 0; i < nframes; ++i, ++sigp, ++addp)
-			*sigp += *addp;
+		for (uint i = 0; i < size; ++i, ++sig_p, ++add_p)
+			*sig_p += *add_p;
 	}
 
 	void
@@ -228,17 +336,15 @@ namespace Beeps
 		if (signals->capacity() != multiplier.capacity())
 			argument_error(__FILE__, __LINE__);
 
-		Frames* sigf   = Signals_get_frames(signals);
-		Frames* mulf   = Signals_get_frames(const_cast<Signals*>(&multiplier));
-		uint nchannels = sigf->nchannels();
-		uint nframes   = sigf->nframes();
+		uint nchannels = signals->nchannels();
+		uint nsamples  = signals->nsamples();
 
 		for (uint ch = 0; ch < nchannels; ++ch)
 		{
-			Float* sigp = &(*sigf)(0, ch);
-			Float* mulp = &(*mulf)(0, 0);
-			for (uint i = 0; i < nframes; i += nchannels, sigp += nchannels, ++mulp)
-				*sigp *= *mulp;
+			      Sample* sig_p = Signals_at(signals,    0, ch);
+			const Sample* mul_p = Signals_at(multiplier, 0, 0);
+			for (uint i = 0; i < nsamples; ++i, sig_p += nchannels, ++mul_p)
+				*sig_p *= *mul_p;
 		}
 	}
 
@@ -246,7 +352,8 @@ namespace Beeps
 	void
 	write_samples (Signals* signals, const SignalSamples<T>& samples, long nsamples_)
 	{
-		uint nsamples = nsamples_ < 0 ? samples.nsamples() : (uint) nsamples_;
+		uint nchannels = signals->nchannels();
+		uint nsamples  = nsamples_ < 0 ? samples.nsamples() : (uint) nsamples_;
 
 		if (!signals)
 			argument_error(__FILE__, __LINE__);
@@ -257,17 +364,15 @@ namespace Beeps
 		if (signals->capacity() < nsamples)
 			argument_error(__FILE__, __LINE__);
 
-		Frames* f = Signals_get_frames(signals);
-		assert(f);
-
-		for (uint channel = 0; channel < signals->nchannels(); ++channel)
+		for (uint channel = 0; channel < nchannels; ++channel)
 		{
-			const T* buf = samples.channel(channel);
-			for (uint sample = 0; sample < nsamples; ++sample)
-				(*f)(sample, channel) = buf[sample];
+			Sample* sig_p = Signals_at(signals, 0, channel);
+			const T* buf  = samples.channel(channel);
+			for (uint i = 0; i < nsamples; ++i, sig_p += nchannels)
+				*sig_p = buf[i];
 		}
 
-		signals->self->nsamples = nsamples;
+		Signals_set_nsamples(signals, nsamples);
 	}
 
 	template <>
@@ -291,8 +396,33 @@ namespace Beeps
 	{
 		if (!signals)
 			argument_error(__FILE__, __LINE__);
+		if (nsamples > signals->capacity())
+			argument_error(__FILE__, __LINE__);
 
 		signals->self->nsamples = nsamples;
+	}
+
+	Sample*
+	Signals_at (Signals* signals, uint index, uint channel)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+
+		return &(*signals->self->frames)(index, channel);
+	}
+
+	const Sample*
+	Signals_at (const Signals* signals, uint index, uint channel)
+	{
+		return Signals_at(const_cast<Signals*>(signals), index, channel);
+	}
+
+	const Sample*
+	Signals_at (const Signals& signals, uint index, uint channel)
+	{
+		return Signals_at(const_cast<Signals*>(&signals), index, channel);
 	}
 
 	float
@@ -301,41 +431,26 @@ namespace Beeps
 		return (float) (signals.nsamples() / signals.sample_rate());
 	}
 
-	Frames*
-	Signals_get_frames (Signals* signals)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-
-		return signals->self->frames.get();
-	}
-
-	const Frames*
-	Signals_get_frames (const Signals* signals)
-	{
-		return Signals_get_frames(const_cast<Signals*>(signals));
-	}
-
 	static void
 	make_audio_buffer (
 		AudioFile<float>::AudioBuffer* buffer, const Signals& signals)
 	{
 		assert(buffer && signals);
 
-		const Frames* frames = Signals_get_frames(&signals);
-		assert(frames);
+		uint nchannels = signals.nchannels();
+		uint nsamples  = signals.nsamples();
 
 		buffer->clear();
-		for (uint ch = 0; ch < frames->nchannels(); ++ch)
+		for (uint ch = 0; ch < nchannels; ++ch)
 		{
 			buffer->emplace_back(std::vector<float>());
 			auto& channel = buffer->back();
 
-			uint nframes = frames->nframes();
-			channel.reserve(nframes);
+			channel.reserve(nsamples);
 
-			for (uint i = 0; i < nframes; ++i)
-				channel.emplace_back((*frames)(i, ch));
+			const Sample* p = Signals_at(signals, 0, ch);
+			for (uint i = 0; i < nsamples; ++i, p += nchannels)
+				channel.push_back(*p);
 		}
 	}
 
@@ -376,7 +491,7 @@ namespace Beeps
 	uint
 	Signals::nchannels () const
 	{
-		return self->frames ? self->frames->nchannels() : 0;
+		return self->frames ? self->frames->channels() : 0;
 	}
 
 	uint
@@ -388,7 +503,7 @@ namespace Beeps
 	uint
 	Signals::capacity () const
 	{
-		return self->frames ? self->frames->nframes() : 0;
+		return self->frames ? self->frames->frames() : 0;
 	}
 
 	bool
@@ -406,7 +521,7 @@ namespace Beeps
 	Signals::operator bool () const
 	{
 		const Frames* f = self->frames.get();
-		return f && f->dataRate() > 0 && f->nchannels() > 0 && f->nframes() > 0;
+		return f && f->dataRate() > 0 && f->channels() > 0 && f->frames() > 0;
 	}
 
 	bool

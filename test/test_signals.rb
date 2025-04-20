@@ -31,14 +31,17 @@ class TestSignals < Test::Unit::TestCase
   end
 
   def test_nsamples()
+    assert_equal 44100, signals                                .nsamples
+
     assert_equal 44100, signals(seconds: 1)                    .nsamples
     assert_equal 88200, signals(seconds: 2)                    .nsamples
+
     assert_equal   100, signals(seconds: 1,   sample_rate: 100).nsamples
     assert_equal   200, signals(seconds: 2,   sample_rate: 100).nsamples
     assert_equal    50, signals(seconds: 0.5, sample_rate: 100).nsamples
 
-    assert_equal   100, signals(seconds: 1, nchannels: 1, sample_rate: 100).nsamples
-    assert_equal   200, signals(seconds: 1, nchannels: 2, sample_rate: 100).nsamples
+    assert_equal   100, signals(nchannels: 1, sample_rate: 100).nsamples
+    assert_equal   100, signals(nchannels: 2, sample_rate: 100).nsamples
   end
 
   def test_each()
@@ -49,7 +52,7 @@ class TestSignals < Test::Unit::TestCase
     assert_equal 100, signals(nchannels: 2, sample_rate: 100).each(channel: 1).to_a.size
 
     assert_raise(ArgumentError) {signals(nchannels: 2).each(channel: -1).to_a}
-    assert_raise(ArgumentError) {signals(nchannels: 2).each(channel: 2) .to_a}
+    assert_raise(ArgumentError) {signals(nchannels: 2).each(channel:  2).to_a}
 
     assert_in_delta 0, signals(sample_rate: 100).each.to_a.then {_1.sum / _1.size}, 0.001
   end

@@ -99,6 +99,8 @@ namespace Beeps
 
 			Signals signals;
 
+			uint nsamples_per_process;
+
 			uint offset   = 0;
 
 			bool finished = false;

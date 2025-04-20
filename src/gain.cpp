@@ -44,11 +44,11 @@ namespace Beeps
 	{
 		Super::filter(context, signals, offset);
 
-		Frames* frames = Signals_get_frames(signals);
-		if (!frames)
-			argument_error(__FILE__, __LINE__);
-
-		*frames *= self->gain;
+		float gain = self->gain;
+		uint size  = signals->nsamples() * signals->nchannels();
+		Sample* p  = Signals_at(signals, 0);
+		for (uint i = 0; i < size; ++i)
+			*p++ *= gain;
 	}
 
 

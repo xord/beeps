@@ -189,45 +189,36 @@ namespace Beeps
 	static void
 	shift (Signals* signals, uint nsamples)
 	{
+		if (nsamples == 0)
+			return;
+
 		if (nsamples > signals->nsamples())
 			return Signals_clear(signals);
 
-		Frames* frames = Signals_get_frames(signals);
-		assert(frames);
-
-		Float* from = &(*frames)(nsamples, 0);
-		Float* to   = &(*frames)(0, 0);
-		uint size   = (signals->nsamples() - nsamples) * signals->nchannels();
+		Sample* from       = Signals_at(signals, nsamples);
+		Sample* to         = Signals_at(signals, 0);
+		uint move_nsamples = signals->nsamples() - nsamples;
+		uint size          = move_nsamples * signals->nchannels();
 		for (uint i = 0; i < size; ++i)
 			*to++ = *from++;
 
-		Signals_set_nsamples(signals, signals->nsamples() - nsamples);
+		Signals_set_nsamples(signals, move_nsamples);
 	}
 
 	static void
 	append (Signals* to, const Signals& from)
 	{
-		assert(to);
+		assert(to->nchannels() == from.nchannels());
+		assert(to->nsamples() + from.nsamples() <= to->capacity());
 
-		      Frames* tof   = Signals_get_frames(to);
-		const Frames* fromf = Signals_get_frames(&from);
-		assert(fromf && tof);
+		uint nchannels       =  to->nchannels();
+		uint size            = from.nsamples() * nchannels;
+		      Sample*   to_p = Signals_at(to,   to->nsamples());
+		const Sample* from_p = Signals_at(from, 0);
+		for (uint i = 0; i < size; ++i)
+			*to_p++ = *from_p++;
 
-		uint   to_cap      =  to->capacity();
-		uint   to_nsamples =  to->nsamples();
-		uint from_nsamples = from.nsamples();
-		uint from_start    = from_nsamples > to_cap ? from_nsamples - to_cap : 0;
-		uint nsamples      = from_nsamples - from_start;
-		assert(to_nsamples + nsamples <= to_cap);
-
-		for (uint ch = 0; ch < tof->nchannels(); ++ch)
-		{
-			uint from_ch = ch < fromf->nchannels() ? ch : 0;
-			for (uint i = 0; i < nsamples; ++i)
-				(*tof)(to_nsamples + i, ch) = (*fromf)(from_start + i, from_ch);
-		}
-
-		Signals_set_nsamples(to, to_nsamples + nsamples);
+		Signals_set_nsamples(to, to->nsamples() + from.nsamples());
 	}
 
 	void
@@ -235,12 +226,17 @@ namespace Beeps
 	{
 		Super::filter(context, signals, offset);
 
-		Signals& sig  = self->signals;
-		uint nsamples = sig.nsamples() + signals->nsamples();
-		if (nsamples > sig.capacity())
-			shift(&sig, nsamples - sig.capacity());
+		auto& in =      *signals;
+		auto& my = self->signals;
 
-		append(&sig, *signals);
+		if (my.nchannels() != in.nchannels() || my.sample_rate() != in.sample_rate())
+			my = Signals_create(my.capacity(), in.nchannels(), in.sample_rate());
+
+		uint total_nsamples = my.nsamples() + in.nsamples();
+		if (total_nsamples > my.capacity())
+			shift(&my, total_nsamples - my.capacity());
+
+		append(&my, in);
 
 		self->spectrum.clear();
 	}

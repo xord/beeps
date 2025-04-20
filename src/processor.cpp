@@ -328,7 +328,8 @@ namespace Beeps
 	StreamContext::StreamContext (
 		uint nsamples_per_process, uint nchannels, double sample_rate)
 	:	context(nchannels, sample_rate),
-		signals(Signals_create(nsamples_per_process, nchannels, sample_rate))
+		signals(Signals_create(nsamples_per_process, nchannels, sample_rate)),
+		nsamples_per_process(nsamples_per_process)
 	{
 	}
 
@@ -337,10 +338,10 @@ namespace Beeps
 	{
 		assert(processor);
 
-		Signals_clear(&signals);
+		Signals_clear(&signals, nsamples_per_process);
 		context.process(processor, &signals, &offset);
 
-		if (signals.nsamples() < signals.capacity())
+		if (signals.nsamples() < nsamples_per_process)
 			finished = true;
 
 		return signals;

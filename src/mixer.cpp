@@ -16,6 +16,8 @@ namespace Beeps
 
 		std::vector<Processor::Ref> inputs;
 
+		Signals input_signals;
+
 	};// Mixer::Data
 
 
@@ -79,24 +81,32 @@ namespace Beeps
 	{
 		Super::filter(context, signals, offset);
 
-		Signals_resize(signals, signals->capacity(), 0);
+		auto& in  = self->input_signals;
+		auto& out = *signals;
 
-		Signals sig   = Signals_create(signals->capacity(), signals->nchannels());
-		uint min_size = signals->capacity();
+		Signals_fill(&out, out.capacity(), 0);
+
+		if (!in)
+			in = Signals_create(out.capacity(), out.nchannels());
+		else
+			Signals_clear(&in, out.capacity());
+
+		uint out_size = 0;
 		for (auto& input : self->inputs)
 		{
-			Signals_clear(&sig);
+			Signals_clear(&in);
 
-			uint sig_offset = *offset;
-			Processor_get_context(context)->process(input, &sig, &sig_offset);
+			uint input_offset = *offset;
+			Processor_get_context(context)->process(input, &in, &input_offset);
 
-			uint size = sig_offset - *offset;
-			if (size < min_size) min_size = size;
+			uint size = input_offset - *offset;
+			if (size > out_size) out_size = size;
 
-			Signals_add(signals, sig);
+			Signals_add(&out, in);
 		}
 
-		*offset += min_size;
+		Signals_set_nsamples(&out, out_size);
+		*offset += out_size;
 	}
 
 	Mixer::operator bool () const

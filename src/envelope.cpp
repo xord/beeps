@@ -151,15 +151,17 @@ namespace Beeps
 		return self->release_time;
 	}
 
-	static size_t
-	slice (Frames* frames, size_t start, float length_sec = -1)
+	static uint
+	tick (Envelope* envelope, Signals* signals, uint start, float length_sec = -1)
 	{
-		size_t max = frames->nframes() - start;
-		size_t len = length_sec >= 0 ? length_sec * frames->sample_rate() : max;
+		uint max = signals->capacity() - start;
+		uint len = length_sec >= 0 ? length_sec * signals->sample_rate() : max;
 		if (len > max) len = max;
-		assert(0 < len && (start + len) <= frames->nframes());
+		assert(0 < len && (start + len) <= signals->nsamples());
 
-		return frames->slice(start, len);
+		return Signals_tick(
+			signals, start, len,
+			[&](stk::StkFrames* frames) {envelope->self->adsr.tick(*frames);});
 	}
 
 	static void
@@ -169,26 +171,27 @@ namespace Beeps
 
 		Envelope::Data* self = envelope->self.get();
 
-		Frames* frames = Signals_get_frames(signals);
-		assert(frames);
-
 		if (self->time == 0 && self->attack_time == 0)
 			self->adsr.setValue(self->sustain_level);// skip attack phase
 
-		float start = self->time;
-		float end   = start + Signals_get_seconds(*signals);
-		self->time  = end;
+		float start       = self->time;
+		float end         = start + Signals_get_seconds(*signals);
+		float on          = self->note_on_time;
+		float off         = self->note_off_time;
+		float release_end = off >= 0 ? off + self->release_time : -1;
+		bool has_on       = 0 <= on  && start <= on  && on  < end;
+		bool has_off      = 0 <= off && start <= off && off < end;
 
-		float on  = self->note_on_time;
-		float off = self->note_off_time;
-		assert(on <= off);
-
-		bool has_on  = 0 <= on  && start <= on  && on  < end;
-		bool has_off = 0 <= off && start <= off && off < end;
+		if (release_end >= 0 && release_end < end)
+		{
+			Signals_set_nsamples(signals, (release_end - start) * signals->sample_rate());
+			end = release_end;
+		}
+		self->time = end;
 
 		if (!has_on && !has_off)
 		{
-			self->adsr.tick(*frames);
+			tick(envelope, signals, 0);
 			return;
 		}
 
@@ -196,29 +199,19 @@ namespace Beeps
 		if (has_on)
 		{
 			if (start < on)
-			{
-				last = slice(frames, 0, on - start);
-				self->adsr.tick(*frames);
-				frames->unslice();
-			}
+				last = tick(envelope, signals, 0, on - start);
 			self->adsr.keyOn();
 		}
 		if (has_on || has_off)
 		{
 			float len = has_off ? off - (has_on ? on : start) : -1;
-			last = slice(frames, last, len);
-			self->adsr.tick(*frames);
-			frames->unslice();
+			last = tick(envelope, signals, (uint) last, len);
 		}
 		if (has_off)
 		{
 			self->adsr.keyOff();
 			if (off < end)
-			{
-				slice(frames, last, -1);
-				self->adsr.tick(*frames);
-				frames->unslice();
-			}
+				tick(envelope, signals, (uint) last, -1);
 		}
 	}
 
@@ -232,11 +225,15 @@ namespace Beeps
 			self->adsr_signals =
 				Signals_create(signals->nsamples(), 1, signals->sample_rate());
 		}
+		else
+			Signals_clear(&self->adsr_signals, signals->nsamples());
 
-		if (self->adsr_signals.nsamples() != signals->nsamples())
-			Signals_resize(&self->adsr_signals, signals->nsamples(), 0);
+		Signals_set_nsamples(&self->adsr_signals, signals->nsamples());
 
 		process_envelope_signals(this, &self->adsr_signals);
+		if (self->adsr_signals.nsamples() < signals->nsamples())
+			Signals_set_nsamples(signals, self->adsr_signals.nsamples());
+
 		Signals_multiply(signals, self->adsr_signals);
 	}
 

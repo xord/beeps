@@ -63,15 +63,13 @@ namespace Beeps
 			assert(sample_rate > 0 && nchannels > 0);
 			if (nsamples <= 0) return 0;
 
-			const Frames* frames = Signals_get_frames(&signals);
-			assert(frames);
-
 			std::vector<short> buffer;
-			buffer.reserve(nsamples * nchannels);
-			for (uint sample = 0; sample < nsamples; ++sample)
+			buffer.resize(nsamples * nchannels, 0);
+			for (uint channel = 0; channel < nchannels; ++channel)
 			{
-				for (uint channel = 0; channel < nchannels; ++channel)
-					buffer.push_back((*frames)(sample, channel) * SHRT_MAX);
+				const Sample* p = Signals_at(signals, 0, channel);
+				for (uint i = 0; i < nsamples; ++i, p += nchannels)
+					buffer.push_back(*p * SHRT_MAX);
 			}
 
 			alBufferData(

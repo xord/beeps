@@ -86,22 +86,19 @@ namespace Beeps
 
 			if (!is_valid()) return;
 
-			Frames* frames = Signals_get_frames(signals);
-			assert(frames);
-
 			auto& samples  = self->samples;
 			uint nchannels = self->nchannels;
 			uint nsamples  = (uint) (samples.size() / nchannels);
 			uint offset    = *gen_offset < self->offset ? 0 : *gen_offset - self->offset;
 			if (offset >= nsamples) return;
 
-			nsamples = std::min(frames->nframes(), nsamples - offset);
-			for (uint ch = 0; ch < frames->nchannels(); ++ch)
+			nsamples = std::min(signals->capacity(), nsamples - offset);
+			for (uint ch = 0; ch < signals->nchannels(); ++ch)
 			{
 				uint samples_ch = ch < nchannels ? ch : 0;
 				float div       = 1.0f / SHRT_MAX;
 				for (uint i = 0; i < nsamples; ++i)
-					(*frames)(i, ch) = samples[(offset + i) * nchannels + samples_ch] * div;
+					*Signals_at(signals, i, ch) = samples[(offset + i) * nchannels + samples_ch] * div;
 			}
 			Signals_set_nsamples(signals, nsamples);
 

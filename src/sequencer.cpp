@@ -96,13 +96,11 @@ namespace Beeps
 	static void
 	mix (Signals* mixed, const Signals& source, uint source_offset)
 	{
-		Frames* mixf = Signals_get_frames(mixed);
-		Frames* srcf = Signals_get_frames(const_cast<Signals*>(&source));
-		Float* mixp  = &(*mixf)(source_offset, 0);
-		Float* srcp  = &(*srcf)(0, 0);
-		uint size    = source.nsamples() * source.nchannels();
-		for (uint i = 0; i < size; ++i, ++mixp, ++srcp)
-			*mixp += *srcp;
+		      Sample* mix_p = Signals_at(mixed,  source_offset);
+		const Sample* src_p = Signals_at(source, 0);
+		uint size     = source.nsamples() * source.nchannels();
+		for (uint i = 0; i < size; ++i, ++mix_p, ++src_p)
+			*mix_p += *src_p;
 	}
 
 	void
@@ -112,7 +110,7 @@ namespace Beeps
 
 		auto& context = *Processor_get_context(pcontext);
 		auto& signals = *psignals;
-		Signals_resize(&signals, signals.capacity(), 0);
+		Signals_fill(&signals, signals.capacity(), 0);
 
 		uint generate_begin  = *offset;
 		uint generate_end    = *offset + signals.capacity();

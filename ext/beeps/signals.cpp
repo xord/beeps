@@ -77,24 +77,26 @@ RUCY_DEF1(each, channel_)
 {
 	CHECK;
 
+	uint nchannels      = THIS->nchannels();
 	uint       nsamples = THIS->nsamples();
 	const auto* samples = THIS->samples();
 
 	if (channel_)
 	{
-		uint nchannels = THIS->nchannels();
-		int   channel  = to<int>(channel_);
+		int channel = to<int>(channel_);
 		if (channel < 0)
 			argument_error(__FILE__, __LINE__);
 		if (channel >= nchannels)
 			argument_error(__FILE__, __LINE__);
 
-		for (uint i = channel; i < nsamples; i += nchannels)
-			rb_yield(value(samples[i]));
+		const auto* p = samples + channel;
+		for (uint i = 0; i < nsamples; ++i, p += nchannels)
+			rb_yield(value(*p));
 	}
 	else
 	{
-		for (uint i = 0; i < nsamples; ++i)
+		uint size = nsamples * nchannels;
+		for (uint i = 0; i < size; ++i)
 			rb_yield(value(samples[i]));
 	}
 }

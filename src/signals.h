@@ -5,6 +5,7 @@
 
 
 #include <assert.h>
+#include <functional>
 #include <vector>
 #include <Stk.h>
 #include <xot/pimpl.h>
@@ -17,10 +18,7 @@ namespace Beeps
 {
 
 
-	typedef stk::StkFloat Float;
-
-
-	class Frames;
+	typedef stk::StkFloat Sample;
 
 	template <typename T> class SignalSamples;
 
@@ -32,11 +30,19 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, double sample_rate = 0);
 
+	uint Signals_tick (
+		Signals* signals,
+		std::function<void(stk::StkFrames*)> fun);
+
+	uint Signals_tick (
+		Signals* signals, uint start, uint length,
+		std::function<void(stk::StkFrames*)> fun);
+
 	void Signals_clear (Signals* signals);
 
 	void Signals_clear (Signals* signals, uint capacity);
 
-	void Signals_resize (Signals* signals, uint nsamples, Float value);
+	void Signals_fill (Signals* signals, uint nsamples, Sample value);
 
 	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
 
@@ -50,111 +56,20 @@ namespace Beeps
 
 	void  Signals_set_nsamples (Signals* signals, uint nsamples);
 
+	      Sample* Signals_at (      Signals* signals, uint index, uint channel = 0);
+
+	const Sample* Signals_at (const Signals* signals, uint index, uint channel = 0);
+
+	const Sample* Signals_at (const Signals& signals, uint index, uint channel = 0);
+
 	float Signals_get_seconds (const Signals& signals);
-
-	      Frames* Signals_get_frames (      Signals* signals);
-
-	const Frames* Signals_get_frames (const Signals* signals);
 
 	void    Signals_save (const Signals& signals, const char* path);
 
 	Signals Signals_load (const char* path);
 
 
-	class Frames : public stk::StkFrames
-	{
-
-		typedef stk::StkFrames Super;
-
-		public:
-
-			Frames (unsigned int nframes = 0, unsigned int nchannels = 1, double sample_rate = 0)
-			:	Super(nframes, nchannels)
-			{
-				if (sample_rate == 0)
-					sample_rate = Beeps::sample_rate();
-
-				if (nframes <= 0)
-					argument_error(__FILE__, __LINE__);
-				if (nchannels <= 0)
-					argument_error(__FILE__, __LINE__);
-				if (sample_rate <= 0)
-					argument_error(__FILE__, __LINE__);
-
-				setDataRate(sample_rate);
-			}
-
-			Frames (const Frames& obj)
-			:	Super(obj)
-			{
-				setDataRate(obj.dataRate());
-			}
-
-			size_t slice (size_t start, size_t length)
-			{
-				assert(!saved_data_);
-
-				size_t end = start + length;
-				assert(start <= nFrames_ && end <= nFrames_);
-
-				saved_data_       = data_;
-				saved_nFrames_    = nFrames_;
-				saved_size_       = size_;
-				saved_bufferSize_ = bufferSize_;
-
-				data_      += start * nChannels_;
-				nFrames_    = length;
-				size_       = length * nChannels_;
-				bufferSize_ = size_;
-
-				return end;
-			}
-
-			void unslice ()
-			{
-				assert(saved_data_);
-
-				data_       = saved_data_;
-				nFrames_    = saved_nFrames_;
-				size_       = saved_size_;
-				bufferSize_ = saved_bufferSize_;
-
-				saved_data_       = NULL;
-				saved_nFrames_    = 0;
-				saved_size_       = 0;
-				saved_bufferSize_ = 0;
-			}
-
-			uint sample_rate () const
-			{
-				return dataRate();
-			}
-
-			uint nchannels () const
-			{
-				return nChannels_;
-			}
-
-			uint nframes () const
-			{
-				return (uint) nFrames_;
-			}
-
-			const Float* data () const
-			{
-				return data_;
-			}
-
-		private:
-
-			Float* saved_data_ = NULL;
-
-			size_t saved_nFrames_ = 0, saved_size_ = 0, saved_bufferSize_ = 0;
-
-	};// Frames
-
-
-	template <typename T>
+	template <typename T = Sample>
 	class SignalSamples
 	{
 
@@ -174,9 +89,6 @@ namespace Beeps
 				if (!signals)
 					argument_error(__FILE__, __LINE__);
 
-				const Frames* f = Signals_get_frames(&signals);
-				assert(f);
-
 				uint nsamples  = signals.nsamples();
 				uint nchannels = signals.nchannels();
 
@@ -185,8 +97,9 @@ namespace Beeps
 
 				for (uint channel = 0; channel < nchannels; ++channel)
 				{
-					for (uint sample = 0; sample < nsamples; ++sample)
-						samples.push_back((*f)(sample, channel));
+					const Sample* p = Signals_at(signals, 0);
+					for (uint i = 0; i < nsamples; ++i, p += nchannels)
+						samples.push_back(*p);
 				}
 
 				self->nsamples = nsamples;

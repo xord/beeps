@@ -9,6 +9,7 @@
 #include "BlitSquare.h"
 #include "BlitSaw.h"
 #include "beeps/exception.h"
+#include "beeps/debug.h"
 #include "signals.h"
 
 
@@ -61,7 +62,7 @@ namespace Beeps
 
 			virtual void reset () = 0;
 
-			virtual void tick (Frames* frames) = 0;
+			virtual void tick (stk::StkFrames* frames) = 0;
 
 			virtual void set_frequency (float freq) = 0;
 
@@ -84,12 +85,11 @@ namespace Beeps
 				drop_msec = DROP_MSEC;
 			}
 
-			void tick (Frames* frames) override
+			void tick (stk::StkFrames* frames) override
 			{
 				if (drop_msec > 0)
 				{
-					double sample_rate = frames->dataRate();
-					Frames f((uint) (sample_rate * (drop_msec / 1000.0)), 1, sample_rate);
+					stk::StkFrames f((uint) (frames->dataRate() * (drop_msec / 1000.0)), 1);
 					osc.tick(f);
 					drop_msec = 0;
 				}
@@ -151,9 +151,9 @@ namespace Beeps
 				time = 0;
 			}
 
-			void tick (Frames* frames) override
+			void tick (stk::StkFrames* frames) override
 			{
-				if (0 < freq && (freq * 2) <= frames->sample_rate())
+				if (0 < freq && (freq * 2) <= frames->dataRate())
 					tick_with_freq(frames);
 				else
 					tick_without_freq(frames);
@@ -180,32 +180,32 @@ namespace Beeps
 
 			double time = 0;
 
-			void tick_without_freq (Frames* frames)
+			void tick_without_freq (stk::StkFrames* frames)
 			{
-				uint nchannels = frames->nchannels();
-				uint nframes   = frames->nframes();
-				Float* pframe  = &(*frames)(0, 0);
-				for (uint i = 0; i < nframes; ++i, ++pframe)
+				uint nchannels = frames->channels();
+				uint nframes   = frames->frames();
+				Sample* p      = &(*frames)(0, 0);
+				for (uint i = 0; i < nframes; ++i, ++p)
 				{
 					uint ch = i % nchannels;
-					*pframe = ch == 0 ? noise() : pframe[-ch];
+					*p      = ch == 0 ? noise() : p[-ch];
 				}
 			}
 
-			void tick_with_freq (Frames* frames)
+			void tick_with_freq (stk::StkFrames* frames)
 			{
-				float time_per_sample = 1.f / frames->sample_rate();
+				float time_per_sample = 1.f / frames->dataRate();
 				float time_per_freq   = 1.f / (freq * 2);
 
-				uint nchannels = frames->nchannels();
-				uint nframes   = frames->nframes();
-				Float* pframe  = &(*frames)(0, 0);
+				uint nchannels = frames->channels();
+				uint nframes   = frames->frames();
+				Sample* p      = &(*frames)(0, 0);
 				float value    = noise();
-				for (uint i = 0; i < nframes; ++i, ++pframe)
+				for (uint i = 0; i < nframes; ++i, ++p)
 				{
 					if (i % nchannels == 0)
 					{
-						*pframe = value;
+						*p = value;
 
 						time += time_per_sample;
 						while (time >= time_per_freq)
@@ -215,7 +215,7 @@ namespace Beeps
 						}
 					}
 					else
-						*pframe = value;
+						*p = value;
 				}
 			}
 
@@ -244,15 +244,15 @@ namespace Beeps
 				time = 0;
 			}
 
-			void tick (Frames* frames) override
+			void tick (stk::StkFrames* frames) override
 			{
 				size_t size = table.size();
-				float dt    = size * freq / frames->sample_rate();
+				float dt    = size * freq / frames->dataRate();
 
-				uint nchannels = frames->nchannels();
-				uint nframes   = frames->nframes();
-				Float* pframe  = &(*frames)(0, 0);
-				for (uint i = 0; i < nframes; ++i, ++pframe)
+				uint nchannels = frames->channels();
+				uint nframes   = frames->frames();
+				Sample* p      = &(*frames)(0, 0);
+				for (uint i = 0; i < nframes; ++i, ++p)
 				{
 					uint ch = i % nchannels;
 					if (ch == 0)
@@ -260,13 +260,13 @@ namespace Beeps
 						size_t index0 = (size_t) time;
 						size_t index1 = index0 == size - 1 ? 0 : index0 + 1;
 						float frac    = time - index0;
-						*pframe       = table[index0] * (1.f - frac) + table[index1] * frac;
+						*p            = table[index0] * (1.f - frac) + table[index1] * frac;
 
 						time += dt;
 						while (time >= size) time -= size;
 					}
 					else
-						*pframe = pframe[-ch];
+						*p = p[-ch];
 				}
 			}
 
@@ -432,14 +432,11 @@ namespace Beeps
 	{
 		Super::generate(context, signals, offset);
 
-		Frames* frames = Signals_get_frames(signals);
-		if (!frames)
-			argument_error(__FILE__, __LINE__);
-
 		self->osc->set_frequency(self->frequency);
-		self->osc->tick(frames);
-
-		Signals_set_nsamples(signals, frames->nframes());
+		Signals_tick(signals, [&](stk::StkFrames* frames)
+		{
+			self->osc->tick(frames);
+		});
 	}
 
 	Oscillator::operator bool () const
