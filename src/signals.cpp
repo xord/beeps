@@ -27,12 +27,15 @@ namespace Beeps
 	Signals
 	Signals_create (uint capacity, uint nchannels, double sample_rate)
 	{
+		if (sample_rate == 0)
+			sample_rate = Beeps::sample_rate();
+
 		if (capacity <= 0)
 			argument_error(__FILE__, __LINE__);
 		if (nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
-
-		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
+		if (sample_rate <= 0)
+			argument_error(__FILE__, __LINE__);
 
 		Signals s;
 		s.self->frames.reset(new Frames(capacity, nchannels));
@@ -45,14 +48,17 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, double sample_rate)
 	{
+		if (sample_rate == 0)
+			sample_rate = Beeps::sample_rate();
+
 		if (!channels)
 			argument_error(__FILE__, __LINE__);
 		if (nsamples <= 0)
 			argument_error(__FILE__, __LINE__);
 		if (nchannels <= 0)
 			argument_error(__FILE__, __LINE__);
-
-		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
+		if (sample_rate <= 0)
+			argument_error(__FILE__, __LINE__);
 
 		Frames* frames = new Frames(nsamples, nchannels);
 		frames->setDataRate(sample_rate);

@@ -207,10 +207,15 @@ namespace Beeps
 
 	MicIn::MicIn (uint nchannels, double sample_rate)
 	{
+		if (sample_rate == 0)
+			sample_rate = Beeps::sample_rate();
+
+		if (nchannels <= 0)
+			argument_error(__FILE__, __LINE__);
 		if (nchannels > 2)
 			argument_error(__FILE__, __LINE__);
-
-		if (sample_rate <= 0) sample_rate = Beeps::sample_rate();
+		if (sample_rate <= 0)
+			argument_error(__FILE__, __LINE__);
 
 		self->mic.self->sample_rate = sample_rate;
 		self->mic.self->nchannels   = nchannels;
