@@ -1,6 +1,7 @@
 #include "beeps/ruby/processor.h"
 
 
+#include "beeps/ruby/signals.h"
 #include "beeps/exception.h"
 #include "defs.h"
 
@@ -58,6 +59,17 @@ RUCY_DEF0(on_start)
 }
 RUCY_END
 
+static
+RUCY_DEF4(get_signals, processor, seconds, nchannels, sample_rate)
+{
+	return value(Beeps::get_signals(
+		to<Beeps::Processor*>(processor),
+		to<float>            (seconds),
+		to<uint>             (nchannels),
+		to<double>           (sample_rate)));
+}
+RUCY_END
+
 
 static Class cProcessor;
 
@@ -72,6 +84,8 @@ Init_beeps_processor ()
 	cProcessor.define_method("input=", set_input);
 	cProcessor.define_method("input",  get_input);
 	cProcessor.define_method("on_start", on_start);
+
+	cProcessor.define_singleton_method("get_signals!", get_signals);
 }
 
 

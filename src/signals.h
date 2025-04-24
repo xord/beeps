@@ -8,6 +8,7 @@
 #include <vector>
 #include <Stk.h>
 #include <xot/pimpl.h>
+#include "beeps/beeps.h"
 #include "beeps/signals.h"
 #include "beeps/exception.h"
 
@@ -63,11 +64,30 @@ namespace Beeps
 	class Frames : public stk::StkFrames
 	{
 
+		typedef stk::StkFrames Super;
+
 		public:
 
-			Frames (unsigned int nframes = 0, unsigned int nchannels = 1)
-			:	stk::StkFrames(nframes, nchannels)
+			Frames (unsigned int nframes = 0, unsigned int nchannels = 1, double sample_rate = 0)
+			:	Super(nframes, nchannels)
 			{
+				if (sample_rate == 0)
+					sample_rate = Beeps::sample_rate();
+
+				if (nframes <= 0)
+					argument_error(__FILE__, __LINE__);
+				if (nchannels <= 0)
+					argument_error(__FILE__, __LINE__);
+				if (sample_rate <= 0)
+					argument_error(__FILE__, __LINE__);
+
+				setDataRate(sample_rate);
+			}
+
+			Frames (const Frames& obj)
+			:	Super(obj)
+			{
+				setDataRate(obj.dataRate());
 			}
 
 			size_t slice (size_t start, size_t length)

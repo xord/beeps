@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <AudioFile.h>
 #include <CDSPResampler.h>
-#include "beeps/beeps.h"
 #include "beeps/exception.h"
 
 
@@ -27,19 +26,9 @@ namespace Beeps
 	Signals
 	Signals_create (uint capacity, uint nchannels, double sample_rate)
 	{
-		if (sample_rate == 0)
-			sample_rate = Beeps::sample_rate();
-
-		if (capacity <= 0)
-			argument_error(__FILE__, __LINE__);
-		if (nchannels <= 0)
-			argument_error(__FILE__, __LINE__);
-		if (sample_rate <= 0)
-			argument_error(__FILE__, __LINE__);
-
 		Signals s;
-		s.self->frames.reset(new Frames(capacity, nchannels));
-		s.self->frames->setDataRate(sample_rate);
+		s.self->frames.reset(
+			new Frames(capacity * nchannels, nchannels, sample_rate));
 		return s;
 	}
 
@@ -48,21 +37,10 @@ namespace Beeps
 		const float* const* channels,
 		uint nsamples, uint nchannels, double sample_rate)
 	{
-		if (sample_rate == 0)
-			sample_rate = Beeps::sample_rate();
-
 		if (!channels)
 			argument_error(__FILE__, __LINE__);
-		if (nsamples <= 0)
-			argument_error(__FILE__, __LINE__);
-		if (nchannels <= 0)
-			argument_error(__FILE__, __LINE__);
-		if (sample_rate <= 0)
-			argument_error(__FILE__, __LINE__);
 
-		Frames* frames = new Frames(nsamples, nchannels);
-		frames->setDataRate(sample_rate);
-
+		Frames* frames = new Frames(nsamples * nchannels, nchannels, sample_rate);
 		for (uint channel = 0; channel < nchannels; ++channel)
 		{
 			for (uint sample = 0; sample < nsamples; ++sample)

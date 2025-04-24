@@ -687,13 +687,8 @@ namespace Beeps
 
 		SoundData (
 			Processor* processor, float seconds, uint nchannels, double sample_rate)
+		:	signals(get_signals(processor, seconds, nchannels, sample_rate))
 		{
-			assert(
-				processor && *processor &&
-				seconds > 0 && nchannels > 0 && sample_rate > 0);
-
-			StreamContext context(seconds * sample_rate, nchannels, sample_rate);
-			this->signals = context.process_next(processor);
 		}
 
 		void attach_to (SoundPlayer* player) override

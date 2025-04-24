@@ -7,13 +7,11 @@
 #include <xot/ref.h>
 #include <xot/pimpl.h>
 #include <beeps/defs.h>
+#include <beeps/signals.h>
 
 
 namespace Beeps
 {
-
-
-	class Signals;
 
 
 	class Processor : public Xot::RefCountable<>
@@ -98,6 +96,11 @@ namespace Beeps
 				Context* context, Signals* signals, uint* offset) override final;
 
 	};// Filter
+
+
+	Signals get_signals (
+		Processor* processor, float seconds,
+		uint nchannels = 1, double sample_rate = 0);
 
 
 }// Beeps

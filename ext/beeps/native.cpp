@@ -4,6 +4,7 @@
 void Init_beeps ();
 void Init_beeps_exception ();
 
+void Init_beeps_signals ();
 void Init_beeps_sound ();
 void Init_beeps_sound_player ();
 void Init_beeps_processor ();
@@ -35,6 +36,7 @@ extern "C" void
 	Init_beeps();
 	Init_beeps_exception();
 
+	Init_beeps_signals();
 	Init_beeps_sound();
 	Init_beeps_sound_player();
 	Init_beeps_processor();

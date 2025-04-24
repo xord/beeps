@@ -4,6 +4,7 @@ require_relative 'helper'
 class TestProcessor < Test::Unit::TestCase
 
   B = Beeps
+  P = B::Processor
 
   def processor()
     B::Gain.new
@@ -42,6 +43,12 @@ class TestProcessor < Test::Unit::TestCase
     assert_equal nil,   osc.input
     assert_equal osc,   gain1.input
     assert_equal gain1, gain2.input
+  end
+
+  def test_get_signals()
+    assert_equal 4000, P.get_signals(
+      B::Oscillator.new, seconds: 2, nchannels: 2, sample_rate: 1000
+    ).to_a.size
   end
 
 end# TestProcessor

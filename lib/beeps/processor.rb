@@ -38,6 +38,10 @@ module Beeps
     #  self
     #end
 
+    def self.get_signals(processor, seconds: 1, nchannels: 1, sample_rate: 0)
+      get_signals! processor, seconds, nchannels, sample_rate
+    end
+
   end# Processor
 
 

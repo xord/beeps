@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <xot/time.h>
+#include "beeps/beeps.h"
 #include "beeps/exception.h"
 #include "beeps/debug.h"
 
@@ -24,6 +25,28 @@ namespace Beeps
 
 	};// Processor::Data
 
+
+	Signals
+	get_signals (
+		Processor* processor, float seconds, uint nchannels, double sample_rate)
+	{
+		if (sample_rate == 0)
+			sample_rate = Beeps::sample_rate();
+
+		if (!processor)
+			argument_error(__FILE__, __LINE__);
+		if (!*processor)
+			argument_error(__FILE__, __LINE__);
+		if (seconds <= 0)
+			argument_error(__FILE__, __LINE__);
+		if (nchannels <= 0)
+			argument_error(__FILE__, __LINE__);
+		if (sample_rate <= 0)
+			argument_error(__FILE__, __LINE__);
+
+		StreamContext context(seconds * sample_rate, nchannels, sample_rate);
+		return context.process_next(processor);
+	}
 
 	ProcessorContext*
 	Processor_get_context(Processor::Context* context)
