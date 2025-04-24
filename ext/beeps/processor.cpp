@@ -17,7 +17,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Processor)
 static
 RUCY_DEF_ALLOC(alloc, klass)
 {
-	Beeps::beeps_error(__FILE__, __LINE__);
+	Beeps::beeps_error(__FILE__, __LINE__, "can not instantiate Processor class.");
 }
 RUCY_END
 

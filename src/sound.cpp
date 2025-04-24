@@ -7,8 +7,8 @@
 #include <algorithm>
 #include "Stk.h"
 #include "beeps/beeps.h"
-#include "beeps/exception.h"
 #include "beeps/generator.h"
+#include "beeps/exception.h"
 #include "beeps/debug.h"
 #include "openal.h"
 #include "processor.h"
