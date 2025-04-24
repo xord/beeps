@@ -32,17 +32,17 @@ namespace Beeps
 		Beeps_fin();
 	}
 
+	double
+	sample_rate ()
+	{
+		return stk::Stk::sampleRate();
+	}
+
 	void
 	process_streams ()
 	{
 		MicIn_process_streams();
 		SoundPlayer_process_streams();
-	}
-
-	double
-	sample_rate ()
-	{
-		return stk::Stk::sampleRate();
 	}
 
 

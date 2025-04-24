@@ -15,9 +15,9 @@ namespace Beeps
 
 	void fin ();
 
-	void process_streams ();
-
 	double sample_rate ();
+
+	void process_streams ();
 
 
 }// Beeps
