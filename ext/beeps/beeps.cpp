@@ -22,6 +22,13 @@ RUCY_DEF0(fin)
 RUCY_END
 
 static
+RUCY_DEF0(get_sample_rate)
+{
+	return value(Beeps::sample_rate());
+}
+RUCY_END
+
+static
 RUCY_DEF0(process_streams)
 {
 	Beeps::process_streams();
@@ -38,6 +45,7 @@ Init_beeps ()
 	mBeeps = define_module("Beeps");
 	mBeeps.define_singleton_method("init!", init);
 	mBeeps.define_singleton_method("fin!",  fin);
+	mBeeps.define_singleton_method("sample_rate", get_sample_rate);
 	mBeeps.define_singleton_method("process_streams!", process_streams);
 }
 
