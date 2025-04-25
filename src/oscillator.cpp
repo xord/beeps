@@ -88,7 +88,8 @@ namespace Beeps
 			{
 				if (drop_msec > 0)
 				{
-					Frames f((uint) (frames->dataRate() * (drop_msec / 1000.0)));
+					double sample_rate = frames->dataRate();
+					Frames f((uint) (sample_rate * (drop_msec / 1000.0)), 1, sample_rate);
 					osc.tick(f);
 					drop_msec = 0;
 				}
