@@ -76,45 +76,53 @@ namespace Beeps
 		return self->inputs.end();
 	}
 
+	static void
+	mix (
+		Mixer* mixer, Processor* input,
+		Processor::Context* context, Signals* signals, uint offset)
+	{
+		Mixer::Data* self = mixer->self.get();
+
+		auto& insig = self->input_signals;
+		if (!insig)
+			insig = Signals_create(signals->capacity(), signals->nchannels());
+		else
+			Signals_clear(&insig, signals->capacity());
+
+		Processor_get_context(context)->process(input, &insig, &offset);
+
+		if (insig.nsamples() > signals->nsamples())
+			Signals_set_nsamples(signals, insig.nsamples());
+
+		Signals_add(signals, insig);
+	}
+
 	void
 	Mixer::filter (Context* context, Signals* signals, uint* offset)
 	{
+		Signals_fill(signals, signals->capacity(), 0);
+		Signals_clear(signals);
+
 		Super::filter(context, signals, offset);
 
-		auto& in  = self->input_signals;
-		auto& out = *signals;
-
-		Signals_fill(&out, out.capacity(), 0);
-
-		if (!in)
-			in = Signals_create(out.capacity(), out.nchannels());
-		else
-			Signals_clear(&in, out.capacity());
-
-		uint out_size = 0;
 		for (auto& input : self->inputs)
-		{
-			Signals_clear(&in);
+			mix(this, input.get(), context, signals, *offset);
 
-			uint input_offset = *offset;
-			Processor_get_context(context)->process(input, &in, &input_offset);
-
-			uint size = input_offset - *offset;
-			if (size > out_size) out_size = size;
-
-			Signals_add(&out, in);
-		}
-
-		Signals_set_nsamples(&out, out_size);
-		*offset += out_size;
+		*offset += signals->nsamples();
 	}
 
 	Mixer::operator bool () const
 	{
-		if (self->inputs.empty()) return false;
+		const auto* input = this->input();
+		if (input && !*input)
+			return false;
 
-		for (auto& input : self->inputs)
-			if (!*input) return false;
+		if (!input && self->inputs.empty())
+			return false;
+
+		for (auto& i : self->inputs)
+			if (!*i) return false;
+
 		return true;
 	}
 

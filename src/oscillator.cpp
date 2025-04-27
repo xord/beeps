@@ -437,6 +437,8 @@ namespace Beeps
 		{
 			self->osc->tick(frames);
 		});
+
+		*offset += signals->nsamples();
 	}
 
 	Oscillator::operator bool () const

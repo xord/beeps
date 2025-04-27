@@ -195,14 +195,14 @@ namespace Beeps
 		if (nsamples > signals->nsamples())
 			return Signals_clear(signals);
 
-		Sample* from       = Signals_at(signals, nsamples);
-		Sample* to         = Signals_at(signals, 0);
-		uint move_nsamples = signals->nsamples() - nsamples;
-		uint size          = move_nsamples * signals->nchannels();
+		Sample* from         = Signals_at(signals, nsamples);
+		Sample* to           = Signals_at(signals, 0);
+		uint nsamples_remain = signals->nsamples() - nsamples;
+		uint size            = nsamples_remain * signals->nchannels();
 		for (uint i = 0; i < size; ++i)
 			*to++ = *from++;
 
-		Signals_set_nsamples(signals, move_nsamples);
+		Signals_set_nsamples(signals, nsamples_remain);
 	}
 
 	static void
@@ -212,13 +212,14 @@ namespace Beeps
 		assert(to->nsamples() + from.nsamples() <= to->capacity());
 
 		uint nchannels       =  to->nchannels();
-		uint size            = from.nsamples() * nchannels;
+		uint nsamples        = std::min(from.nsamples(), to->capacity() - to->nsamples());
+		uint size            = nsamples * nchannels;
 		      Sample*   to_p = Signals_at(to,   to->nsamples());
 		const Sample* from_p = Signals_at(from, 0);
 		for (uint i = 0; i < size; ++i)
 			*to_p++ = *from_p++;
 
-		Signals_set_nsamples(to, to->nsamples() + from.nsamples());
+		Signals_set_nsamples(to, to->nsamples() + nsamples);
 	}
 
 	void

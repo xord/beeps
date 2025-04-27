@@ -14,10 +14,25 @@ namespace Beeps
 	static const float TIME_ZERO = 0.0000001;
 
 
+	class ADSR : public stk::ADSR
+	{
+
+		public:
+
+			void skipAttackPhase()
+			{
+				value_  = 1;
+				target_ = 1;
+				state_  = DECAY;
+			}
+
+	};// ADSR
+
+
 	struct Envelope::Data
 	{
 
-		stk::ADSR adsr;
+		ADSR adsr;
 
 		Signals adsr_signals;
 
@@ -160,7 +175,7 @@ namespace Beeps
 		assert(0 < len && (start + len) <= signals->nsamples());
 
 		return Signals_tick(
-			signals, start, len,
+			signals, start, start + len,
 			[&](stk::StkFrames* frames) {envelope->self->adsr.tick(*frames);});
 	}
 
@@ -172,7 +187,7 @@ namespace Beeps
 		Envelope::Data* self = envelope->self.get();
 
 		if (self->time == 0 && self->attack_time == 0)
-			self->adsr.setValue(self->sustain_level);// skip attack phase
+			self->adsr.skipAttackPhase();
 
 		float start       = self->time;
 		float end         = start + Signals_get_seconds(*signals);
@@ -211,7 +226,10 @@ namespace Beeps
 		{
 			self->adsr.keyOff();
 			if (off < end)
-				tick(envelope, signals, (uint) last, -1);
+			{
+				float len = end == release_end ? end - off : -1;
+				tick(envelope, signals, (uint) last, len);
+			}
 		}
 	}
 

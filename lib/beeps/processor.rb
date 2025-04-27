@@ -123,6 +123,8 @@ module Beeps
 
     alias each each_input
 
+    alias inputs to_a
+
   end# Mixer
 
 
