@@ -16,6 +16,12 @@ class TestOscillator < Test::Unit::TestCase
     assert_in_delta 0, get_samples(1000, osc(:sawtooth)).sum / B.sample_rate
   end
 
+  def test_square_with_duty()
+    assert_not_equal(
+      get_samples(1000, osc(:square, duty: 0.1)),
+      get_samples(1000, osc(:square, duty: 0.2)))
+  end
+
   def test_samples_wave()
     assert_each_in_delta [1] * 1001, get_samples(1000, osc(samples: [1]))
     assert_each_in_delta [1, 1, 1],  get_samples(2,    osc(samples: [1]))

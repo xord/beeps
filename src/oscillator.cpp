@@ -377,6 +377,29 @@ namespace Beeps
 	}
 
 	void
+	Oscillator::set_duty (float duty)
+	{
+		if (duty <= 0)
+			argument_error(__FILE__, __LINE__);
+		if (duty >= 1)
+			argument_error(__FILE__, __LINE__);
+
+		if (duty == self->duty)
+			return;
+
+		self->duty = duty;
+		if (type() == SQUARE) update_waveform(this);
+
+		set_updated();
+	}
+
+	float
+	Oscillator::duty () const
+	{
+		return self->duty;
+	}
+
+	void
 	Oscillator::generate (Context* context, Signals* signals, uint* offset)
 	{
 		Super::generate(context, signals, offset);
