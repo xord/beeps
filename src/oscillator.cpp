@@ -4,10 +4,6 @@
 #include <assert.h>
 #include <cmath>
 #include <vector>
-#include "SineWave.h"
-#include "Blit.h"
-#include "BlitSquare.h"
-#include "BlitSaw.h"
 #include "beeps/exception.h"
 #include "beeps/debug.h"
 #include "signals.h"
@@ -15,42 +11,6 @@
 
 namespace Beeps
 {
-
-
-	class SineWave : public stk::SineWave
-	{
-
-		public:
-
-			void setPhase (stk::StkFloat phase)
-			{
-				time_ = std::fmod(phase, 1.f) * TABLE_SIZE;
-			}
-
-			stk::StkFloat getPhase () const
-			{
-				return time_ / TABLE_SIZE;
-			}
-
-	};// SineWave
-
-
-	class BlitSaw : public stk::BlitSaw
-	{
-
-		public:
-
-			void setPhase (stk::StkFloat phase)
-			{
-				phase_ = M_PI * phase;
-			}
-
-			stk::StkFloat getPhase () const
-			{
-				return phase_ / M_PI;
-			}
-
-	};// BlitSaw
 
 
 	class Osc
@@ -66,79 +26,13 @@ namespace Beeps
 
 			virtual void set_frequency (float freq) = 0;
 
+			virtual float    frequency () const = 0;
+
 			virtual void set_phase (float phase) = 0;
 
 			virtual float    phase () const = 0;
 
 	};// Osc
-
-
-	template <typename OSC, uint DROP_MSEC>
-	class StkOsc : public Osc
-	{
-
-		public:
-
-			void reset () override
-			{
-				osc.reset();
-				drop_msec = DROP_MSEC;
-			}
-
-			void tick (stk::StkFrames* frames) override
-			{
-				if (drop_msec > 0)
-				{
-					stk::StkFrames f((uint) (frames->dataRate() * (drop_msec / 1000.0)), 1);
-					osc.tick(f);
-					drop_msec = 0;
-				}
-
-				osc.tick(*frames);
-			}
-
-			void set_frequency (float freq) override
-			{
-				osc.setFrequency(freq);
-			}
-
-			void set_phase (float phase) override
-			{
-				osc.setPhase(phase);
-			}
-
-			float phase () const override
-			{
-				return osc.getPhase();
-			}
-
-		protected:
-
-			OSC osc;
-
-			uint drop_msec = DROP_MSEC;
-
-	};// StkOsc
-
-
-	typedef StkOsc<SineWave,          0> SineOsc;
-
-	typedef StkOsc<stk::BlitSquare, 100> SquareOsc;
-
-	typedef StkOsc<BlitSaw,         200> SawtoothOsc;
-
-
-	class TriangleOsc : public StkOsc<stk::Blit, 0>
-	{
-
-		public:
-
-			TriangleOsc ()
-			{
-				osc.setHarmonics(10);
-			}
-
-	};// TriangleOsc
 
 
 	class NoiseOsc : public Osc
@@ -162,6 +56,11 @@ namespace Beeps
 			void set_frequency (float freq) override
 			{
 				this->freq = freq;
+			}
+
+			float frequency () const override
+			{
+				return freq;
 			}
 
 			void set_phase (float phase) override
@@ -232,10 +131,10 @@ namespace Beeps
 
 		public:
 
-			typedef std::vector<float> Table;
+			typedef std::vector<Sample> Table;
 
-			WaveformOsc (float* samples, size_t nsamples, float frequency)
-			:	table(samples, samples + nsamples), freq(frequency), time(0)
+			WaveformOsc (const Sample* samples, size_t nsamples)
+			:	table(samples, samples + nsamples), freq(1), time(0)
 			{
 			}
 
@@ -275,6 +174,11 @@ namespace Beeps
 				this->freq = freq;
 			}
 
+			float frequency () const override
+			{
+				return freq;
+			}
+
 			void set_phase (float phase) override
 			{
 				this->time = std::fmod(phase, 1.f) * table.size();
@@ -302,9 +206,9 @@ namespace Beeps
 	struct Oscillator::Data
 	{
 
-		Type type       = TYPE_NONE;
+		Type type  = TYPE_NONE;
 
-		float frequency = 440;
+		float duty = 0.5;
 
 		std::unique_ptr<Osc> osc;
 
@@ -316,7 +220,7 @@ namespace Beeps
 		set_type(type);
 	}
 
-	Oscillator::Oscillator (float* samples, size_t size)
+	Oscillator::Oscillator (const Sample* samples, size_t size)
 	{
 		set_samples(samples, size);
 	}
@@ -330,32 +234,77 @@ namespace Beeps
 	{
 		Super::reset();
 		self->osc->reset();
+
+		set_updated();
+	}
+
+	static Osc*
+	create_osc (Oscillator::Type type, size_t size, float duty)
+	{
+		std::function<Sample(float)> fun;
+		switch (type)
+		{
+			case Oscillator::SINE:
+				fun = [](float t) {return std::sin(t * M_PI * 2);};
+				break;
+
+			case Oscillator::TRIANGLE:
+				fun = [](float t) {return t < 0.5 ? t * 4 - 1 : 3 - t * 4;};
+				break;
+
+			case Oscillator::SAWTOOTH:
+				fun = [](float t) {return t * 2 - 1;};
+				break;
+
+			case Oscillator::SQUARE:
+				fun = [=](float t) {return t < duty ? 1 : -1;};
+				break;
+
+			case Oscillator::NOISE:
+				return new NoiseOsc();
+
+			default:
+				argument_error(
+					__FILE__, __LINE__, "unknown oscilator type '%d'", type);
+				break;
+		}
+
+		std::vector<Sample> samples;
+		samples.resize(size);
+		for (size_t i = 0; i < size; ++i)
+			samples[i] = fun(i / (float) size);
+
+		return new WaveformOsc(&samples[0], samples.size());
+	}
+
+	static void
+	update_osc (Oscillator* pthis, std::function<Osc*()> fun)
+	{
+		Oscillator::Data* self = pthis->self.get();
+
+		float freq  = self->osc ? self->osc->frequency() : 440;
+		float phase = self->osc ? self->osc->phase()     : 0;
+
+		self->osc.reset(fun());
+
+		self->osc->set_frequency(freq);
+		self->osc->set_phase(phase);
+	}
+
+	static void
+	update_waveform (Oscillator* pthis)
+	{
+		update_osc(pthis, [&]()
+		{
+			return create_osc(pthis->type(), 32, pthis->duty());
+		});
 	}
 
 	void
 	Oscillator::set_type (Type type)
 	{
-		if (type == self->type) return;
-
-		float phase = self->osc ? self->osc->phase() : 0;
-
 		self->type = type;
-		self->osc.reset();
-
-		switch (self->type)
-		{
-			case SINE:     self->osc.reset(new SineOsc());     break;
-			case TRIANGLE: self->osc.reset(new TriangleOsc()); break;
-			case SQUARE:   self->osc.reset(new SquareOsc());   break;
-			case SAWTOOTH: self->osc.reset(new SawtoothOsc()); break;
-			case NOISE:    self->osc.reset(new NoiseOsc());    break;
-			default:
-				argument_error(
-					__FILE__, __LINE__, "unknown oscilator type '%d'", self->type);
-				break;
-		}
-
-		self->osc->set_phase(phase);
+		update_waveform(this);
 
 		set_updated();
 	}
@@ -367,18 +316,18 @@ namespace Beeps
 	}
 
 	void
-	Oscillator::set_samples (float* samples, size_t size)
+	Oscillator::set_samples (const Sample* samples, size_t size)
 	{
-		float phase = self->osc ? self->osc->phase() : 0;
-
 		self->type = SAMPLES;
-		self->osc.reset(new WaveformOsc(samples, size, frequency()));
-		self->osc->set_phase(phase);
+		update_osc(this, [=]()
+		{
+			return new WaveformOsc(samples, size);
+		});
 
 		set_updated();
 	}
 
-	const float*
+	const Sample*
 	Oscillator::samples () const
 	{
 		if (self->type != SAMPLES)
@@ -404,14 +353,14 @@ namespace Beeps
 		if (frequency <= 0)
 			argument_error(__FILE__, __LINE__);
 
-		self->frequency = frequency;
+		self->osc->set_frequency(frequency);
 		set_updated();
 	}
 
 	float
 	Oscillator::frequency () const
 	{
-		return self->frequency;
+		return self->osc->frequency();
 	}
 
 	void
@@ -432,7 +381,6 @@ namespace Beeps
 	{
 		Super::generate(context, signals, offset);
 
-		self->osc->set_frequency(self->frequency);
 		Signals_tick(signals, [&](stk::StkFrames* frames)
 		{
 			self->osc->tick(frames);
@@ -443,8 +391,10 @@ namespace Beeps
 
 	Oscillator::operator bool () const
 	{
-		if (!Super::operator bool()) return false;
-		return self->type != TYPE_NONE && self->frequency > 0 && self->osc;
+		if (!Super::operator bool())
+			return false;
+
+		return self->type != TYPE_NONE && self->osc;
 	}
 
 
