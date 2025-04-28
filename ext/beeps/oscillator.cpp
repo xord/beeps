@@ -46,12 +46,12 @@ RUCY_DEF1(set_samples, samples)
 	Value* array = samples.as_array();
 	size_t size  = samples.size();
 
-	std::vector<float> floats;
-	floats.reserve(size);
+	std::vector<Beeps::Sample> data;
+	data.reserve(size);
 	for (size_t i = 0; i < size; ++i)
-		floats.push_back(to<float>(array[i]));
+		data.push_back(to<Beeps::Sample>(array[i]));
 
-	THIS->set_samples(&floats[0], floats.size());
+	THIS->set_samples(&data[0], data.size());
 }
 RUCY_END
 
@@ -60,13 +60,13 @@ RUCY_DEF0(each_sample)
 {
 	CHECK;
 
-	const float* floats = THIS->samples();
-	size_t size         = THIS->nsamples();
-	if (!floats || size == 0) return Qnil;
+	const Beeps::Sample* samples = THIS->samples();
+	size_t size                  = THIS->nsamples();
+	if (!samples || size == 0) return Qnil;
 
 	Value ret;
 	for (size_t i = 0; i < size; ++i)
-		ret = rb_yield(value(floats[i]));
+		ret = rb_yield(value((float) samples[i]));
 	return ret;
 }
 RUCY_END

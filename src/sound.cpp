@@ -60,23 +60,23 @@ namespace Beeps
 			double sample_rate = signals.sample_rate();
 			uint nchannels     = signals.nchannels();
 			uint nsamples      = signals.nsamples();
+			uint size          = nsamples * nchannels;
 			assert(sample_rate > 0 && nchannels > 0);
 			if (nsamples <= 0) return 0;
 
-			std::vector<short> buffer;
-			buffer.resize(nsamples * nchannels, 0);
+			std::unique_ptr<short[]> buffer(new short[size]);
 			for (uint channel = 0; channel < nchannels; ++channel)
 			{
 				const Sample* p = Signals_at(signals, 0, channel);
-				for (uint i = 0; i < nsamples; ++i, p += nchannels)
-					buffer.push_back(*p * SHRT_MAX);
+				for (uint i = channel; i < size; i += nchannels, p += nchannels)
+					buffer[i] = *p * SHRT_MAX;
 			}
 
 			alBufferData(
 				self->id,
 				nchannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16,
 				&buffer[0],
-				sizeof(short) * nsamples * nchannels,
+				sizeof(short) * size,
 				sample_rate);
 			OpenAL_check_error(__FILE__, __LINE__);
 

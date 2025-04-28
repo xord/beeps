@@ -24,6 +24,9 @@ namespace Beeps
 	using Xot::String;
 
 
+	typedef double Sample;
+
+
 }// Beeps
 
 

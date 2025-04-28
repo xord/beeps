@@ -25,7 +25,7 @@ namespace Beeps
 
 			Oscillator (Type type = SINE);
 
-			Oscillator (float* samples, size_t size);
+			Oscillator (const Sample* samples, size_t size);
 
 			virtual ~Oscillator ();
 
@@ -35,11 +35,11 @@ namespace Beeps
 
 			virtual Type     type () const;
 
-			virtual void     set_samples (float* samples, size_t size);
+			virtual void      set_samples (const Sample* samples, size_t size);
 
-			virtual const float* samples () const;
+			virtual const Sample* samples () const;
 
-			virtual size_t      nsamples () const;
+			virtual size_t       nsamples () const;
 
 			virtual void set_frequency (float frequency);
 

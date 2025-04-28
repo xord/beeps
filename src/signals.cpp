@@ -512,7 +512,7 @@ namespace Beeps
 		return self->nsamples == 0;
 	}
 
-	const double*
+	const Sample*
 	Signals::samples () const
 	{
 		return self->frames ? self->frames->data() : NULL;

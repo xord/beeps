@@ -18,8 +18,6 @@ namespace Beeps
 {
 
 
-	typedef stk::StkFloat Sample;
-
 	template <typename T> class SignalSamples;
 
 
