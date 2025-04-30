@@ -414,7 +414,11 @@ namespace Beeps
 			for (int i = 0; i < 2; ++i)
 			{
 				SoundBuffer buffer(true);
-				if (!process_stream(&buffer)) break;
+				if (!process_stream(&buffer))
+				{
+					source.stop();
+					break;
+				}
 
 				source.queue(buffer);
 				buffers.emplace_back(buffer);
@@ -423,7 +427,10 @@ namespace Beeps
 
 		bool process_stream (SoundBuffer* buffer)
 		{
-			assert(buffer && processor && stream_context);
+			assert(buffer && processor);
+
+			if (!stream_context)
+				return false;
 
 			Signals signals = stream_context->process_next(processor);
 			if (stream_context->is_finished())
@@ -441,7 +448,10 @@ namespace Beeps
 					return;
 
 				if (!process_stream(&buffer))
+				{
+					source.stop();
 					return;
+				}
 
 				source.queue(buffer);
 				if (source.state() == STOPPED) source.play();

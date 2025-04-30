@@ -189,38 +189,37 @@ namespace Beeps
 		if (self->time == 0 && self->attack_time == 0)
 			self->adsr.skipAttackPhase();
 
-		float start       = self->time;
-		float end         = start + Signals_get_seconds(*signals);
 		float on          = self->note_on_time;
 		float off         = self->note_off_time;
+		float start       = self->time;
+		float end         = start + signals->capacity() / signals->sample_rate();
 		float release_end = off >= 0 ? off + self->release_time : -1;
 		bool has_on       = 0 <= on  && start <= on  && on  < end;
 		bool has_off      = 0 <= off && start <= off && off < end;
 
 		if (release_end >= 0 && release_end < end)
-		{
-			Signals_set_nsamples(signals, (release_end - start) * signals->sample_rate());
 			end = release_end;
-		}
+
 		self->time = end;
 
 		if (!has_on && !has_off)
 		{
-			tick(envelope, signals, 0);
+			float len = end == release_end ? end - start : -1;
+			tick(envelope, signals, 0, len);
 			return;
 		}
 
-		size_t last = 0;
+		uint pos = 0;
 		if (has_on)
 		{
 			if (start < on)
-				last = tick(envelope, signals, 0, on - start);
+				pos = tick(envelope, signals, pos, on - start);
 			self->adsr.keyOn();
 		}
 		if (has_on || has_off)
 		{
 			float len = has_off ? off - (has_on ? on : start) : -1;
-			last = tick(envelope, signals, (uint) last, len);
+			pos = tick(envelope, signals, pos, len);
 		}
 		if (has_off)
 		{
@@ -228,9 +227,11 @@ namespace Beeps
 			if (off < end)
 			{
 				float len = end == release_end ? end - off : -1;
-				tick(envelope, signals, (uint) last, len);
+				pos = tick(envelope, signals, pos, len);
 			}
 		}
+
+		Signals_set_nsamples(signals, pos);
 	}
 
 	void
@@ -245,8 +246,6 @@ namespace Beeps
 		}
 		else
 			Signals_clear(&self->adsr_signals, signals->nsamples());
-
-		Signals_set_nsamples(&self->adsr_signals, signals->nsamples());
 
 		process_envelope_signals(this, &self->adsr_signals);
 		if (self->adsr_signals.nsamples() < signals->nsamples())
