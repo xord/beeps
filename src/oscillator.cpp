@@ -151,6 +151,7 @@ namespace Beeps
 				uint nchannels = frames->channels();
 				uint nframes   = frames->frames();
 				Sample* p      = &(*frames)(0, 0);
+				Sample prev    = 0;
 				for (uint i = 0; i < nframes; ++i, ++p)
 				{
 					uint ch = i % nchannels;
@@ -160,12 +161,12 @@ namespace Beeps
 						size_t index1 = index0 == size - 1 ? 0 : index0 + 1;
 						float frac    = time - index0;
 						*p            = table[index0] * (1.f - frac) + table[index1] * frac;
+						prev          = *p;
 
 						time += dt;
 						while (time >= size) time -= size;
 					}
-					else
-						*p = p[-ch];
+					else *p = prev;
 				}
 			}
 
