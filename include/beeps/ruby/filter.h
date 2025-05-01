@@ -15,6 +15,10 @@ RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Mixer)
 
 RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Envelope)
 
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps:: LowPass)
+
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::HighPass)
+
 RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::TimeStretch)
 
 RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::PitchShift)
@@ -34,6 +38,12 @@ namespace Beeps
 
 	BEEPS_EXPORT Rucy::Class envelope_class ();
 	// class Beeps::Envelope
+
+	BEEPS_EXPORT Rucy::Class  low_pass_class ();
+	// class Beeps:: LowPass
+
+	BEEPS_EXPORT Rucy::Class high_pass_class ();
+	// class Beeps::HighPass
 
 	BEEPS_EXPORT Rucy::Class time_stretch_class ();
 	// class Beeps::TimeStretch
@@ -68,6 +78,18 @@ namespace Rucy
 	get_ruby_class<Beeps::Envelope> ()
 	{
 		return Beeps::envelope_class();
+	}
+
+	template <> inline Class
+	get_ruby_class<Beeps::LowPass> ()
+	{
+		return Beeps::low_pass_class();
+	}
+
+	template <> inline Class
+	get_ruby_class<Beeps::HighPass> ()
+	{
+		return Beeps::high_pass_class();
 	}
 
 	template <> inline Class

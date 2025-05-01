@@ -121,6 +121,56 @@ namespace Beeps
 	};// Envelope
 
 
+	class LowPass : public Filter
+	{
+
+		typedef Filter Super;
+
+		public:
+
+			LowPass (Processor* input = NULL);
+
+			virtual ~LowPass ();
+
+			virtual void set_cutoff_frequency  (float frequency);
+
+			virtual float    cutoff_frequency () const;
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// LowPass
+
+
+	class HighPass : public Filter
+	{
+
+		typedef Filter Super;
+
+		public:
+
+			HighPass (Processor* input = NULL);
+
+			virtual ~HighPass ();
+
+			virtual void set_cutoff_frequency  (float frequency);
+
+			virtual float    cutoff_frequency () const;
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// HighPass
+
+
 	class TimeStretch : public Filter
 	{
 

@@ -164,6 +164,38 @@ module Beeps
   end# Envelope
 
 
+  class LowPass
+
+    def initialize(cutoff = nil, **kwargs, &block)
+      super(**kwargs, &block)
+
+      self.cutoff = cutoff if cutoff
+    end
+
+    universal_accessor :cutoff_frequency
+
+    alias cutoff= cutoff_frequency=
+    alias cutoff  cutoff_frequency
+
+  end# LowPass
+
+
+  class HighPass
+
+    def initialize(cutoff = nil, **kwargs, &block)
+      super(**kwargs, &block)
+
+      self.cutoff = cutoff if cutoff
+    end
+
+    universal_accessor :cutoff_frequency
+
+    alias cutoff= cutoff_frequency=
+    alias cutoff  cutoff_frequency
+
+  end# HighPass
+
+
   class TimeStretch
 
     universal_accessor :scale

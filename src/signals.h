@@ -33,6 +33,10 @@ namespace Beeps
 		std::function<void(stk::StkFrames*)> fun);
 
 	uint Signals_tick (
+		Signals* output, const Signals& input,
+		std::function<void(stk::StkFrames*, const stk::StkFrames&)> fun);
+
+	uint Signals_tick (
 		Signals* signals, uint start, uint length,
 		std::function<void(stk::StkFrames*)> fun);
 

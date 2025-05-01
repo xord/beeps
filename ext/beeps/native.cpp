@@ -17,6 +17,8 @@ void Init_beeps_mic_in ();
 void Init_beeps_gain ();
 void Init_beeps_mixer ();
 void Init_beeps_envelope ();
+void Init_beeps_low_pass ();
+void Init_beeps_high_pass ();
 void Init_beeps_time_stretch ();
 void Init_beeps_pitch_shift ();
 void Init_beeps_analyser ();
@@ -49,6 +51,8 @@ extern "C" void
 	Init_beeps_gain();
 	Init_beeps_mixer();
 	Init_beeps_envelope();
+	Init_beeps_low_pass();
+	Init_beeps_high_pass();
 	Init_beeps_time_stretch();
 	Init_beeps_pitch_shift();
 	Init_beeps_analyser();

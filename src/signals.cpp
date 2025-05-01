@@ -172,6 +172,25 @@ namespace Beeps
 
 	uint
 	Signals_tick (
+		Signals* output, const Signals& input,
+		std::function<void(stk::StkFrames*, const stk::StkFrames&)> fun)
+	{
+		if (!output)
+			argument_error(__FILE__, __LINE__);
+		if (!*output)
+			argument_error(__FILE__, __LINE__);
+		if (!input)
+			argument_error(__FILE__, __LINE__);
+
+		Signals_clear(output, input.nsamples());
+		Signals_set_nsamples(output, output->capacity());
+
+		fun(output->self->frames.get(), *input.self->frames);
+		return output->nsamples();
+	}
+
+	uint
+	Signals_tick (
 		Signals* signals, uint start, uint end,
 		std::function<void(stk::StkFrames*)> fun)
 	{
