@@ -17,7 +17,7 @@ TESTS_ALONE = ['test/test_beeps_init.rb']
 install_packages win32: %w[MINGW_PACKAGE_PREFIX-openal]
 
 use_external_library 'https://github.com/thestk/stk',
-  tag:      '4.6.2',
+  tag:      '5.0.1',
   incdirs:  'include',
   srcdirs:  'src',
   excludes: %w[stk/src/include Tcp Udp Socket Thread Mutex InetWv /Rt]
