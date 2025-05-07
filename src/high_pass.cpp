@@ -28,6 +28,9 @@ namespace Beeps
 	void
 	HighPass::set_cutoff_frequency (float frequency)
 	{
+		if (frequency <= 0)
+			argument_error(__FILE__, __LINE__);
+
 		if (frequency == self->cutoff_freq)
 			return;
 

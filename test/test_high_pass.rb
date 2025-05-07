@@ -34,6 +34,8 @@ class TestHighPass < Test::Unit::TestCase
     f.cutoff     5
     assert_equal 5, f.cutoff_frequency
     assert_equal 5, f.cutoff
+
+    assert_raise(ArgumentError) {f.cutoff 0}
   end
 
 end# TestHighPass
