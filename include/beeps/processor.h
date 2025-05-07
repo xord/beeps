@@ -23,7 +23,9 @@ namespace Beeps
 
 			class Context {};
 
-			typedef Xot::Ref<This> Ref;
+			typedef Xot::Ref<This>   Ref;
+
+			typedef std::vector<Ref> List;
 
 			virtual ~Processor ();
 
@@ -56,6 +58,12 @@ namespace Beeps
 			virtual void filter   (Context* context, Signals* signals, uint* offset);
 
 			virtual void set_updated ();
+
+			virtual void    add_sub_input (Processor* input);
+
+			virtual void remove_sub_input (Processor* input);
+
+			virtual const List& sub_inputs () const;
 
 			friend class ProcessorContext;
 

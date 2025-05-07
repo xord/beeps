@@ -23,6 +23,8 @@ namespace Beeps
 
 		Processor::Ref input;
 
+		Processor::List sub_inputs;
+
 	};// Processor::Data
 
 
@@ -76,7 +78,12 @@ namespace Beeps
 	Processor::reset ()
 	{
 		self->started = false;
-		if (self->input) self->input->reset();
+
+		if (self->input)
+			self->input->reset();
+
+		for (auto& input : self->sub_inputs)
+			input->reset();
 
 		set_updated();
 	}
@@ -85,7 +92,7 @@ namespace Beeps
 	Processor::set_input (Processor* input)
 	{
 		if (input && self->generator)
-			invalid_state_error(__FILE__, __LINE__, "generator cannot have inputs");
+			invalid_state_error(__FILE__, __LINE__, "generator cannot have input");
 
 		self->input = input;
 
@@ -178,6 +185,39 @@ namespace Beeps
 	Processor::set_updated ()
 	{
 		self->last_update_time = Xot::time();
+	}
+
+	void
+	Processor::add_sub_input (Processor* input)
+	{
+		auto& inputs = self->sub_inputs;
+
+		if (std::find(inputs.begin(), inputs.end(), input) != inputs.end())
+			return;
+
+		inputs.emplace_back(input);
+
+		set_updated();
+	}
+
+	void
+	Processor::remove_sub_input (Processor* input)
+	{
+		auto& inputs = self->sub_inputs;
+
+		auto it = std::find(inputs.begin(), inputs.end(), input);
+		if (it == inputs.end())
+			return;
+
+		inputs.erase(it);
+
+		set_updated();
+	}
+
+	const Processor::List&
+	Processor::sub_inputs () const
+	{
+		return self->sub_inputs;
 	}
 
 
