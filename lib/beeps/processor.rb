@@ -196,6 +196,13 @@ module Beeps
   end# HighPass
 
 
+  class Reverb
+
+    universal_accessor :mix, :room_size, :damping
+
+  end# Reverb
+
+
   class TimeStretch
 
     universal_accessor :scale

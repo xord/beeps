@@ -171,6 +171,39 @@ namespace Beeps
 	};// HighPass
 
 
+	class Reverb : public Filter
+	{
+
+		typedef Filter Super;
+
+		public:
+
+			Reverb (Processor* input = NULL);
+
+			virtual ~Reverb ();
+
+			virtual void set_mix (float mix);
+
+			virtual float    mix () const;
+
+			virtual void set_room_size (float frequency);
+
+			virtual float    room_size () const;
+
+			virtual void set_damping (float damping);
+
+			virtual float    damping () const;
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
+
+			struct Data;
+
+			Xot::PImpl<Data> self;
+
+	};// Reverb
+
+
 	class TimeStretch : public Filter
 	{
 
