@@ -49,6 +49,14 @@ namespace Beeps
 
 			virtual float    phase () const;
 
+			virtual void set_gain (float gain);
+
+			virtual float    gain () const;
+
+			virtual void set_offset (float offset);
+
+			virtual float    offset () const;
+
 			virtual void set_duty (float duty);
 
 			virtual float    duty () const;

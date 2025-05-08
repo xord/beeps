@@ -110,6 +110,44 @@ RUCY_DEF0(get_phase)
 RUCY_END
 
 static
+RUCY_DEF1(set_gain, gain)
+{
+	CHECK;
+
+	THIS->set_gain(to<float>(gain));
+	return gain;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_gain)
+{
+	CHECK;
+
+	return value(THIS->gain());
+}
+RUCY_END
+
+static
+RUCY_DEF1(set_offset, offset)
+{
+	CHECK;
+
+	THIS->set_offset(to<float>(offset));
+	return offset;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_offset)
+{
+	CHECK;
+
+	return value(THIS->offset());
+}
+RUCY_END
+
+static
 RUCY_DEF1(set_duty, duty)
 {
 	CHECK;
@@ -146,6 +184,10 @@ Init_beeps_oscillator ()
 	cOscillator.define_method("frequency",  get_frequency);
 	cOscillator.define_method("phase=",     set_phase);
 	cOscillator.define_method("phase",      get_phase);
+	cOscillator.define_method("gain=",      set_gain);
+	cOscillator.define_method("gain",       get_gain);
+	cOscillator.define_method("offset=",    set_offset);
+	cOscillator.define_method("offset",     get_offset);
 	cOscillator.define_method("duty=",      set_duty);
 	cOscillator.define_method("duty",       get_duty);
 

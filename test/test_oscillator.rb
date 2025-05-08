@@ -9,11 +9,38 @@ class TestOscillator < Test::Unit::TestCase
     B::Oscillator.new(type, samples: samples, freq: freq, **kwargs)
   end
 
+  def test_initialize()
+    assert_equal      1, osc(frequency: 1).frequency
+    assert_equal      2, osc(frequency: 2).freq
+    assert_equal      3, osc(freq:      3).frequency
+    assert_equal      4, osc(freq:      4).freq
+    assert_in_delta 0.5, osc(phase:   5.5).phase
+    assert_equal      6, osc(gain:      6).gain
+    assert_equal      7, osc(offset:    7).offset
+    assert_in_delta 0.8, osc(duty:    0.8).duty
+  end
+
+  def test_offset()
+    assert_in_delta  0, get_samples(10000, osc(offset:  0)).sum / 10000
+    assert_in_delta  3, get_samples(10000, osc(offset:  3)).sum / 10000
+    assert_in_delta -3, get_samples(10000, osc(offset: -3)).sum / 10000
+  end
+
+  def test_gain()
+    assert_in_delta  3, get_samples(100, osc(gain: 3)).max
+    assert_in_delta -3, get_samples(100, osc(gain: 3)).min
+  end
+
+  def test_offset_and_gain()
+    assert_in_delta 13, get_samples(100, osc(offset: 10, gain: 3)).max
+    assert_in_delta  7, get_samples(100, osc(offset: 10, gain: 3)).min
+  end
+
   def test_waves()
-    assert_in_delta 0, get_samples(1000, osc(:sine))    .sum / B.sample_rate
-    assert_in_delta 0, get_samples(1000, osc(:triangle)).sum / B.sample_rate
-    assert_in_delta 0, get_samples(1000, osc(:square))  .sum / B.sample_rate
-    assert_in_delta 0, get_samples(1000, osc(:sawtooth)).sum / B.sample_rate
+    assert_in_delta 0, get_samples(10000, osc(:sine))    .sum / 10000
+    assert_in_delta 0, get_samples(10000, osc(:triangle)).sum / 10000
+    assert_in_delta 0, get_samples(10000, osc(:square))  .sum / 10000
+    assert_in_delta 0, get_samples(10000, osc(:sawtooth)).sum / 10000, 0.05
   end
 
   def test_square_with_duty()

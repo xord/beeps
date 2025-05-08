@@ -68,7 +68,7 @@ module Beeps
       end
     end
 
-    universal_accessor :type, :frequency, :phase, :duty
+    universal_accessor :type, :frequency, :phase, :gain, :offset, :duty
 
     alias freq= frequency=
     alias freq  frequency

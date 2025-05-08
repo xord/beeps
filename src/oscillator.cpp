@@ -207,9 +207,13 @@ namespace Beeps
 	struct Oscillator::Data
 	{
 
-		Type type  = TYPE_NONE;
+		Type type    = TYPE_NONE;
 
-		float duty = 0.5;
+		float gain   = 1;
+
+		float offset = 0;
+
+		float duty   = 0.5;
 
 		std::unique_ptr<Osc> osc;
 
@@ -380,6 +384,40 @@ namespace Beeps
 	}
 
 	void
+	Oscillator::set_gain (float gain)
+	{
+		if (gain == self->gain)
+			return;
+
+		self->gain = gain;
+
+		set_updated();
+	}
+
+	float
+	Oscillator::gain () const
+	{
+		return self->gain;
+	}
+
+	void
+	Oscillator::set_offset (float offset)
+	{
+		if (offset == self->offset)
+			return;
+
+		self->offset = offset;
+
+		set_updated();
+	}
+
+	float
+	Oscillator::offset () const
+	{
+		return self->offset;
+	}
+
+	void
 	Oscillator::set_duty (float duty)
 	{
 		if (duty <= 0)
@@ -419,6 +457,7 @@ namespace Beeps
 		{
 			self->osc->tick(frames);
 		});
+		Signals_offset_and_scale(signals, self->offset, self->gain);
 
 		*offset += signals->nsamples();
 	}

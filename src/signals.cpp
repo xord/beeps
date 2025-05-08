@@ -367,6 +367,33 @@ namespace Beeps
 		}
 	}
 
+	void
+	Signals_offset_and_scale (
+		Signals* signals, float offset, float scale, int channel)
+	{
+		if (offset == 0 && scale == 1) return;
+
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+
+		uint nchannels = signals->nchannels();
+		uint nsamples  = signals->nsamples();
+
+		if (channel >= 0)
+		{
+			Sample* p = Signals_at(signals, 0, channel);
+			for (uint i = 0; i < nsamples; ++i, p += nchannels)
+				*p = *p * scale + offset;
+		}
+		else
+		{
+			uint size = nchannels * nsamples;
+			Sample* p = Signals_at(signals, 0, 0);
+			for (uint i = 0; i < size; ++i, ++p)
+				*p = *p * scale + offset;
+		}
+	}
+
 	template <typename T>
 	void
 	write_samples (Signals* signals, const SignalSamples<T>& samples, long nsamples_)
