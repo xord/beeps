@@ -63,6 +63,8 @@ namespace Beeps
 			}
 		}
 		notes.emplace_back(processor, offset, duration);
+
+		set_updated();
 	}
 
 	void
@@ -76,6 +78,8 @@ namespace Beeps
 		if (it == self->notes.end()) return;
 
 		self->notes.erase(it);
+
+		set_updated();
 	}
 
 	void
@@ -85,6 +89,8 @@ namespace Beeps
 			argument_error(__FILE__, __LINE__, "time_scale must be greater than 0");
 
 		self->time_scale = time_scale;
+
+		set_updated();
 	}
 
 	float

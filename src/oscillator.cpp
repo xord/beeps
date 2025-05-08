@@ -355,6 +355,7 @@ namespace Beeps
 			argument_error(__FILE__, __LINE__);
 
 		self->osc->set_frequency(frequency);
+
 		set_updated();
 	}
 
@@ -368,6 +369,7 @@ namespace Beeps
 	Oscillator::set_phase (float phase)
 	{
 		self->osc->set_phase(phase);
+
 		set_updated();
 	}
 
