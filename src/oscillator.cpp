@@ -218,9 +218,10 @@ namespace Beeps
 
 		std::unique_ptr<Osc> osc;
 
-		Processor::Ref frequency_input;
-
 	};// Oscillator::Data
+
+
+	enum InputIndex {FREQUENCY = 0, PHASE, GAIN, OFFSET, DUTY};
 
 
 	Oscillator::Oscillator (Type type)
@@ -364,21 +365,13 @@ namespace Beeps
 		self->osc->set_frequency(frequency);
 
 		set_updated();
+		clear_sub_input_unless_processing(FREQUENCY);
 	}
 
 	void
-	Oscillator::set_frequency (Processor* processor)
+	Oscillator::set_frequency (Processor* frequency)
 	{
-		if (processor == self->frequency_input)
-			return;
-
-		if (self->frequency_input)
-			remove_sub_input(self->frequency_input);
-
-		self->frequency_input = processor;
-
-		if (self->frequency_input)
-			add_sub_input(self->frequency_input);
+		set_sub_input(FREQUENCY, frequency);
 	}
 
 	float
@@ -393,6 +386,13 @@ namespace Beeps
 		self->osc->set_phase(phase);
 
 		set_updated();
+		clear_sub_input_unless_processing(PHASE);
+	}
+
+	void
+	Oscillator::set_phase (Processor* phase)
+	{
+		set_sub_input(PHASE, phase);
 	}
 
 	float
@@ -410,6 +410,13 @@ namespace Beeps
 		self->gain = gain;
 
 		set_updated();
+		clear_sub_input_unless_processing(GAIN);
+	}
+
+	void
+	Oscillator::set_gain (Processor* gain)
+	{
+		set_sub_input(GAIN, gain);
 	}
 
 	float
@@ -427,6 +434,13 @@ namespace Beeps
 		self->offset = offset;
 
 		set_updated();
+		clear_sub_input_unless_processing(OFFSET);
+	}
+
+	void
+	Oscillator::set_offset (Processor* offset)
+	{
+		set_sub_input(OFFSET, offset);
 	}
 
 	float
@@ -450,6 +464,13 @@ namespace Beeps
 		if (type() == SQUARE) update_waveform(this);
 
 		set_updated();
+		clear_sub_input_unless_processing(DUTY);
+	}
+
+	void
+	Oscillator::set_duty (Processor* duty)
+	{
+		set_sub_input(DUTY, duty);
 	}
 
 	float
@@ -471,33 +492,31 @@ namespace Beeps
 	{
 		Super::generate(context, signals, offset);
 
-		if (self->frequency_input)
-		{
-			uint nsamples    = signals->capacity();
-			uint chunk_size  = 1024;
-			Signals freq_sig = Signals_create(chunk_size, 1, signals->sample_rate());
-			for (uint start = 0; start < nsamples; start += chunk_size)
-			{
-				uint freq_offset = *offset + start;
-				Signals_clear(&freq_sig);
-				Processor_get_context(context)
-					->process(self->frequency_input, &freq_sig, &freq_offset);
+		auto* pcontext     = Processor_get_context(context);
+		Processor* pfreq   = sub_input(FREQUENCY);
+		Processor* pphase  = sub_input(PHASE);
+		Processor* pgain   = sub_input(GAIN);
+		Processor* poffset = sub_input(OFFSET);
+		Processor* pduty   = sub_input(DUTY);
+		bool has_sub_input = pfreq || pphase || pgain || poffset || pduty;
 
-				set_frequency((float) *freq_sig.samples());
-				Signals_tick(
-					signals, start, std::min(start + chunk_size, nsamples),
-					[&](stk::StkFrames* frames)
-					{
-						self->osc->tick(frames);
-					});
-			}
-		}
-		else
+		uint nsamples   = signals->capacity();
+		uint chunk_size = has_sub_input ? 1024 : nsamples;
+		for (uint start = 0; start < nsamples; start += chunk_size)
 		{
-			Signals_tick(signals, [&](stk::StkFrames* frames)
-			{
-				self->osc->tick(frames);
-			});
+			uint offset_ = *offset + start;
+			if (pfreq)   set_frequency((float) pcontext->process(pfreq,   chunk_size, offset_));
+			if (pphase)  set_phase(    (float) pcontext->process(pphase,  chunk_size, offset_));
+			if (pgain)   set_gain(     (float) pcontext->process(pgain,   chunk_size, offset_));
+			if (poffset) set_offset(   (float) pcontext->process(poffset, chunk_size, offset_));
+			if (pduty)   set_duty(     (float) pcontext->process(pduty,   chunk_size, offset_));
+
+			Signals_tick(
+				signals, start, std::min(start + chunk_size, nsamples),
+				[&](stk::StkFrames* frames)
+				{
+					self->osc->tick(frames);
+				});
 		}
 
 		Signals_offset_and_scale(signals, self->offset, self->gain);

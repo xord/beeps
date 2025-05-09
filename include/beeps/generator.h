@@ -41,25 +41,33 @@ namespace Beeps
 
 			virtual size_t       nsamples () const;
 
-			virtual void set_frequency (float frequency);
+			virtual void set_frequency (float      frequency);
 
-			virtual void set_frequency (Processor* processor);
+			virtual void set_frequency (Processor* frequency);
 
 			virtual float    frequency () const;
 
-			virtual void set_phase (float phase);
+			virtual void set_phase (float      phase);
+
+			virtual void set_phase (Processor* phase);
 
 			virtual float    phase () const;
 
-			virtual void set_gain (float gain);
+			virtual void set_gain (float      gain);
+
+			virtual void set_gain (Processor* gain);
 
 			virtual float    gain () const;
 
-			virtual void set_offset (float offset);
+			virtual void set_offset (float      offset);
+
+			virtual void set_offset (Processor* offset);
 
 			virtual float    offset () const;
 
-			virtual void set_duty (float duty);
+			virtual void set_duty (float      duty);
+
+			virtual void set_duty (Processor* duty);
 
 			virtual float    duty () const;
 

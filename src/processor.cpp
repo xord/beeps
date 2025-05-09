@@ -15,7 +15,7 @@ namespace Beeps
 	struct Processor::Data
 	{
 
-		bool generator = false, started = false;
+		bool generator = false, started = false, processing = false;
 
 		float buffering_seconds = 0;
 
@@ -23,7 +23,7 @@ namespace Beeps
 
 		Processor::Ref input;
 
-		Processor::List sub_inputs;
+		Processor::Map sub_inputs;
 
 	};// Processor::Data
 
@@ -82,8 +82,8 @@ namespace Beeps
 		if (self->input)
 			self->input->reset();
 
-		for (auto& input : self->sub_inputs)
-			input->reset();
+		for (auto& kv : self->sub_inputs)
+			kv.second->reset();
 
 		set_updated();
 	}
@@ -136,10 +136,14 @@ namespace Beeps
 			on_start();
 		}
 
+		self->processing = true;
+
 		if (self->generator)
 			generate(context, signals, offset);
 		else
 			filter(context, signals, offset);
+
+		self->processing = false;
 	}
 
 	void
@@ -182,47 +186,37 @@ namespace Beeps
 	}
 
 	void
+	Processor::set_sub_input (uint index, Processor* input)
+	{
+		if (input)
+			self->sub_inputs[index] = input;
+		else
+			self->sub_inputs.erase(index);
+
+		set_updated();
+	}
+
+	Processor*
+	Processor::sub_input (uint index) const
+	{
+		auto it = self->sub_inputs.find(index);
+		if (it == self->sub_inputs.end())
+			return NULL;
+
+		return it->second;
+	}
+
+	void
+	Processor::clear_sub_input_unless_processing (uint index)
+	{
+		if (!self->processing)
+			set_sub_input(index, NULL);
+	}
+
+	void
 	Processor::set_updated ()
 	{
 		self->last_update_time = Xot::time();
-	}
-
-	void
-	Processor::add_sub_input (Processor* input)
-	{
-		if (!input)
-			argument_error(__FILE__, __LINE__);
-
-		auto& inputs = self->sub_inputs;
-
-		if (std::find(inputs.begin(), inputs.end(), input) != inputs.end())
-			return;
-
-		inputs.emplace_back(input);
-
-		set_updated();
-	}
-
-	void
-	Processor::remove_sub_input (Processor* input)
-	{
-		if (!input) return;
-
-		auto& inputs = self->sub_inputs;
-
-		auto it = std::find(inputs.begin(), inputs.end(), input);
-		if (it == inputs.end())
-			return;
-
-		inputs.erase(it);
-
-		set_updated();
-	}
-
-	const Processor::List&
-	Processor::sub_inputs () const
-	{
-		return self->sub_inputs;
 	}
 
 
@@ -329,6 +323,28 @@ namespace Beeps
 	ProcessorContext::ProcessorContext (uint nchannels, double sample_rate)
 	:	sample_rate(sample_rate), nchannels(nchannels)
 	{
+	}
+
+	Sample
+	ProcessorContext::process (
+		Processor* processor, uint nsamples, uint offset, bool ignore_buffer)
+	{
+		assert(processor);
+
+		if (!signal) signal = Signals_create(nsamples, 1, sample_rate);
+		Signals_clear(&signal, nsamples);
+
+		SignalsBuffer* buffer = NULL;
+		uint offset_          = offset;
+		if (!ignore_buffer && (buffer = get_buffer(processor)))
+			buffer->process(this, processor, &signal, &offset_);
+		else
+			processor->process(this, &signal, &offset_);
+
+		if (offset_ == offset || signal.empty())
+			return 0;
+
+		return *signal.samples();
 	}
 
 	void

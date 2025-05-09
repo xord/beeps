@@ -99,7 +99,11 @@ RUCY_DEF1(set_phase, phase)
 {
 	CHECK;
 
-	THIS->set_phase(to<float>(phase));
+	if (phase.is_a(Beeps::processor_class()))
+		THIS->set_phase(to<Beeps::Processor*>(phase));
+	else
+		THIS->set_phase(to<float>(phase));
+
 	return phase;
 }
 RUCY_END
@@ -118,7 +122,11 @@ RUCY_DEF1(set_gain, gain)
 {
 	CHECK;
 
-	THIS->set_gain(to<float>(gain));
+	if (gain.is_a(Beeps::processor_class()))
+		THIS->set_gain(to<Beeps::Processor*>(gain));
+	else
+		THIS->set_gain(to<float>(gain));
+
 	return gain;
 }
 RUCY_END
@@ -137,7 +145,11 @@ RUCY_DEF1(set_offset, offset)
 {
 	CHECK;
 
-	THIS->set_offset(to<float>(offset));
+	if (offset.is_a(Beeps::processor_class()))
+		THIS->set_offset(to<Beeps::Processor*>(offset));
+	else
+		THIS->set_offset(to<float>(offset));
+
 	return offset;
 }
 RUCY_END
@@ -156,7 +168,11 @@ RUCY_DEF1(set_duty, duty)
 {
 	CHECK;
 
-	THIS->set_duty(to<float>(duty));
+	if (duty.is_a(Beeps::processor_class()))
+		THIS->set_duty(to<Beeps::Processor*>(duty));
+	else
+		THIS->set_duty(to<float>(duty));
+
 	return duty;
 }
 RUCY_END

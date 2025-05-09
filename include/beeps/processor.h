@@ -4,6 +4,7 @@
 #define __BEEPS_PROCESSOR_H__
 
 
+#include <map>
 #include <xot/ref.h>
 #include <xot/pimpl.h>
 #include <beeps/defs.h>
@@ -23,9 +24,9 @@ namespace Beeps
 
 			class Context {};
 
-			typedef Xot::Ref<This>   Ref;
+			typedef Xot::Ref<This>     Ref;
 
-			typedef std::vector<Ref> List;
+			typedef std::map<uint, Ref> Map;
 
 			virtual ~Processor ();
 
@@ -57,13 +58,13 @@ namespace Beeps
 
 			virtual void filter   (Context* context, Signals* signals, uint* offset);
 
+			virtual void   set_sub_input (uint index, Processor* input);
+
+			virtual Processor* sub_input (uint index) const;
+
+			virtual void clear_sub_input_unless_processing (uint index);
+
 			virtual void set_updated ();
-
-			virtual void    add_sub_input (Processor* input);
-
-			virtual void remove_sub_input (Processor* input);
-
-			virtual const List& sub_inputs () const;
 
 			friend class ProcessorContext;
 

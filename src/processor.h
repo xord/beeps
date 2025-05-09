@@ -60,6 +60,10 @@ namespace Beeps
 
 			ProcessorContext (uint nchannels, double sample_rate);
 
+			Sample process (
+				Processor* processor, uint nsamples, uint offset = 0,
+				bool ignore_buffer = false);
+
 			void process (
 				Processor* processor, Signals* signals, uint* offset,
 				bool ignore_buffer = false);
@@ -69,6 +73,8 @@ namespace Beeps
 			double sample_rate;
 
 			uint nchannels;
+
+			Signals signal;
 
 			std::map<uintptr_t, std::unique_ptr<SignalsBuffer>> buffers;
 

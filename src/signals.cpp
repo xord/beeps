@@ -201,6 +201,9 @@ namespace Beeps
 		if (start > end)
 			argument_error(__FILE__, __LINE__);
 
+		if (start == 0 && end == signals->capacity())
+			return Signals_tick(signals, fun);
+
 		signals->self->frames->slice(start, end);
 		fun(signals->self->frames.get());
 		signals->self->frames->unslice();
