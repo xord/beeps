@@ -76,7 +76,11 @@ RUCY_DEF1(set_frequency, frequency)
 {
 	CHECK;
 
-	THIS->set_frequency(to<float>(frequency));
+	if (frequency.is_a(Beeps::processor_class()))
+		THIS->set_frequency(to<Beeps::Processor*>(frequency));
+	else
+		THIS->set_frequency(to<float>(frequency));
+
 	return frequency;
 }
 RUCY_END

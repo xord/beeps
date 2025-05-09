@@ -43,6 +43,8 @@ namespace Beeps
 
 			virtual void set_frequency (float frequency);
 
+			virtual void set_frequency (Processor* processor);
+
 			virtual float    frequency () const;
 
 			virtual void set_phase (float phase);

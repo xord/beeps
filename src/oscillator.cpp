@@ -6,6 +6,7 @@
 #include <vector>
 #include "beeps/exception.h"
 #include "beeps/debug.h"
+#include "processor.h"
 #include "signals.h"
 
 
@@ -217,6 +218,8 @@ namespace Beeps
 
 		std::unique_ptr<Osc> osc;
 
+		Processor::Ref frequency_input;
+
 	};// Oscillator::Data
 
 
@@ -363,6 +366,21 @@ namespace Beeps
 		set_updated();
 	}
 
+	void
+	Oscillator::set_frequency (Processor* processor)
+	{
+		if (processor == self->frequency_input)
+			return;
+
+		if (self->frequency_input)
+			remove_sub_input(self->frequency_input);
+
+		self->frequency_input = processor;
+
+		if (self->frequency_input)
+			add_sub_input(self->frequency_input);
+	}
+
 	float
 	Oscillator::frequency () const
 	{
@@ -453,12 +471,36 @@ namespace Beeps
 	{
 		Super::generate(context, signals, offset);
 
-		Signals_tick(signals, [&](stk::StkFrames* frames)
+		if (self->frequency_input)
 		{
-			self->osc->tick(frames);
-		});
-		Signals_offset_and_scale(signals, self->offset, self->gain);
+			uint nsamples    = signals->capacity();
+			uint chunk_size  = 1024;
+			Signals freq_sig = Signals_create(chunk_size, 1, signals->sample_rate());
+			for (uint start = 0; start < nsamples; start += chunk_size)
+			{
+				uint freq_offset = *offset + start;
+				Signals_clear(&freq_sig);
+				Processor_get_context(context)
+					->process(self->frequency_input, &freq_sig, &freq_offset);
 
+				set_frequency((float) *freq_sig.samples());
+				Signals_tick(
+					signals, start, std::min(start + chunk_size, nsamples),
+					[&](stk::StkFrames* frames)
+					{
+						self->osc->tick(frames);
+					});
+			}
+		}
+		else
+		{
+			Signals_tick(signals, [&](stk::StkFrames* frames)
+			{
+				self->osc->tick(frames);
+			});
+		}
+
+		Signals_offset_and_scale(signals, self->offset, self->gain);
 		*offset += signals->nsamples();
 	}
 

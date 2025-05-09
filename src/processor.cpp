@@ -190,6 +190,9 @@ namespace Beeps
 	void
 	Processor::add_sub_input (Processor* input)
 	{
+		if (!input)
+			argument_error(__FILE__, __LINE__);
+
 		auto& inputs = self->sub_inputs;
 
 		if (std::find(inputs.begin(), inputs.end(), input) != inputs.end())
@@ -203,6 +206,8 @@ namespace Beeps
 	void
 	Processor::remove_sub_input (Processor* input)
 	{
+		if (!input) return;
+
 		auto& inputs = self->sub_inputs;
 
 		auto it = std::find(inputs.begin(), inputs.end(), input);
