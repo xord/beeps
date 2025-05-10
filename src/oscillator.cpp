@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <cmath>
+#include <algorithm>
 #include <vector>
 #include "beeps/exception.h"
 #include "beeps/debug.h"
@@ -12,6 +13,11 @@
 
 namespace Beeps
 {
+
+
+	static const uint NSEGMENTS_PER_WAVEFORM_CYCLE = 32;
+
+	static const uint MIN_BUFFER_SIZE              = 64;
 
 
 	class Osc
@@ -492,26 +498,27 @@ namespace Beeps
 	{
 		Super::generate(context, signals, offset);
 
-		auto* pcontext     = Processor_get_context(context);
 		Processor* pfreq   = sub_input(FREQUENCY);
 		Processor* pphase  = sub_input(PHASE);
 		Processor* pgain   = sub_input(GAIN);
 		Processor* poffset = sub_input(OFFSET);
 		Processor* pduty   = sub_input(DUTY);
-		bool has_sub_input = pfreq || pphase || pgain || poffset || pduty;
 
-		uint nsamples   = signals->capacity();
-		uint chunk_size = has_sub_input ? 1024 : nsamples;
-		for (uint start = 0; start < nsamples; start += chunk_size)
+		auto* pcontext     = Processor_get_context(context);
+		double sample_rate = signals->sample_rate();
+		uint nsamples      = signals->capacity();
+		uint seg_size      = get_segment_size(sample_rate, nsamples);
+
+		for (uint start = 0; start < nsamples; start += seg_size)
 		{
-			uint offset_ = *offset + start;
-			if (pfreq)   set_frequency((float) pcontext->process(pfreq,   chunk_size, offset_));
-			if (pphase)  set_phase(    (float) pcontext->process(pphase,  chunk_size, offset_));
-			if (pgain)   set_gain(     (float) pcontext->process(pgain,   chunk_size, offset_));
-			if (poffset) set_offset(   (float) pcontext->process(poffset, chunk_size, offset_));
-			if (pduty)   set_duty(     (float) pcontext->process(pduty,   chunk_size, offset_));
+			uint seg_offset = *offset + start;
+			if (pfreq)   set_frequency(pcontext->process(pfreq,   seg_size, seg_offset));
+			if (pphase)  set_phase(    pcontext->process(pphase,  seg_size, seg_offset));
+			if (pgain)   set_gain(     pcontext->process(pgain,   seg_size, seg_offset));
+			if (poffset) set_offset(   pcontext->process(poffset, seg_size, seg_offset));
+			if (pduty)   set_duty(     pcontext->process(pduty,   seg_size, seg_offset));
 
-			uint end = std::min(start + chunk_size, nsamples);
+			uint end = std::min(start + seg_size, nsamples);
 			Signals_tick(signals, start, end, [&](stk::StkFrames* frames)
 			{
 				self->osc->tick(frames);
@@ -520,6 +527,16 @@ namespace Beeps
 		}
 
 		*offset += signals->nsamples();
+	}
+
+	int
+	Oscillator::max_segment_size_for_process (
+		double sample_rate, uint nsamples) const
+	{
+		return std::clamp(
+			(uint) (sample_rate / frequency() / NSEGMENTS_PER_WAVEFORM_CYCLE),
+			MIN_BUFFER_SIZE,
+			nsamples);
 	}
 
 

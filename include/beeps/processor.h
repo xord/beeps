@@ -58,6 +58,11 @@ namespace Beeps
 
 			virtual void filter   (Context* context, Signals* signals, uint* offset);
 
+			virtual int  max_segment_size_for_process (
+				double sample_rate, uint nsamples) const;
+
+			virtual uint get_segment_size (double sample_rate, uint nsamples) const;
+
 			virtual void   set_sub_input (uint index, Processor* input);
 
 			virtual Processor* sub_input (uint index) const;
