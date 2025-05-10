@@ -53,7 +53,8 @@ namespace Beeps
 	void Signals_multiply (Signals* signals, const Signals& multiplier);
 
 	void Signals_offset_and_scale (
-		Signals* signals, float offset, float scale, int channel = -1);
+		Signals* signals, float offset, float scale,
+		int channel = -1, uint start = 0, int end = -1);
 
 	template <typename T>
 	void Signals_write_samples (

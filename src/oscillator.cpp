@@ -511,15 +511,14 @@ namespace Beeps
 			if (poffset) set_offset(   (float) pcontext->process(poffset, chunk_size, offset_));
 			if (pduty)   set_duty(     (float) pcontext->process(pduty,   chunk_size, offset_));
 
-			Signals_tick(
-				signals, start, std::min(start + chunk_size, nsamples),
-				[&](stk::StkFrames* frames)
-				{
-					self->osc->tick(frames);
-				});
+			uint end = std::min(start + chunk_size, nsamples);
+			Signals_tick(signals, start, end, [&](stk::StkFrames* frames)
+			{
+				self->osc->tick(frames);
+			});
+			Signals_offset_and_scale(signals, self->offset, self->gain, -1, start, end);
 		}
 
-		Signals_offset_and_scale(signals, self->offset, self->gain);
 		*offset += signals->nsamples();
 	}
 

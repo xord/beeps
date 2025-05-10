@@ -372,26 +372,36 @@ namespace Beeps
 
 	void
 	Signals_offset_and_scale (
-		Signals* signals, float offset, float scale, int channel)
+		Signals* signals, float offset, float scale,
+		int channel, uint start, int end_)
 	{
-		if (offset == 0 && scale == 1) return;
-
 		if (!signals)
 			argument_error(__FILE__, __LINE__);
 
+		uint signals_nsamples = signals->nsamples();
+		uint end              = end_ < 0 ? signals_nsamples : (uint) end_;
+		if (start > signals_nsamples)
+			argument_error(__FILE__, __LINE__);
+		if (end   > signals_nsamples)
+			argument_error(__FILE__, __LINE__);
+		if (end < start)
+			argument_error(__FILE__, __LINE__);
+
+		if (offset == 0 && scale == 1) return;
+
 		uint nchannels = signals->nchannels();
-		uint nsamples  = signals->nsamples();
+		uint nsamples  = end - start;
 
 		if (channel >= 0)
 		{
-			Sample* p = Signals_at(signals, 0, channel);
+			Sample* p = Signals_at(signals, start, channel);
 			for (uint i = 0; i < nsamples; ++i, p += nchannels)
 				*p = *p * scale + offset;
 		}
 		else
 		{
 			uint size = nchannels * nsamples;
-			Sample* p = Signals_at(signals, 0, 0);
+			Sample* p = Signals_at(signals, start, 0);
 			for (uint i = 0; i < size; ++i, ++p)
 				*p = *p * scale + offset;
 		}
