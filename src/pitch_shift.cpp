@@ -52,6 +52,12 @@ namespace Beeps
 		return self->shift;
 	}
 
+	PitchShift::operator bool () const
+	{
+		if (!Super::operator bool()) return false;
+		return self->shift > 0;
+	}
+
 	void
 	PitchShift::filter (Context* context, Signals* signals, uint* offset)
 	{
@@ -70,12 +76,6 @@ namespace Beeps
 			output.channels(), output.nsamples());
 
 		Signals_write_samples(signals, output, signals->nsamples());
-	}
-
-	PitchShift::operator bool () const
-	{
-		if (!Super::operator bool()) return false;
-		return self->shift > 0;
 	}
 
 

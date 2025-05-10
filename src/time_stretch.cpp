@@ -54,6 +54,12 @@ namespace Beeps
 		return self->scale;
 	}
 
+	TimeStretch::operator bool () const
+	{
+		if (!Super::operator bool()) return false;
+		return self->scale > 0;
+	}
+
 	void
 	TimeStretch::filter (Context* context, Signals* signals, uint* offset)
 	{
@@ -79,12 +85,6 @@ namespace Beeps
 			output.channels(), output.nsamples());
 
 		Signals_write_samples(signals, output);
-	}
-
-	TimeStretch::operator bool () const
-	{
-		if (!Super::operator bool()) return false;
-		return self->scale > 0;
 	}
 
 

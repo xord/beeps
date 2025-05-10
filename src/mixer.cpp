@@ -76,6 +76,21 @@ namespace Beeps
 		return self->inputs.end();
 	}
 
+	Mixer::operator bool () const
+	{
+		const auto* input = this->input();
+		if (input && !*input)
+			return false;
+
+		if (!input && self->inputs.empty())
+			return false;
+
+		for (auto& i : self->inputs)
+			if (!*i) return false;
+
+		return true;
+	}
+
 	static void
 	mix (
 		Mixer* mixer, Processor* input,
@@ -109,21 +124,6 @@ namespace Beeps
 			mix(this, input.get(), context, signals, *offset);
 
 		*offset += signals->nsamples();
-	}
-
-	Mixer::operator bool () const
-	{
-		const auto* input = this->input();
-		if (input && !*input)
-			return false;
-
-		if (!input && self->inputs.empty())
-			return false;
-
-		for (auto& i : self->inputs)
-			if (!*i) return false;
-
-		return true;
 	}
 
 

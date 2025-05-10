@@ -76,18 +76,18 @@ namespace Beeps
 		return Signals_get_seconds(self->signals);
 	}
 
+	FileIn::operator bool () const
+	{
+		if (!Super::operator bool()) return false;
+		return self->signals;
+	}
+
 	void
 	FileIn::generate (Context* context, Signals* signals, uint* offset)
 	{
 		Super::generate(context, signals, offset);
 
 		*offset += Signals_copy(signals, self->signals, *offset);
-	}
-
-	FileIn::operator bool () const
-	{
-		if (!Super::operator bool()) return false;
-		return self->signals;
 	}
 
 

@@ -256,18 +256,18 @@ namespace Beeps
 		return self->mic.self->nchannels;
 	}
 
+	MicIn::operator bool () const
+	{
+		if (!Super::operator bool()) return false;
+		return self->mic.is_valid();
+	}
+
 	void
 	MicIn::generate (Context* context, Signals* signals, uint* offset)
 	{
 		Super::generate(context, signals, offset);
 
 		self->mic.get_signals(signals, offset);
-	}
-
-	MicIn::operator bool () const
-	{
-		if (!Super::operator bool()) return false;
-		return self->mic.is_valid();
 	}
 
 

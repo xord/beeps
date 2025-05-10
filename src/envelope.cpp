@@ -166,6 +166,17 @@ namespace Beeps
 		return self->release_time;
 	}
 
+	Envelope::operator bool () const
+	{
+		if (!Super::operator bool()) return false;
+		return
+			self->attack_time   >= 0 &&
+			self->decay_time    >= 0 &&
+			self->sustain_level >= 0 &&
+			self->release_time  >= 0 &&
+			self->time          >= 0;
+	}
+
 	static uint
 	tick (Envelope* envelope, Signals* signals, uint start, float length_sec = -1)
 	{
@@ -252,17 +263,6 @@ namespace Beeps
 			Signals_set_nsamples(signals, self->adsr_signals.nsamples());
 
 		Signals_multiply(signals, self->adsr_signals);
-	}
-
-	Envelope::operator bool () const
-	{
-		if (!Super::operator bool()) return false;
-		return
-			self->attack_time   >= 0 &&
-			self->decay_time    >= 0 &&
-			self->sustain_level >= 0 &&
-			self->release_time  >= 0 &&
-			self->time          >= 0;
 	}
 
 

@@ -49,11 +49,11 @@ namespace Beeps
 
 			Processor (bool generator = false);
 
-			virtual void process (Context* context, Signals* signals, uint* offset) final;
+			virtual void process  (Context* context, Signals* signals, uint* offset) final;
 
 			virtual void generate (Context* context, Signals* signals, uint* offset);
 
-			virtual void filter (Context* context, Signals* signals, uint* offset);
+			virtual void filter   (Context* context, Signals* signals, uint* offset);
 
 			virtual void set_updated ();
 

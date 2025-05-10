@@ -27,12 +27,14 @@ namespace Beeps
 
 			virtual float    gain () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// Gain
 
@@ -66,14 +68,16 @@ namespace Beeps
 
 			virtual const_iterator end () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// Mixer
 
@@ -109,14 +113,16 @@ namespace Beeps
 
 			virtual float    release_time () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// Envelope
 
@@ -136,12 +142,14 @@ namespace Beeps
 
 			virtual float    cutoff_frequency () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// LowPass
 
@@ -161,12 +169,14 @@ namespace Beeps
 
 			virtual float    cutoff_frequency () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// HighPass
 
@@ -194,12 +204,14 @@ namespace Beeps
 
 			virtual float    damping () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// Reverb
 
@@ -221,14 +233,16 @@ namespace Beeps
 
 			virtual float    scale () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// TimeStretch
 
@@ -250,14 +264,16 @@ namespace Beeps
 
 			virtual float    shift () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// PitchShift
 
@@ -285,14 +301,16 @@ namespace Beeps
 
 			virtual const Spectrum& spectrum () const;
 
-			virtual void filter (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void filter (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// Analyser
 

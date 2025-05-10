@@ -53,14 +53,16 @@ namespace Beeps
 
 			virtual float    duty () const;
 
-			virtual void generate (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// Oscillator
 
@@ -84,14 +86,16 @@ namespace Beeps
 
 			virtual float    time_scale () const;
 
-			virtual void generate (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// Sequencer
 
@@ -121,14 +125,16 @@ namespace Beeps
 
 			virtual float seconds () const;
 
-			virtual void generate (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// FileIn
 
@@ -152,14 +158,16 @@ namespace Beeps
 
 			virtual uint nchannels () const;
 
-			virtual void generate (
-				Context* context, Signals* signals, uint* offset) override;
-
 			virtual operator bool () const override;
 
 			struct Data;
 
 			Xot::PImpl<Data> self;
+
+		protected:
+
+			virtual void generate (
+				Context* context, Signals* signals, uint* offset) override;
 
 	};// MicIn
 

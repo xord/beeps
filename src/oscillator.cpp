@@ -402,6 +402,14 @@ namespace Beeps
 		return self->duty;
 	}
 
+	Oscillator::operator bool () const
+	{
+		if (!Super::operator bool())
+			return false;
+
+		return self->type != TYPE_NONE && self->osc;
+	}
+
 	void
 	Oscillator::generate (Context* context, Signals* signals, uint* offset)
 	{
@@ -413,14 +421,6 @@ namespace Beeps
 		});
 
 		*offset += signals->nsamples();
-	}
-
-	Oscillator::operator bool () const
-	{
-		if (!Super::operator bool())
-			return false;
-
-		return self->type != TYPE_NONE && self->osc;
 	}
 
 

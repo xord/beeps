@@ -186,6 +186,12 @@ namespace Beeps
 		return self->spectrum;
 	}
 
+	Analyser::operator bool () const
+	{
+		if (!Super::operator bool()) return false;
+		return self->is_valid();
+	}
+
 	static void
 	shift (Signals* signals, uint nsamples)
 	{
@@ -240,12 +246,6 @@ namespace Beeps
 		append(&my, in);
 
 		self->spectrum.clear();
-	}
-
-	Analyser::operator bool () const
-	{
-		if (!Super::operator bool()) return false;
-		return self->is_valid();
 	}
 
 

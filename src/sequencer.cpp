@@ -99,6 +99,12 @@ namespace Beeps
 		return self->time_scale;
 	}
 
+	Sequencer::operator bool () const
+	{
+		if (!Super::operator bool()) return false;
+		return self->time_scale > 0;
+	}
+
 	static void
 	mix (Signals* mixed, const Signals& source, uint source_offset)
 	{
@@ -152,12 +158,6 @@ namespace Beeps
 
 		Signals_set_nsamples(&signals, nsamples);
 		*offset += nsamples;
-	}
-
-	Sequencer::operator bool () const
-	{
-		if (!Super::operator bool()) return false;
-		return self->time_scale > 0;
 	}
 
 
