@@ -1,6 +1,30 @@
 # beeps ChangeLog
 
 
+## [v0.3.7] - 2025-05-11
+
+- Add LowPass and HighPass classes
+- Add Reverb class
+- Add Signals class for ruby extension
+- Add Beeps.sample_rate()
+- Add Processor.get_signals!() method
+- Add Oscillator#gain, Oscillator#offset, and Oscillator#duty
+- Add more tests for processors
+
+- Update STK
+- Processor has sub inputs
+- Reimplement oscillators without STK wave generators
+- Oscillator#frequency= can take another processor like low frequency oscillator for frequency modulation
+- Oscillator: phase, gain, offset, and duty can also accept a processor as input
+- Make process segment size variable based on the frequency of the sub-input
+- Sequencer: Call set_updated()
+
+- Refactor: hide Beeps::Frames class
+
+- Fix the issue where the sound player with a streaming source does not stop when the envelope's note_off is called
+- Fix crashes
+
+
 ## [v0.3.6] - 2025-04-08
 
 - Update dependencies: xot, rucy
