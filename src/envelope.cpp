@@ -200,6 +200,16 @@ namespace Beeps
 		if (self->time == 0 && self->attack_time == 0)
 			self->adsr.skipAttackPhase();
 
+		if (
+			self->note_on_time  >= 0 &&
+			self->note_off_time <  0 &&
+			self->sustain_level == 0)
+		{
+			envelope->note_off(
+				self->note_on_time + self->attack_time + self->decay_time
+				- self->time);
+		}
+
 		float on          = self->note_on_time;
 		float off         = self->note_off_time;
 		float start       = self->time;
