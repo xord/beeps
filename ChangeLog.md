@@ -1,6 +1,12 @@
 # beeps ChangeLog
 
 
+## [v0.3.8] - 2025-05-22
+
+- The oscillator resets the frequency to 0.001 if it is set to 0
+- The envelope automatically calls note_off internally when sustain_level is 0
+
+
 ## [v0.3.7] - 2025-05-11
 
 - Add LowPass and HighPass classes
