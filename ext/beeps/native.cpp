@@ -13,6 +13,7 @@ void Init_beeps_oscillator ();
 void Init_beeps_sequencer ();
 void Init_beeps_file_in ();
 void Init_beeps_mic_in ();
+void Init_beeps_text_in ();
 
 void Init_beeps_gain ();
 void Init_beeps_mixer ();
@@ -48,6 +49,7 @@ extern "C" void
 	Init_beeps_sequencer();
 	Init_beeps_file_in();
 	Init_beeps_mic_in();
+	Init_beeps_text_in();
 
 	Init_beeps_gain();
 	Init_beeps_mixer();

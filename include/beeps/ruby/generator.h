@@ -17,6 +17,8 @@ RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::FileIn)
 
 RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::MicIn)
 
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::TextIn)
+
 
 namespace Beeps
 {
@@ -33,6 +35,9 @@ namespace Beeps
 
 	BEEPS_EXPORT Rucy::Class mic_in_class ();
 	// class Beeps::MicIn
+
+	BEEPS_EXPORT Rucy::Class text_in_class ();
+	// class Beeps::TextIn
 
 
 }// Beeps
@@ -64,6 +69,12 @@ namespace Rucy
 	get_ruby_class<Beeps::MicIn> ()
 	{
 		return Beeps::mic_in_class();
+	}
+
+	template <> inline Class
+	get_ruby_class<Beeps::TextIn> ()
+	{
+		return Beeps::text_in_class();
 	}
 
 
