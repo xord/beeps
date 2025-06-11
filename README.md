@@ -1,5 +1,6 @@
 # Beeps - Plays beep sound
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/xord/beeps)
 ![License](https://img.shields.io/github/license/xord/beeps)
 ![Build Status](https://github.com/xord/beeps/actions/workflows/test.yml/badge.svg)
 ![Gem Version](https://badge.fury.io/rb/beeps.svg)
