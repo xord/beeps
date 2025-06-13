@@ -20,6 +20,15 @@ RUCY_DEF_ALLOC(alloc, klass)
 RUCY_END
 
 static
+RUCY_DEF1(synthesize, text)
+{
+	CHECK;
+
+	THIS->synthesize(text.c_str());
+}
+RUCY_END
+
+static
 RUCY_DEF0(get_sample_rate)
 {
 	CHECK;
@@ -38,6 +47,7 @@ Init_beeps_text_in ()
 
 	cTextIn = mBeeps.define_class("TextIn", Beeps::processor_class());
 	cTextIn.define_alloc_func(alloc);
+	cTextIn.define_method("synthesize", synthesize);
 	cTextIn.define_method("sample_rate", get_sample_rate);
 }
 

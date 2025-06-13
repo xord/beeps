@@ -94,6 +94,16 @@ module Beeps
   end# FileIn
 
 
+  class TextIn
+
+    def initialize(text = nil, **kwargs, &block)
+      super(**kwargs, &block)
+      synthesize text if text
+    end
+
+  end# TextIn
+
+
   class Gain
 
     def initialize(gain = 1, **kwargs, &block)

@@ -204,6 +204,8 @@ namespace Beeps
 
 			virtual ~TextIn ();
 
+			virtual void synthesize (const char* text);
+
 			virtual double sample_rate () const;
 
 			virtual operator bool () const override;
