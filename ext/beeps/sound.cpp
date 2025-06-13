@@ -117,7 +117,7 @@ RUCY_END
 static
 RUCY_DEF1(load, path)
 {
-	return value(Beeps::load_sound(to<const char*>(path)));
+	return value(Beeps::load_sound(path.c_str()));
 }
 RUCY_END
 
