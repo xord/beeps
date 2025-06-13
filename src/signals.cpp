@@ -116,13 +116,13 @@ namespace Beeps
 	Signals
 	Signals_create (
 		const float* const* channels,
-		uint nsamples, uint nchannels, double sample_rate)
+		uint nsamples, uint nchannels, double sample_rate, uint capacity)
 	{
 		if (!channels)
 			argument_error(__FILE__, __LINE__);
 
-		Signals s        = Signals_create(nsamples, nchannels, sample_rate);
-		s.self->nsamples = nsamples;
+		Signals s = Signals_create(
+			capacity > nsamples ? capacity : nsamples, nchannels, sample_rate);
 
 		for (uint channel = 0; channel < nchannels; ++channel)
 		{
@@ -131,6 +131,7 @@ namespace Beeps
 				*p = channels[channel][i];
 		}
 
+		s.self->nsamples = nsamples;
 		return s;
 	}
 
@@ -212,20 +213,47 @@ namespace Beeps
 	}
 
 	void
-	Signals_fill (Signals* signals, uint nsamples, Sample value)
+	Signals_fill (Signals* signals, uint nsamples, Sample value, uint offset)
 	{
 		if (!signals)
 			argument_error(__FILE__, __LINE__);
 		if (!*signals)
 			argument_error(__FILE__, __LINE__);
 
-		Signals_clear(signals);
-		Signals_set_nsamples(signals, nsamples);
+		uint new_nsamples = offset + nsamples;
+		if (new_nsamples > signals->capacity())
+			beeps_error(__FILE__, __LINE__);
 
-		Sample* p   = Signals_at(signals, 0);
+		Sample* p   = Signals_at(signals, offset);
 		size_t size = nsamples * signals->nchannels();
 		for (size_t i = 0; i < size; ++i)
 			*p++ = value;
+
+		Signals_set_nsamples(signals, new_nsamples);
+	}
+
+	void
+	Signals_shift (Signals* signals, uint nsamples)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+
+		if (nsamples == 0)
+			return;
+
+		int new_nsamples = signals->nsamples() - nsamples;
+		if (new_nsamples < 0)
+			new_nsamples = 0;
+
+		Sample* from = Signals_at(signals, nsamples);
+		Sample* to   = Signals_at(signals, 0);
+		int size     = new_nsamples * signals->nchannels();
+		for (int i = 0; i < size; ++i)
+			*to++ = *from++;
+
+		Signals_set_nsamples(signals, new_nsamples);
 	}
 
 	static uint
@@ -448,6 +476,43 @@ namespace Beeps
 		Signals* signals, const SignalSamples<double>& samples, long nsamples)
 	{
 		write_samples(signals, samples, nsamples);
+	}
+
+	void
+	Signals_set_capacity (Signals* signals, uint capacity)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+		if (capacity == 0)
+			argument_error(__FILE__, __LINE__);
+
+		if (capacity == signals->capacity())
+			return;
+
+		uint nsamples  = signals->nsamples();
+		uint nchannels = signals->nchannels();
+
+		if (capacity < signals->capacity())
+		{
+			signals->self->frames->resize(capacity, nchannels);
+			if (capacity < nsamples) Signals_set_nsamples(signals, capacity);
+		}
+		else
+		{
+			double sample_rate = signals->sample_rate();
+			const Sample* from = Signals_at(signals, 0);
+
+			std::unique_ptr<Frames> old = std::move(signals->self->frames);
+			signals->self->frames.reset(
+				new Frames(capacity * nchannels, nchannels, sample_rate));
+
+			Sample* to = Signals_at(signals, 0);
+			uint size  = nsamples * nchannels;
+			for (uint i = 0; i < size; ++i)
+				*to++ = *from++;
+		}
 	}
 
 	void

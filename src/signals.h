@@ -26,7 +26,7 @@ namespace Beeps
 
 	Signals Signals_create (
 		const float* const* channels,
-		uint nsamples, uint nchannels, double sample_rate = 0);
+		uint nsamples, uint nchannels, double sample_rate = 0, uint capacity = 0);
 
 	uint Signals_tick (
 		Signals* signals,
@@ -44,9 +44,13 @@ namespace Beeps
 
 	void Signals_clear (Signals* signals, uint capacity);
 
-	void Signals_fill (Signals* signals, uint nsamples, Sample value);
+	void Signals_fill (
+		Signals* signals, uint nsamples, Sample value,
+		uint offset = 0);
 
-	uint Signals_copy (Signals* to, const Signals& from, uint from_offset);
+	void Signals_shift (Signals* signals, uint nsamples);
+
+	uint Signals_copy (Signals* to, const Signals& from, uint from_offset = 0);
 
 	void Signals_add (     Signals* signals, const Signals& add);
 
@@ -60,7 +64,9 @@ namespace Beeps
 	void Signals_write_samples (
 		Signals* signals, const SignalSamples<T>& samples, long nsamples = -1);
 
-	void  Signals_set_nsamples (Signals* signals, uint nsamples);
+	void Signals_set_capacity (Signals* signals, uint capacity);
+
+	void Signals_set_nsamples (Signals* signals, uint nsamples);
 
 	      Sample* Signals_at (      Signals* signals, uint index, uint channel = 0);
 
