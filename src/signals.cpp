@@ -135,29 +135,6 @@ namespace Beeps
 		return s;
 	}
 
-	void
-	Signals_clear (Signals* signals)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-
-		signals->self->nsamples = 0;
-	}
-
-	void
-	Signals_clear (Signals* signals, uint capacity)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-		if (!*signals)
-			argument_error(__FILE__, __LINE__);
-		if (capacity <= 0)
-			argument_error(__FILE__, __LINE__);
-
-		Signals_clear(signals);
-		signals->self->frames->resize(capacity, signals->nchannels());
-	}
-
 	uint
 	Signals_tick (Signals* signals, std::function<void(stk::StkFrames*)> fun)
 	{
@@ -210,6 +187,29 @@ namespace Beeps
 		signals->self->frames->unslice();
 		Signals_set_nsamples(signals, end);
 		return end;
+	}
+
+	void
+	Signals_clear (Signals* signals)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+
+		signals->self->nsamples = 0;
+	}
+
+	void
+	Signals_clear (Signals* signals, uint capacity)
+	{
+		if (!signals)
+			argument_error(__FILE__, __LINE__);
+		if (!*signals)
+			argument_error(__FILE__, __LINE__);
+		if (capacity <= 0)
+			argument_error(__FILE__, __LINE__);
+
+		Signals_clear(signals);
+		signals->self->frames->resize(capacity, signals->nchannels());
 	}
 
 	void
