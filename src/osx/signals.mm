@@ -1,8 +1,7 @@
 // -*- c++ -*-
-#include "../signals.h"
+#include "signals.h"
 
 
-#import <AVFoundation/AVFoundation.h>
 #include "beeps/exception.h"
 
 
@@ -23,6 +22,70 @@ namespace Beeps
 			Xot::stringf("%s (%s)", s.c_str(), error.localizedDescription.UTF8String));
 	}
 
+
+	Signals
+	Signals_create (AVAudioPCMBuffer* buffer, uint capacity)
+	{
+		if (!buffer)
+			argument_error(__FILE__, __LINE__);
+
+		uint nchannels = buffer.format.channelCount;
+		if (nchannels <= 0)
+			beeps_error(__FILE__, __LINE__, "invalid nchannels %d", nchannels);
+
+		uint nsamples = buffer.frameLength;
+		if (nsamples <= 0)
+			beeps_error(__FILE__, __LINE__, "invalid buffer length %d", nsamples);
+
+		const float* const* channels = buffer.floatChannelData;
+		if (!channels)
+			beeps_error(__FILE__, __LINE__, "failed to get channel data");
+
+		return Signals_create(
+			channels, nsamples, nchannels, (uint) buffer.format.sampleRate, capacity);
+	}
+
+	static uint
+	get_next_capacity (const Signals& signals, uint nsamples)
+	{
+		uint cap = signals.capacity();
+		while (cap < nsamples) cap *= 2;
+		return cap;
+	}
+
+	void
+	Signals_append (Signals* to, AVAudioPCMBuffer* buffer)
+	{
+		if (!buffer)
+			argument_error(__FILE__, __LINE__);
+
+		uint nchannels = buffer.format.channelCount;
+		if (nchannels <= 0)
+			beeps_error(__FILE__, __LINE__, "invalid nchannels %d", nchannels);
+		if (nchannels != to->nchannels())
+			beeps_error(__FILE__, __LINE__, "nchannels does not match", nchannels);
+
+		uint nsamples = buffer.frameLength;
+		if (nsamples <= 0)
+			beeps_error(__FILE__, __LINE__, "invalid buffer length %d", nsamples);
+
+		const float* const* channels = buffer.floatChannelData;
+		if (!channels)
+			beeps_error(__FILE__, __LINE__, "failed to get channel data");
+
+		uint new_nsamples = to->nsamples() + nsamples;
+		if (new_nsamples > to->capacity())
+			Signals_set_capacity(to, get_next_capacity(*to, new_nsamples));
+
+		for (uint channel = 0; channel < nchannels; ++channel)
+		{
+			Sample* p = Signals_at(to, to->nsamples(), channel);
+			for (uint i = 0; i < nsamples; ++i, p += nchannels)
+				*p = channels[channel][i];
+		}
+
+		Signals_set_nsamples(to, new_nsamples);
+	}
 
 	static AVAudioPCMBuffer*
 	load_buffer (const char* path)
@@ -64,19 +127,7 @@ namespace Beeps
 		AVAudioPCMBuffer* buffer = load_buffer(path);
 		if (!buffer) return Signals();
 
-		uint nchannels = buffer.format.channelCount;
-		if (nchannels <= 0)
-			beeps_error(__FILE__, __LINE__, "invalid nchannels %d", nchannels);
-
-		uint len = buffer.frameLength;
-		if (len <= 0)
-			beeps_error(__FILE__, __LINE__, "invalid buffer length %d", len);
-
-		const float* const* data = buffer.floatChannelData;
-		if (!data)
-			beeps_error(__FILE__, __LINE__, "failed to get channel data");
-
-		return Signals_create(data, len, nchannels, (uint) buffer.format.sampleRate);
+		return Signals_create(buffer);
 	}
 
 
