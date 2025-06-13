@@ -21,6 +21,8 @@ namespace Beeps
 
 		double sample_rate = 0;
 
+		bool finished      = false;
+
 		Signals signals;
 
 	};// TextIn::Data
@@ -58,12 +60,18 @@ namespace Beeps
 			[synth writeUtterance: utt
 				toBufferCallback: ^(AVAudioBuffer* buffer)
 				{
+					auto finish = [&]()
+					{
+						pthis->self->finished = true;
+						[synth release];
+					};
+
 					if (![buffer isKindOfClass: AVAudioPCMBuffer.class])
-						return [synth release];
+						return finish();
 
 					AVAudioPCMBuffer* pcmbuf = (AVAudioPCMBuffer*) buffer;
 					if (pcmbuf.frameLength == 0)
-						return [synth release];
+						return finish();
 
 					[pcmbuf retain];
 					dispatch_async(dispatch_get_main_queue(), ^()
@@ -113,9 +121,12 @@ namespace Beeps
 			*offset += copied_size;
 		}
 
-		uint fill_size = signals->capacity() - signals->nsamples();
-		Signals_fill(signals, fill_size, 0, signals->nsamples());
-		*offset += fill_size;
+		if (!self->finished)
+		{
+			uint fill_size = signals->capacity() - signals->nsamples();
+			Signals_fill(signals, fill_size, 0, signals->nsamples());
+			*offset += fill_size;
+		}
 	}
 
 
