@@ -33,6 +33,8 @@ namespace Beeps
 
 			bool empty () const;
 
+			bool full() const;
+
 			const Sample* samples () const;
 
 			operator bool () const;

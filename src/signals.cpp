@@ -568,7 +568,16 @@ namespace Beeps
 	bool
 	Signals::empty () const
 	{
-		return self->nsamples == 0;
+		return nsamples() == 0;
+	}
+
+	bool
+	Signals::full () const
+	{
+		uint n = nsamples();
+		if (n == 0) return false;
+
+		return n == capacity();
 	}
 
 	const Sample*
