@@ -3,6 +3,7 @@
 
 
 #include "beeps/exception.h"
+#include "../signals.h"
 
 
 namespace Beeps
