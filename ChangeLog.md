@@ -1,6 +1,15 @@
 # beeps ChangeLog
 
 
+## [v0.3.9] - 2025-07-06
+
+- Add TextIn class
+- Add Signals::full()
+- Add Siangls_shift() and Signals_set_capacity()
+- Add Signals_create() and Signals_append() for AVAudioPCMBuffer
+- Add deepwiki badge
+
+
 ## [v0.3.8] - 2025-05-22
 
 - The oscillator resets the frequency to 0.001 if it is set to 0
