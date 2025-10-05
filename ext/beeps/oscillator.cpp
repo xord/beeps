@@ -43,8 +43,8 @@ RUCY_DEF1(set_samples, samples)
 {
 	CHECK;
 
-	Value* array = samples.as_array();
-	size_t size  = samples.size();
+	const Value* array = samples.as_array();
+	size_t size        = samples.size();
 
 	std::vector<Beeps::Sample> data;
 	data.reserve(size);

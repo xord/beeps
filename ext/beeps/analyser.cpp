@@ -76,8 +76,8 @@ RUCY_DEF1(each_signal, nsamples_)
 			Value args(2, values);
 			for (uint i = start; i < nsamples; i += 2)
 			{
-				args[0] = value(samples[i + 0]);
-				args[1] = value(samples[i + 1]);
+				args.set(0, value(samples[i + 0]));
+				args.set(1, value(samples[i + 1]));
 				rb_yield(args);
 			}
 			break;
