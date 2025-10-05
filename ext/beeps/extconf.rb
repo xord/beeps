@@ -21,8 +21,8 @@ Xot::ExtConf.new Xot, Rucy, Beeps do
       frameworks << 'OpenAL'      << 'AVFoundation'
     end
 
-    $LDFLAGS << ' -Wl,--out-implib=native.dll.a' if mingw? || cygwin?
+    $LDFLAGS << ' -Wl,--out-implib=beeps_ext.dll.a' if mingw? || cygwin?
   end
 
-  create_makefile 'beeps/native'
+  create_makefile 'beeps_ext'
 end

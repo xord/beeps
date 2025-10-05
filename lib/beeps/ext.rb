@@ -1,1 +1,1 @@
-require 'beeps/native'
+require 'beeps_ext'

@@ -27,11 +27,7 @@ void Init_beeps_analyser ();
 
 
 extern "C" void
-#ifdef COCOAPODS
-	Init_beeps_native ()
-#else
-	Init_native ()
-#endif
+Init_beeps_ext ()
 {
 	RUCY_TRY
 
