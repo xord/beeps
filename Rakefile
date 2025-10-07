@@ -14,7 +14,9 @@ require 'beeps/extension'
 EXTENSIONS  = [Xot, Rucy, Beeps]
 TESTS_ALONE = ['test/test_beeps_init.rb']
 
-install_packages win32: %w[MINGW_PACKAGE_PREFIX-openal]
+install_packages(
+  mingw: %w[MINGW_PACKAGE_PREFIX-openal],
+  apt:   %w[libopenal-dev])
 
 use_external_library 'https://github.com/thestk/stk',
   tag:      '5.0.1',
