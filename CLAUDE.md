@@ -1,23 +1,23 @@
 # Beeps
 
-音声合成・再生ライブラリ。オシレーター、フィルター、エンベロープ、エフェクトによるオーディオ処理チェーンを提供する。
+Audio synthesis and playback library. Provides an audio processing chain with oscillators, filters, envelopes, and effects.
 
-## プロセッサチェーン
+## Processor Chain
 
-`>>` 演算子でプロセッサを接続する:
+Connect processors with the `>>` operator:
 ```ruby
 Beeps::Oscillator.new >> Beeps::Gain.new(gain: 0.5)
 ```
 
-## 外部ライブラリ
+## External Libraries
 
-ビルド時に以下を自動取得・静的リンクする:
-- STK 5.0.1 — DSP ツールキット
-- AudioFile 1.1.1 — オーディオファイル I/O
-- r8brain-free-src 6.2 — サンプルレート変換
-- signalsmith-stretch — タイムストレッチ
+Automatically fetched and statically linked at build time:
+- STK 5.0.1 — DSP toolkit
+- AudioFile 1.1.1 — Audio file I/O
+- r8brain-free-src 6.2 — Sample rate conversion
+- signalsmith-stretch — Time stretching
 
-## プラットフォーム依存
+## Platform Dependencies
 
 - macOS: OpenAL, AVFoundation
 - Windows: OpenAL, Media Foundation
