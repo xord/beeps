@@ -23,12 +23,12 @@ class TestOscillator < Test::Unit::TestCase
   def test_offset()
     assert_in_delta  0, get_samples(10000, osc(offset:  0)).sum / 10000
     assert_in_delta  3, get_samples(10000, osc(offset:  3)).sum / 10000
-    assert_in_delta -3, get_samples(10000, osc(offset: -3)).sum / 10000
+    assert_in_delta(-3, get_samples(10000, osc(offset: -3)).sum / 10000)
   end
 
   def test_gain()
     assert_in_delta  3, get_samples(100, osc(gain: 3)).max
-    assert_in_delta -3, get_samples(100, osc(gain: 3)).min
+    assert_in_delta(-3, get_samples(100, osc(gain: 3)).min)
   end
 
   def test_offset_and_gain()

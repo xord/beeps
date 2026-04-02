@@ -4,6 +4,7 @@
 #define __BEEPS_GENERATOR_H__
 
 
+#include <list>
 #include <beeps/processor.h>
 
 
@@ -95,6 +96,23 @@ namespace Beeps
 
 		public:
 
+			struct Note
+			{
+
+				Processor::Ref processor;
+
+				float offset, duration;
+
+				Note (Processor* processor, float offset, float duration);
+
+			};// Note
+
+			typedef std::list<Note> NoteList;
+
+			typedef NoteList::      iterator       iterator;
+
+			typedef NoteList::const_iterator const_iterator;
+
 			Sequencer ();
 
 			virtual ~Sequencer ();
@@ -106,6 +124,14 @@ namespace Beeps
 			virtual void set_time_scale (float scale);
 
 			virtual float    time_scale () const;
+
+			virtual       iterator begin ();
+
+			virtual const_iterator begin () const;
+
+			virtual       iterator end ();
+
+			virtual const_iterator end () const;
 
 			virtual operator bool () const override;
 

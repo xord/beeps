@@ -61,6 +61,23 @@ RUCY_DEF0(get_time_scale)
 }
 RUCY_END
 
+static
+RUCY_DEF0(each_note)
+{
+	CHECK;
+
+	Value ret;
+	for (auto it = THIS->begin(), end = THIS->end(); it != end; ++it)
+	{
+		ret = rb_yield_values(3,
+			value(it->processor.get()),
+			value(it->offset),
+			value(it->duration));
+	}
+	return ret;
+}
+RUCY_END
+
 
 static Class cSequencer;
 
@@ -75,6 +92,7 @@ Init_beeps_sequencer ()
 	cSequencer.define_method("remove", remove);
 	//cSequencer.define_method("time_scale=", set_time_scale);
 	//cSequencer.define_method("time_scale",  get_time_scale);
+	cSequencer.define_method("each_note!", each_note);
 }
 
 

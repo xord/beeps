@@ -74,12 +74,27 @@ module Beeps
     alias freq  frequency
 
     def each_sample(&block)
-      block ? each_sample!(&block) : enum_for(:each_sample!)
+      return enum_for :each_sample unless block
+      each_sample!(&block)
     end
 
     alias each each_sample
 
   end# Oscillator
+
+
+  class Sequencer
+
+    include Enumerable
+
+    def each_note(&block)
+      return enum_for :each_note unless block
+      each_note!(&block)
+    end
+
+    alias each each_note
+
+  end# Sequencer
 
 
   class FileIn

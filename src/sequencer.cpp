@@ -1,7 +1,6 @@
 #include "beeps/generator.h"
 
 
-#include <list>
 #include <algorithm>
 #include "beeps/exception.h"
 #include "beeps/debug.h"
@@ -16,21 +15,7 @@ namespace Beeps
 	struct Sequencer::Data
 	{
 
-		struct Note
-		{
-
-			Processor::Ref processor;
-
-			float offset, duration;
-
-			Note (Processor* processor, float offset, float duration)
-			:	processor(processor), offset(offset), duration(duration)
-			{
-			}
-
-		};// Note
-
-		std::list<Note> notes;
+		NoteList notes;
 
 		float time_scale = 1;
 
@@ -40,6 +25,12 @@ namespace Beeps
 		}
 
 	};// Sequencer::Data
+
+
+	Sequencer::Note::Note (Processor* processor, float offset, float duration)
+	:	processor(processor), offset(offset), duration(duration)
+	{
+	}
 
 
 	Sequencer::Sequencer ()
@@ -97,6 +88,30 @@ namespace Beeps
 	Sequencer::time_scale () const
 	{
 		return self->time_scale;
+	}
+
+	Sequencer::iterator
+	Sequencer::begin ()
+	{
+		return self->notes.begin();
+	}
+
+	Sequencer::const_iterator
+	Sequencer::begin () const
+	{
+		return self->notes.begin();
+	}
+
+	Sequencer::iterator
+	Sequencer::end ()
+	{
+		return self->notes.end();
+	}
+
+	Sequencer::const_iterator
+	Sequencer::end () const
+	{
+		return self->notes.end();
 	}
 
 	Sequencer::operator bool () const
