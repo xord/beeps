@@ -80,6 +80,10 @@ module Beeps
 
     alias each each_sample
 
+    def samples()
+      to_a
+    end
+
   end# Oscillator
 
 
