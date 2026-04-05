@@ -9,6 +9,8 @@
 #include <beeps/generator.h>
 
 
+RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Value)
+
 RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Oscillator)
 
 RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Sequencer)
@@ -23,6 +25,9 @@ RUCY_DECLARE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::TextIn)
 namespace Beeps
 {
 
+
+	BEEPS_EXPORT Rucy::Class value_class ();
+	// class Beeps::Value
 
 	BEEPS_EXPORT Rucy::Class oscillator_class ();
 	// class Beeps::Oscillator
@@ -46,6 +51,12 @@ namespace Beeps
 namespace Rucy
 {
 
+
+	template <> inline Class
+	get_ruby_class<Beeps::Value> ()
+	{
+		return Beeps::value_class();
+	}
 
 	template <> inline Class
 	get_ruby_class<Beeps::Oscillator> ()

@@ -45,6 +45,32 @@ module Beeps
   end# Processor
 
 
+  class Value
+
+    include Enumerable
+
+    const_symbol_accessor :type, **{
+      none:   TYPE_NONE,
+      linear: LINEAR
+    }
+
+    def initialize(value, type = :linear, **kwargs, &block)
+      super(**kwargs, &block)
+      self.value, self.type = value, type
+    end
+
+    universal_accessor :type
+
+    def each_value(&block)
+      return enum_for :each_value unless block
+      each_value!(&block)
+    end
+
+    alias each each_value
+
+  end# Value
+
+
   class Oscillator
 
     include Enumerable
