@@ -1,6 +1,15 @@
 # beeps ChangeLog
 
 
+## [v0.3.10] - 2026-04-09
+
+- Add Sequencer#each_note
+- Add 'apt' for install_packages()
+- Add Value processor for time-varying value generation
+- Change C-Extension name from 'native.so' to 'beeps_ext.so'
+- Update dependencies
+
+
 ## [v0.3.9] - 2025-07-06
 
 - Add TextIn class
