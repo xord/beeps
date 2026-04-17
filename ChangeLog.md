@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.3.11] - 2026-04-17
+
+- Update dependencies
+
+
 ## [v0.3.10] - 2026-04-09
 
 - Add Sequencer#each_note
