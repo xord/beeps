@@ -5,8 +5,10 @@ module Beeps
 
     module_function
 
-    def name()
-      super.split('::')[-2]
+    def name(downcase = false)
+      super().split('::')[-2].then {|s|
+        downcase ? s.gsub(/([a-z])([A-Z])/) {"#{$1}-#{$2}"}.downcase : s
+      }
     end
 
     def version()
