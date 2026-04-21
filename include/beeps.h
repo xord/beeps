@@ -1,7 +1,7 @@
 // -*- c++ -*-
 #pragma once
-#ifndef __BEEPS_H__
-#define __BEEPS_H__
+#ifndef __BEEPS_ALL_H__
+#define __BEEPS_ALL_H__
 
 
 #include <beeps/defs.h>

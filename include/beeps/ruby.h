@@ -1,7 +1,7 @@
 // -*- c++ -*-
 #pragma once
-#ifndef __BEEPS_RUBY_H__
-#define __BEEPS_RUBY_H__
+#ifndef __BEEPS_RUBY_ALL_H__
+#define __BEEPS_RUBY_ALL_H__
 
 
 #include <beeps/ruby/defs.h>
