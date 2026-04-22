@@ -23,6 +23,8 @@ namespace Beeps
 
 	using Xot::String;
 
+	using Xot::StringList;
+
 
 	typedef double Sample;
 
