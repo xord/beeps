@@ -41,7 +41,7 @@ namespace Beeps
 		if (!channels)
 			beeps_error(__FILE__, __LINE__, "failed to get channel data");
 
-		return Signals_create(
+		return Signals(
 			channels, nsamples, nchannels, (uint) buffer.format.sampleRate, capacity);
 	}
 

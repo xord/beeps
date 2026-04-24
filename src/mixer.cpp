@@ -113,9 +113,9 @@ namespace Beeps
 
 		auto& insig = self->input_signals;
 		if (!insig)
-			insig = Signals_create(signals->capacity(), signals->nchannels());
+			insig = Signals(signals->capacity(), signals->nchannels());
 		else
-			Signals_clear(&insig, signals->capacity());
+			insig.clear(signals->capacity());
 
 		Processor_get_context(context)->process(input, &insig, &offset);
 
@@ -129,7 +129,7 @@ namespace Beeps
 	Mixer::filter (Context* context, Signals* signals, uint* offset)
 	{
 		Signals_fill(signals, signals->capacity(), 0);
-		Signals_clear(signals);
+		signals->clear();
 
 		Super::filter(context, signals, offset);
 

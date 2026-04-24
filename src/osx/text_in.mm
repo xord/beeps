@@ -116,7 +116,7 @@ namespace Beeps
 					self->signals.sample_rate());
 			}
 
-			uint copied_size = Signals_copy(signals, self->signals);
+			uint copied_size = signals->append(self->signals);
 			Signals_shift(&self->signals, copied_size);
 			*offset += copied_size;
 		}

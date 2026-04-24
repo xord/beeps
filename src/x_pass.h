@@ -27,9 +27,8 @@ namespace Beeps
 
 		void tick (Signals* signals)
 		{
-			uint nchannels   = signals->nchannels();
-			Signals filtered = Signals_create(
-				signals->nsamples(), nchannels, signals->sample_rate());
+			uint nchannels = signals->nchannels();
+			Signals filtered(signals->nsamples(), nchannels, signals->sample_rate());
 
 			Signals_tick(
 				&filtered, *signals,

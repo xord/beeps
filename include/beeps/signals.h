@@ -19,9 +19,23 @@ namespace Beeps
 
 			Signals ();
 
+			Signals (uint capacity, uint nchannels = 1, double sample_rate = 0);
+
+			Signals (
+				const float* const* channels, uint nsamples, uint nchannels,
+				double sample_rate = 0, uint capacity = 0);
+
 			~Signals ();
 
 			Signals dup () const;
+
+			void clear (uint capacity = 0);
+
+			uint append (
+				const float* const* channels, uint nsamples, uint nchannels,
+				double sample_rate = 0);
+
+			uint append (const Signals& source, uint source_offset = 0);
 
 			double sample_rate () const;
 

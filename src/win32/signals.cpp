@@ -150,10 +150,10 @@ namespace Beeps
 		if (bytes.empty())
 			beeps_error(__FILE__, __LINE__, "failed to read bytes: '%s'", path);
 
-		uint Bps        = format.wBitsPerSample / 8;
-		uint nchannels  = format.nChannels;
-		uint nsamples   = bytes.size() / Bps / nchannels;
-		Signals signals = Signals_create(nsamples, nchannels, format.nSamplesPerSec);
+		uint Bps       = format.wBitsPerSample / 8;
+		uint nchannels = format.nChannels;
+		uint nsamples  = bytes.size() / Bps / nchannels;
+		Signals signals(nsamples, nchannels, format.nSamplesPerSec);
 
 		for (uint channel = 0; channel < nchannels; ++channel)
 		{

@@ -55,7 +55,7 @@ namespace Beeps
 
 			clear();
 
-			signals   = Signals_create(std::min(size, (uint) Beeps::sample_rate()));
+			signals   = Signals(std::min(size, (uint) Beeps::sample_rate()));
 			pffft     .reset(pffft_new_setup(size, PFFFT_REAL));
 			fft_buffer.reset((float*) pffft_aligned_malloc(sizeof(float) * size));
 			fft_size  = size;
@@ -206,7 +206,7 @@ namespace Beeps
 			return;
 
 		if (nsamples > signals->nsamples())
-			return Signals_clear(signals);
+			return signals->clear();
 
 		Sample* from         = Signals_at(signals, nsamples);
 		Sample* to           = Signals_at(signals, 0);
@@ -244,7 +244,7 @@ namespace Beeps
 		auto& my = self->signals;
 
 		if (my.nchannels() != in.nchannels() || my.sample_rate() != in.sample_rate())
-			my = Signals_create(my.capacity(), in.nchannels(), in.sample_rate());
+			my = Signals(my.capacity(), in.nchannels(), in.sample_rate());
 
 		uint total_nsamples = my.nsamples() + in.nsamples();
 		if (total_nsamples > my.capacity())

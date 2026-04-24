@@ -261,12 +261,9 @@ namespace Beeps
 		Super::filter(context, signals, offset);
 
 		if (!self->adsr_signals)
-		{
-			self->adsr_signals =
-				Signals_create(signals->nsamples(), 1, signals->sample_rate());
-		}
+			self->adsr_signals = Signals(signals->nsamples(), 1, signals->sample_rate());
 		else
-			Signals_clear(&self->adsr_signals, signals->nsamples());
+			self->adsr_signals.clear(signals->nsamples());
 
 		process_envelope_signals(this, &self->adsr_signals);
 		if (self->adsr_signals.nsamples() < signals->nsamples())

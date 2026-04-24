@@ -284,7 +284,7 @@ namespace Beeps
 	SignalsBuffer::SignalsBuffer (
 		uint nsamples_per_block, uint nchannels, double sample_rate)
 	{
-		buffer = Signals_create(nsamples_per_block, nchannels, sample_rate);
+		buffer = Signals(nsamples_per_block, nchannels, sample_rate);
 		assert(*this);
 	}
 
@@ -307,7 +307,7 @@ namespace Beeps
 
 		while (true)
 		{
-			*offset += Signals_copy(signals, buffer, *offset - buffer_offset);
+			*offset += signals->append(buffer, *offset - buffer_offset);
 
 			bool signals_full = signals->nsamples() == signals->capacity();
 			bool  buffer_full =   buffer.nsamples() ==   buffer.capacity();
@@ -333,7 +333,7 @@ namespace Beeps
 	SignalsBuffer::buffer_next (
 		ProcessorContext* context, Processor* processor, uint offset)
 	{
-		Signals_clear(&buffer);
+		buffer.clear();
 		buffer_offset = offset;
 		context->process(processor, &buffer, &offset, true);
 
@@ -343,7 +343,7 @@ namespace Beeps
 	void
 	SignalsBuffer::clear ()
 	{
-		Signals_clear(&buffer);
+		buffer.clear();
 		buffer_offset = 0;
 	}
 
@@ -359,8 +359,8 @@ namespace Beeps
 	{
 		assert(processor);
 
-		if (!signal) signal = Signals_create(nsamples, 1, sample_rate);
-		Signals_clear(&signal, nsamples);
+		if (!signal) signal = Signals(nsamples, 1, sample_rate);
+		signal.clear(nsamples);
 
 		SignalsBuffer* buffer = NULL;
 		uint offset_          = offset;
@@ -417,7 +417,7 @@ namespace Beeps
 	StreamContext::StreamContext (
 		uint nsamples_per_process, uint nchannels, double sample_rate)
 	:	context(nchannels, sample_rate),
-		signals(Signals_create(nsamples_per_process, nchannels, sample_rate)),
+		signals(nsamples_per_process, nchannels, sample_rate),
 		nsamples_per_process(nsamples_per_process)
 	{
 	}
@@ -427,7 +427,7 @@ namespace Beeps
 	{
 		assert(processor);
 
-		Signals_clear(&signals, nsamples_per_process);
+		signals.clear(nsamples_per_process);
 		context.process(processor, &signals, &offset);
 
 		if (signals.nsamples() < nsamples_per_process)

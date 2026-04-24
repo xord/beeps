@@ -21,13 +21,6 @@ namespace Beeps
 	template <typename T> class SignalSamples;
 
 
-	Signals Signals_create (
-		uint capacity, uint nchannels = 1, double sample_rate = 0);
-
-	Signals Signals_create (
-		const float* const* channels,
-		uint nsamples, uint nchannels, double sample_rate = 0, uint capacity = 0);
-
 	uint Signals_tick (
 		Signals* signals,
 		std::function<void(stk::StkFrames*)> fun);
@@ -40,17 +33,11 @@ namespace Beeps
 		Signals* signals, uint start, uint length,
 		std::function<void(stk::StkFrames*)> fun);
 
-	void Signals_clear (Signals* signals);
-
-	void Signals_clear (Signals* signals, uint capacity);
-
 	void Signals_fill (
 		Signals* signals, uint nsamples, Sample value,
 		uint offset = 0);
 
 	void Signals_shift (Signals* signals, uint nsamples);
-
-	uint Signals_copy (Signals* to, const Signals& from, uint from_offset = 0);
 
 	void Signals_add (     Signals* signals, const Signals& add);
 

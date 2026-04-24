@@ -139,9 +139,9 @@ namespace Beeps
 		auto& signals = *psignals;
 		Signals_fill(&signals, signals.capacity(), 0);
 
-		uint generate_begin  = *offset;
-		uint generate_end    = *offset + signals.capacity();
-		Signals note_signals = Signals_create(
+		uint generate_begin = *offset;
+		uint generate_end   = *offset + signals.capacity();
+		Signals note_signals(
 			signals.capacity(), signals.nchannels(), signals.sample_rate());
 
 		uint nsamples = 0;
@@ -161,7 +161,7 @@ namespace Beeps
 			assert(begin != end);
 
 			uint note_offset = begin - note_begin;
-			Signals_clear(&note_signals, end - begin);
+			note_signals.clear(end - begin);
 			context.process(note.processor.get(), &note_signals, &note_offset);
 
 			uint mix_offset  = begin - generate_begin;

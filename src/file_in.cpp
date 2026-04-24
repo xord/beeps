@@ -93,7 +93,7 @@ namespace Beeps
 	{
 		Super::generate(context, signals, offset);
 
-		*offset += Signals_copy(signals, self->signals, *offset);
+		*offset += signals->append(self->signals, *offset);
 	}
 
 

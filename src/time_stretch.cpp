@@ -66,8 +66,8 @@ namespace Beeps
 		if (self->scale == 1)
 			return Super::filter(context, signals, offset);
 
-		uint nsamples  = signals->capacity();
-		Signals source = Signals_create(
+		uint nsamples = signals->capacity();
+		Signals source(
 			nsamples / self->scale, signals->nchannels(), signals->sample_rate());
 
 		Super::filter(context, &source, offset);

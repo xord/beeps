@@ -104,37 +104,6 @@ namespace Beeps
 	};// Signals::Data
 
 
-	Signals
-	Signals_create (uint capacity, uint nchannels, double sample_rate)
-	{
-		Signals s;
-		s.self->frames.reset(
-			new Frames(capacity * nchannels, nchannels, sample_rate));
-		return s;
-	}
-
-	Signals
-	Signals_create (
-		const float* const* channels,
-		uint nsamples, uint nchannels, double sample_rate, uint capacity)
-	{
-		if (!channels)
-			argument_error(__FILE__, __LINE__);
-
-		Signals s = Signals_create(
-			capacity > nsamples ? capacity : nsamples, nchannels, sample_rate);
-
-		for (uint channel = 0; channel < nchannels; ++channel)
-		{
-			Sample* p = Signals_at(&s, 0, channel);
-			for (uint i = 0; i < nsamples; ++i, p += nchannels)
-				*p = channels[channel][i];
-		}
-
-		s.self->nsamples = nsamples;
-		return s;
-	}
-
 	uint
 	Signals_tick (Signals* signals, std::function<void(stk::StkFrames*)> fun)
 	{
@@ -160,7 +129,7 @@ namespace Beeps
 		if (!input)
 			argument_error(__FILE__, __LINE__);
 
-		Signals_clear(output, input.nsamples());
+		output->clear(input.nsamples());
 		Signals_set_nsamples(output, output->capacity());
 
 		fun(output->self->frames.get(), *input.self->frames);
@@ -187,29 +156,6 @@ namespace Beeps
 		signals->self->frames->unslice();
 		Signals_set_nsamples(signals, end);
 		return end;
-	}
-
-	void
-	Signals_clear (Signals* signals)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-
-		signals->self->nsamples = 0;
-	}
-
-	void
-	Signals_clear (Signals* signals, uint capacity)
-	{
-		if (!signals)
-			argument_error(__FILE__, __LINE__);
-		if (!*signals)
-			argument_error(__FILE__, __LINE__);
-		if (capacity <= 0)
-			argument_error(__FILE__, __LINE__);
-
-		Signals_clear(signals);
-		signals->self->frames->resize(capacity, signals->nchannels());
 	}
 
 	void
@@ -254,109 +200,6 @@ namespace Beeps
 			*to++ = *from++;
 
 		Signals_set_nsamples(signals, new_nsamples);
-	}
-
-	static uint
-	copy_samples (Signals* to, const Signals& from, uint from_offset)
-	{
-		assert(to && *to && from);
-
-		if (from_offset >= from.nsamples())
-			return 0;
-
-		uint   to_nchannels = to->nchannels();
-		uint from_nchannels = from.nchannels();
-		uint   to_offset    = to->nsamples();
-		uint   to_nsamples  = to->capacity() - to_offset;
-		uint from_nsamples  = from.nsamples();
-		uint copy_nsamples  =
-			std::min(from_offset + to_nsamples, from_nsamples) - from_offset;
-
-		for (uint channel = 0; channel < to_nchannels; ++channel)
-		{
-			uint from_channel    = channel < from_nchannels ? channel : 0;
-			      Sample*   to_p = Signals_at(to,     to_offset,      channel);
-			const Sample* from_p = Signals_at(from, from_offset, from_channel);
-			for (uint i = 0; i < copy_nsamples; ++i)
-			{
-				 *to_p  = *from_p;
-				  to_p +=    to_nchannels;
-				from_p +=  from_nchannels;
-			}
-		}
-
-		Signals_set_nsamples(to, to->self->nsamples + copy_nsamples);
-		return copy_nsamples;
-	}
-
-	static uint
-	resample (Signals* to, const Signals& from, uint from_offset)
-	{
-		assert(to && *to && from);
-
-		if (from_offset >= from.nsamples())
-			return 0;
-
-		uint    to_offset     = to->nsamples();
-		float          to_sec = (to->capacity() - to_offset) /  to->sample_rate();
-		float from_offset_sec = from_offset                  / from.sample_rate();
-		float        from_sec = from.nsamples()              / from.sample_rate();
-
-		float copy_seconds =
-			std::min(from_offset_sec + to_sec, from_sec) - from_offset_sec;
-
-		uint to_nsamples = 0, from_nsamples = 0;
-		if (from_offset_sec + to_sec <= from_sec)
-		{
-			  to_nsamples = to->capacity() - to->nsamples();
-			from_nsamples = copy_seconds * from.sample_rate();
-		}
-		else
-		{
-			to_nsamples = copy_seconds * to->sample_rate();
-			from_nsamples = from.nsamples() - from_offset;
-		}
-
-		r8b::CDSPResampler24 resampler(
-			from.sample_rate(), to->sample_rate(), from_nsamples);
-		r8b::CFixedBuffer<double> from_buf(from_nsamples), to_buf(to_nsamples);
-
-		for (uint channel = 0; channel < to->nchannels(); ++channel)
-		{
-			uint from_channel = channel < from.nchannels() ? channel : 0;
-
-			for (uint i = 0; i < from_nsamples; ++i)
-				from_buf[i] = *Signals_at(from, from_offset + i, from_channel);
-
-			resampler.clear();
-			resampler.oneshot(
-				(const double*) from_buf, from_nsamples,
-				      (double*)   to_buf,   to_nsamples);
-
-			for (uint i = 0; i < to_nsamples; ++i)
-				*Signals_at(to, to_offset + i, channel) = to_buf[i];
-		}
-
-		Signals_set_nsamples(to, to->self->nsamples + to_nsamples);
-		return from_nsamples;
-	}
-
-	uint
-	Signals_copy (Signals* to, const Signals& from, uint from_offset)
-	{
-		if (!to)
-			argument_error(__FILE__, __LINE__);
-		if (!*to)
-			argument_error(__FILE__, __LINE__);
-		if (!from)
-			argument_error(__FILE__, __LINE__);
-
-		Signals_clear(to);
-
-		if (to->sample_rate() == from.sample_rate())
-			return copy_samples(to, from, from_offset);
-		else
-			return resample(to, from, from_offset);
 	}
 
 	void
@@ -592,8 +435,182 @@ namespace Beeps
 	{
 	}
 
+	Signals::Signals (uint capacity, uint nchannels, double sample_rate)
+	{
+		self->frames.reset(
+			new Frames(capacity * nchannels, nchannels, sample_rate));
+	}
+
+	Signals::Signals (
+		const float* const* channels,
+		uint nsamples, uint nchannels, double sample_rate, uint capacity)
+	{
+		if (!channels)
+			argument_error(__FILE__, __LINE__);
+
+		self->frames.reset(new Frames(
+			std::max(capacity, nsamples) * nchannels, nchannels, sample_rate));
+
+		for (uint channel = 0; channel < nchannels; ++channel)
+		{
+			Sample* p = Signals_at(this, 0, channel);
+			for (uint i = 0; i < nsamples; ++i, p += nchannels)
+				*p = channels[channel][i];
+		}
+
+		self->nsamples = nsamples;
+	}
+
 	Signals::~Signals ()
 	{
+	}
+
+	void
+	Signals::clear (uint capacity)
+	{
+		if (!*this)
+			argument_error(__FILE__, __LINE__);
+
+		self->nsamples = 0;
+		if (capacity > 0)
+			self->frames->resize(capacity, nchannels());
+	}
+
+	template <typename T>
+	static uint
+	copy_samples (
+		Signals* to,
+		const T* const* from_channels, uint from_nsamples, uint from_nchannels,
+		uint from_offset, uint from_stride)
+	{
+		assert(to && *to && from_channels);
+
+		if (from_offset >= from_nsamples)
+			return 0;
+
+		uint to_nchannels = to->nchannels();
+		uint to_offset    = to->nsamples();
+		uint to_nsamples  = to->capacity() - to_offset;
+		uint copy_nsamples =
+			std::min(from_offset + to_nsamples, from_nsamples) - from_offset;
+
+		for (uint ch = 0; ch < to_nchannels; ++ch)
+		{
+			uint from_channel = ch < from_nchannels ? ch : 0;
+			Sample*      to_p = Signals_at(to, to_offset, ch);
+			const T*   from_p = from_channels[from_channel] + from_offset * from_stride;
+			for (uint i = 0; i < copy_nsamples; ++i)
+			{
+				 *to_p  = *from_p;
+				  to_p += to_nchannels;
+				from_p += from_stride;
+			}
+		}
+
+		Signals_set_nsamples(to, to->self->nsamples + copy_nsamples);
+		return copy_nsamples;
+	}
+
+	template <typename T>
+	static uint
+	resample (
+		Signals* to,
+		const T* const* from_channels, uint from_nsamples, uint from_nchannels,
+		double from_sample_rate, uint from_offset, uint from_stride)
+	{
+		assert(to && *to && from_channels);
+
+		if (from_offset >= from_nsamples)
+			return 0;
+
+		uint    to_offset     = to->nsamples();
+		float          to_sec = (to->capacity() - to_offset) /  to->sample_rate();
+		float from_offset_sec = from_offset                  / from_sample_rate;
+		float        from_sec = from_nsamples                / from_sample_rate;
+		float copy_seconds    =
+			std::min(from_offset_sec + to_sec, from_sec) - from_offset_sec;
+
+		uint to_nsamples = 0, copy_nsamples = 0;
+		if (from_offset_sec + to_sec <= from_sec)
+		{
+			  to_nsamples = to->capacity() - to->nsamples();
+			copy_nsamples = copy_seconds * from_sample_rate;
+		}
+		else
+		{
+			  to_nsamples = copy_seconds * to->sample_rate();
+			copy_nsamples = from_nsamples - from_offset;
+		}
+
+		r8b::CDSPResampler24 resampler(
+			from_sample_rate, to->sample_rate(), copy_nsamples);
+		r8b::CFixedBuffer<double> from_buf(copy_nsamples), to_buf(to_nsamples);
+
+		for (uint ch = 0; ch < to->nchannels(); ++ch)
+		{
+			uint from_ch  = ch < from_nchannels ? ch : 0;
+			const T* base = from_channels[from_ch] + from_offset * from_stride;
+
+			for (uint i = 0; i < copy_nsamples; ++i)
+				from_buf[i] = base[i * from_stride];
+
+			resampler.clear();
+			resampler.oneshot(
+				(const double*) from_buf, copy_nsamples,
+				      (double*)   to_buf,   to_nsamples);
+
+			for (uint i = 0; i < to_nsamples; ++i)
+				*Signals_at(to, to_offset + i, ch) = to_buf[i];
+		}
+
+		Signals_set_nsamples(to, to->self->nsamples + to_nsamples);
+		return copy_nsamples;
+	}
+
+	uint
+	Signals::append (
+		const float* const* channels,
+		uint nsamples, uint nchannels, double sample_rate)
+	{
+		if (!*this)
+			argument_error(__FILE__, __LINE__);
+		if (!channels)
+			argument_error(__FILE__, __LINE__);
+
+		if (sample_rate == 0)
+			sample_rate = this->sample_rate();
+
+		if (sample_rate == this->sample_rate())
+			return copy_samples(this, channels, nsamples, nchannels, 0, 1);
+		else
+			return resample(this, channels, nsamples, nchannels, sample_rate, 0, 1);
+	}
+
+	uint
+	Signals::append (const Signals& source, uint source_offset)
+	{
+		if (!*this)
+			argument_error(__FILE__, __LINE__);
+		if (!source)
+			argument_error(__FILE__, __LINE__);
+
+		uint nchannels = source.nchannels();
+		std::vector<const Sample*> channels(nchannels);
+		for (uint ch = 0; ch < nchannels; ++ch)
+			channels[ch] = Signals_at(source, 0, ch);
+
+		if (sample_rate() == source.sample_rate())
+		{
+			return copy_samples(
+				this, channels.data(), source.nsamples(), nchannels,
+				source_offset, nchannels);
+		}
+		else
+		{
+			return resample(
+				this, channels.data(), source.nsamples(), nchannels, source.sample_rate(),
+				source_offset, nchannels);
+		}
 	}
 
 	Signals
