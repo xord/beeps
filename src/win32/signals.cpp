@@ -155,14 +155,14 @@ namespace Beeps
 		uint nsamples  = bytes.size() / Bps / nchannels;
 		Signals signals(nsamples, nchannels, format.nSamplesPerSec);
 
-		for (uint channel = 0; channel < nchannels; ++channel)
+		for (uint ch = 0; ch < nchannels; ++ch)
 		{
 			switch (Bps)
 			{
 				case 1:
 				{
-					Sample*        to_p = Signals_at(&signals, 0, channel);
-					const uchar* from_p = ((uchar*) &bytes[0]) + channel;
+					Sample*        to_p = Signals_at(&signals, 0, ch);
+					const uchar* from_p = ((uchar*) &bytes[0]) + ch;
 					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
 						*to_p = (*to_p - 128) / 128.f;
 					break;
@@ -170,8 +170,8 @@ namespace Beeps
 
 				case 2:
 				{
-					Sample*         to_p = Signals_at(&signals, 0, channel);
-					const ushort* from_p = ((ushort*) &bytes[0]) + channel;
+					Sample*         to_p = Signals_at(&signals, 0, ch);
+					const ushort* from_p = ((ushort*) &bytes[0]) + ch;
 					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
 						*to_p = *from_p / 32768.f;
 					break;

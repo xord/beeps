@@ -94,7 +94,7 @@ namespace Beeps
 				auto& samples = self->samples;
 				samples.reserve(nsamples * nchannels);
 
-				for (uint channel = 0; channel < nchannels; ++channel)
+				for (uint ch = 0; ch < nchannels; ++ch)
 				{
 					const Sample* p = Signals_at(signals, 0);
 					for (uint i = 0; i < nsamples; ++i, p += nchannels)

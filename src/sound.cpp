@@ -65,10 +65,10 @@ namespace Beeps
 			if (nsamples <= 0) return 0;
 
 			std::unique_ptr<short[]> buffer(new short[size]);
-			for (uint channel = 0; channel < nchannels; ++channel)
+			for (uint ch = 0; ch < nchannels; ++ch)
 			{
-				const Sample* p = Signals_at(signals, 0, channel);
-				for (uint i = channel; i < size; i += nchannels, p += nchannels)
+				const Sample* p = Signals_at(signals, 0, ch);
+				for (uint i = ch; i < size; i += nchannels, p += nchannels)
 					buffer[i] = *p * SHRT_MAX;
 			}
 

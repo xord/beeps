@@ -77,11 +77,11 @@ namespace Beeps
 		if (new_nsamples > to->capacity())
 			Signals_set_capacity(to, get_next_capacity(*to, new_nsamples));
 
-		for (uint channel = 0; channel < nchannels; ++channel)
+		for (uint ch = 0; ch < nchannels; ++ch)
 		{
-			Sample* p = Signals_at(to, to->nsamples(), channel);
+			Sample* p = Signals_at(to, to->nsamples(), ch);
 			for (uint i = 0; i < nsamples; ++i, p += nchannels)
-				*p = channels[channel][i];
+				*p = channels[ch][i];
 		}
 
 		Signals_set_nsamples(to, new_nsamples);

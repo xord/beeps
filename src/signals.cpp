@@ -294,10 +294,10 @@ namespace Beeps
 		if (signals->capacity() < nsamples)
 			argument_error(__FILE__, __LINE__);
 
-		for (uint channel = 0; channel < nchannels; ++channel)
+		for (uint ch = 0; ch < nchannels; ++ch)
 		{
-			Sample* sig_p = Signals_at(signals, 0, channel);
-			const T* buf  = samples.channel(channel);
+			Sample* sig_p = Signals_at(signals, 0, ch);
+			const T* buf  = samples.channel(ch);
 			for (uint i = 0; i < nsamples; ++i, sig_p += nchannels)
 				*sig_p = buf[i];
 		}
@@ -451,11 +451,11 @@ namespace Beeps
 		self->frames.reset(new Frames(
 			std::max(capacity, nsamples) * nchannels, nchannels, sample_rate));
 
-		for (uint channel = 0; channel < nchannels; ++channel)
+		for (uint ch = 0; ch < nchannels; ++ch)
 		{
-			Sample* p = Signals_at(this, 0, channel);
+			Sample* p = Signals_at(this, 0, ch);
 			for (uint i = 0; i < nsamples; ++i, p += nchannels)
-				*p = channels[channel][i];
+				*p = channels[ch][i];
 		}
 
 		self->nsamples = nsamples;
