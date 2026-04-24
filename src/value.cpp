@@ -175,11 +175,11 @@ namespace Beeps
 	}
 
 	int
-	Value::max_segment_size_for_process (
+	Value::get_max_segment_size_for_process (
 		double sample_rate, uint nsamples) const
 	{
 		if (self->points.size() == 1)
-			return Super::max_segment_size_for_process(sample_rate, nsamples);
+			return Super::get_max_segment_size_for_process(sample_rate, nsamples);
 		return sample_rate / 256;
 	}
 

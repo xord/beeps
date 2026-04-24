@@ -191,28 +191,6 @@ namespace Beeps
 			Processor_get_context(context)->process(self->input, signals, offset);
 	}
 
-	int
-	Processor::max_segment_size_for_process (
-		double sample_rate, uint nsamples) const
-	{
-		return -1;
-	}
-
-	uint
-	Processor::get_segment_size (double sample_rate, uint nsamples) const
-	{
-		uint size = nsamples;
-		for (const auto& kv : self->sub_inputs)
-		{
-			const auto& processor = kv.second;
-
-			int max = processor->max_segment_size_for_process(sample_rate, nsamples);
-			if (max > 0 && (uint) max < size)
-				size = (uint) max;
-		}
-		return size;
-	}
-
 	void
 	Processor::set_sub_input (uint index, Processor* input)
 	{
@@ -239,6 +217,28 @@ namespace Beeps
 	{
 		if (!self->processing)
 			set_sub_input(index, NULL);
+	}
+
+	uint
+	Processor::get_segment_size (double sample_rate, uint nsamples) const
+	{
+		uint size = nsamples;
+		for (const auto& kv : self->sub_inputs)
+		{
+			const auto& processor = kv.second;
+
+			int max = processor->get_max_segment_size_for_process(sample_rate, nsamples);
+			if (max > 0 && (uint) max < size)
+				size = (uint) max;
+		}
+		return size;
+	}
+
+	int
+	Processor::get_max_segment_size_for_process (
+		double sample_rate, uint nsamples) const
+	{
+		return -1;
 	}
 
 	void

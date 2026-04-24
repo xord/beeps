@@ -74,7 +74,7 @@ namespace Beeps
 			virtual void generate (
 				Context* context, Signals* signals, uint* offset) override;
 
-			virtual int max_segment_size_for_process (
+			virtual int get_max_segment_size_for_process (
 				double sample_rate, uint nsamples) const override;
 
 	};// Value
@@ -153,7 +153,7 @@ namespace Beeps
 			virtual void generate (
 				Context* context, Signals* signals, uint* offset) override;
 
-			virtual int max_segment_size_for_process (
+			virtual int get_max_segment_size_for_process (
 				double sample_rate, uint nsamples) const override;
 
 	};// Oscillator

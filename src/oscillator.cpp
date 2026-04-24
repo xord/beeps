@@ -536,7 +536,7 @@ namespace Beeps
 	}
 
 	int
-	Oscillator::max_segment_size_for_process (
+	Oscillator::get_max_segment_size_for_process (
 		double sample_rate, uint nsamples) const
 	{
 		return std::clamp(
