@@ -96,7 +96,7 @@ namespace Beeps
 
 				for (uint ch = 0; ch < nchannels; ++ch)
 				{
-					const Sample* p = Signals_at(signals, 0);
+					const Sample* p = Signals_at(signals, 0, ch);
 					for (uint i = 0; i < nsamples; ++i, p += nchannels)
 						samples.push_back(*p);
 				}
