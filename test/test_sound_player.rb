@@ -127,6 +127,76 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal [false, false, true],  [p.playing?, p.paused?, p.stopped?]
   end
 
+  def test_position()
+    p = sound(1).play
+    p.pause
+    assert_equal 0,   p.position
+
+    p.position = 100
+    sleep 0.05
+    assert_equal 100, p.position
+
+    p.position   200
+    sleep 0.05
+    assert_equal 200, p.position
+  end
+
+  def test_position_stream()
+    p = stream_sound.play
+    p.pause
+    assert_equal 0,   p.position
+
+    p.position = 100
+    sleep 0.05
+    assert_equal 100, p.position
+
+    p.position   200
+    sleep 0.05
+    assert_equal 200, p.position
+  end
+
+  def test_time()
+    p = sound.play
+    p.pause
+    assert_in_epsilon 0,    p.time
+
+    p.time =          0.05
+    sleep 0.05
+    assert_in_epsilon 0.05, p.time
+
+    p.time            0.1
+    sleep 0.05
+    assert_in_epsilon 0.1,  p.time
+  end
+
+  def test_time_stream()
+    p = stream_sound.play
+    p.pause
+    assert_in_epsilon 0,    p.time
+
+    p.time =          0.05
+    sleep 0.05
+    assert_in_epsilon 0.05, p.time
+
+    p.time            0.1
+    sleep 0.05
+    assert_in_epsilon 0.1,  p.time
+  end
+
+  def test_time_scale()
+    p = sound.play
+    assert_in_epsilon 1,   p.time_scale
+
+    p.time_scale =    0.5
+    assert_in_epsilon 0.5, p.time_scale
+
+    p.time_scale      2.0
+    assert_in_epsilon 2.0, p.time_scale
+
+    assert_raise(ArgumentError) {p.time_scale =  0}
+    assert_raise(ArgumentError) {p.time_scale = -1}
+  end
+
   def test_gain()
     p = sound.play
     assert_in_epsilon 1,   p.gain

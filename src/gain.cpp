@@ -39,6 +39,13 @@ namespace Beeps
 		return self->gain;
 	}
 
+	bool
+	Gain::seekable () const
+	{
+		const Processor* in = input();
+		return !in || in->seekable();
+	}
+
 	void
 	Gain::filter (Context* context, Signals* signals, uint* offset)
 	{

@@ -493,6 +493,12 @@ namespace Beeps
 		return self->type != TYPE_NONE && self->osc;
 	}
 
+	bool
+	Oscillator::seekable () const
+	{
+		return true;
+	}
+
 	void
 	Oscillator::generate (Context* context, Signals* signals, uint* offset)
 	{

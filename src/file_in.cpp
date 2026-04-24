@@ -82,6 +82,12 @@ namespace Beeps
 		return self->signals;
 	}
 
+	bool
+	FileIn::seekable () const
+	{
+		return true;
+	}
+
 	void
 	FileIn::generate (Context* context, Signals* signals, uint* offset)
 	{

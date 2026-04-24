@@ -111,6 +111,12 @@ namespace Beeps
 		return const_cast<Processor*>(this)->input();
 	}
 
+	bool
+	Processor::seekable () const
+	{
+		return false;
+	}
+
 	void
 	Processor::on_start ()
 	{
@@ -428,6 +434,13 @@ namespace Beeps
 			finished = true;
 
 		return signals;
+	}
+
+	void
+	StreamContext::seek (uint offset)
+	{
+		this->offset   = offset;
+		this->finished = false;
 	}
 
 	bool

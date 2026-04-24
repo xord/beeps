@@ -68,6 +68,63 @@ RUCY_DEF0(get_state)
 RUCY_END
 
 static
+RUCY_DEF1(set_position, position)
+{
+	CHECK;
+
+	THIS->set_position(to<uint>(position));
+	return position;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_position)
+{
+	CHECK;
+
+	return value(THIS->position());
+}
+RUCY_END
+
+static
+RUCY_DEF1(set_time, time)
+{
+	CHECK;
+
+	THIS->set_time(to<float>(time));
+	return time;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_time)
+{
+	CHECK;
+
+	return value(THIS->time());
+}
+RUCY_END
+
+static
+RUCY_DEF1(set_time_scale, scale)
+{
+	CHECK;
+
+	THIS->set_time_scale(to<float>(scale));
+	return scale;
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_time_scale)
+{
+	CHECK;
+
+	return value(THIS->time_scale());
+}
+RUCY_END
+
+static
 RUCY_DEF1(set_gain, gain)
 {
 	CHECK;
@@ -126,7 +183,13 @@ Init_beeps_sound_player ()
 	cSoundPlayer.define_method("pause",  pause);
 	cSoundPlayer.define_method("rewind", rewind);
 	cSoundPlayer.define_method("stop",   stop);
-	cSoundPlayer.define_method("state",    get_state);
+	cSoundPlayer.define_method("state", get_state);
+	cSoundPlayer.define_method("position=",   set_position);
+	cSoundPlayer.define_method("position",    get_position);
+	cSoundPlayer.define_method("time=",       set_time);
+	cSoundPlayer.define_method("time",        get_time);
+	cSoundPlayer.define_method("time_scale=", set_time_scale);
+	cSoundPlayer.define_method("time_scale",  get_time_scale);
 	cSoundPlayer.define_method("gain=", set_gain);
 	cSoundPlayer.define_method("gain",  get_gain);
 	cSoundPlayer.define_method("loop=", set_loop);

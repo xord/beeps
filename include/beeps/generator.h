@@ -63,6 +63,8 @@ namespace Beeps
 
 			virtual const_iterator end () const;
 
+			bool seekable () const override;
+
 			struct Data;
 
 			Xot::PImpl<Data> self;
@@ -139,6 +141,8 @@ namespace Beeps
 			virtual float    duty () const;
 
 			virtual operator bool () const override;
+
+			bool seekable () const override;
 
 			struct Data;
 
@@ -239,6 +243,8 @@ namespace Beeps
 			virtual float seconds () const;
 
 			virtual operator bool () const override;
+
+			bool seekable () const override;
 
 			struct Data;
 

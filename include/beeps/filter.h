@@ -27,6 +27,8 @@ namespace Beeps
 
 			virtual float    gain () const;
 
+			bool seekable () const override;
+
 			struct Data;
 
 			Xot::PImpl<Data> self;
@@ -69,6 +71,8 @@ namespace Beeps
 			virtual const_iterator end () const;
 
 			virtual operator bool () const override;
+
+			bool seekable () const override;
 
 			struct Data;
 
@@ -302,6 +306,8 @@ namespace Beeps
 			virtual const Spectrum& spectrum () const;
 
 			virtual operator bool () const override;
+
+			bool seekable () const override;
 
 			struct Data;
 

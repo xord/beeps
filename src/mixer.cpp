@@ -91,6 +91,19 @@ namespace Beeps
 		return true;
 	}
 
+	bool
+	Mixer::seekable () const
+	{
+		const auto* in = input();
+		if (in && !in->seekable())
+			return false;
+
+		for (auto& i : self->inputs)
+			if (!i->seekable()) return false;
+
+		return true;
+	}
+
 	static void
 	mix (
 		Mixer* mixer, Processor* input,

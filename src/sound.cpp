@@ -83,6 +83,20 @@ namespace Beeps
 			return nsamples;
 		}
 
+		ALint nsamples () const
+		{
+			if (!*this) return 0;
+
+			ALint size = 0, bits = 0, channels = 0;
+			alGetBufferi(self->id, AL_SIZE, &size);
+			alGetBufferi(self->id, AL_BITS, &bits);
+			alGetBufferi(self->id, AL_CHANNELS, &channels);
+			if (bits <= 0 || channels <= 0)
+				return 0;
+
+			return size / (bits / 8) / channels;
+		}
+
 		operator bool () const
 		{
 			return self->is_valid();
@@ -168,6 +182,7 @@ namespace Beeps
 		SoundSource reuse ()
 		{
 			stop();
+			set_time_scale(1);
 			set_gain(1);
 			set_loop(false);
 
@@ -276,6 +291,47 @@ namespace Beeps
 			}
 		}
 
+		void set_position (uint position)
+		{
+			if (!*this) return;
+
+			alSourcei(self->id, AL_SAMPLE_OFFSET, (ALint) position);
+			OpenAL_check_error(__FILE__, __LINE__);
+		}
+
+		uint position () const
+		{
+			if (!*this) return 0;
+
+			ALint pos = 0;
+			alGetSourcei(self->id, AL_SAMPLE_OFFSET, &pos);
+			OpenAL_check_error(__FILE__, __LINE__);
+
+			return (uint) pos;
+		}
+
+		void set_time_scale (float scale)
+		{
+			if (scale <= 0)
+				argument_error(__FILE__, __LINE__);
+
+			if (!*this) return;
+
+			alSourcef(self->id, AL_PITCH, scale);
+			OpenAL_check_error(__FILE__, __LINE__);
+		}
+
+		float time_scale () const
+		{
+			if (!*this) return 1;
+
+			float scale = 1;
+			alGetSourcef(self->id, AL_PITCH, &scale);
+			OpenAL_check_error(__FILE__, __LINE__);
+
+			return scale;
+		}
+
 		void set_gain (float gain)
 		{
 			if (gain < 0)
@@ -377,6 +433,10 @@ namespace Beeps
 	struct SoundPlayer::Data
 	{
 
+		double sample_rate = 0;
+
+		uint position      = 0;
+
 		SoundSource source;
 
 		std::vector<SoundBuffer> buffers;
@@ -387,6 +447,9 @@ namespace Beeps
 
 		void clear ()
 		{
+			sample_rate = 0;
+			position    = 0;
+
 			source.clear();
 
 			for (auto& buffer : buffers) buffer.clear();
@@ -396,6 +459,8 @@ namespace Beeps
 		void attach_signals (const Signals& signals)
 		{
 			assert(signals);
+
+			sample_rate = signals.sample_rate();
 
 			SoundBuffer buffer(signals);
 			source.attach(buffer);
@@ -407,7 +472,8 @@ namespace Beeps
 		{
 			assert(processor && *processor && nchannels > 0 && sample_rate > 0);
 
-			this->processor = processor;
+			this->sample_rate = sample_rate;
+			this->processor   = processor;
 			stream_context.reset(
 				new StreamContext(sample_rate / 10, nchannels, sample_rate));
 
@@ -446,6 +512,8 @@ namespace Beeps
 			{
 				if (!source.unqueue(&buffer))
 					return;
+
+				position += buffer.nsamples();
 
 				if (!process_stream(&buffer))
 				{
@@ -596,6 +664,7 @@ namespace Beeps
 	SoundPlayer::stop ()
 	{
 		self->source.stop();
+		self->position = 0;
 	}
 
 	SoundPlayer::State
@@ -605,6 +674,67 @@ namespace Beeps
 		if (s == STOPPED && self->is_streaming())
 			return PLAYING;
 		return s;
+	}
+
+	void
+	SoundPlayer::set_position (uint position)
+	{
+		if (self->is_streaming())
+		{
+			if (!self->processor || !self->processor->seekable())
+				invalid_state_error(__FILE__, __LINE__, "processor is not seekable");
+
+			State state = this->state();
+			self->source.stop();
+
+			self->position = position;
+			self->stream_context->seek(position);
+			for (auto& buffer : self->buffers)
+			{
+				if (!self->process_stream(&buffer)) break;
+				self->source.queue(buffer);
+			}
+
+			if (state != STOPPED) self->source.play();
+			if (state == PAUSED)  self->source.pause();
+		}
+		else
+		{
+			self->position = 0;
+			self->source.set_position(position);
+		}
+	}
+
+	uint
+	SoundPlayer::position () const
+	{
+		return self->position + self->source.position();
+	}
+
+	void
+	SoundPlayer::set_time (float time)
+	{
+		if (self->sample_rate <= 0) return;
+		set_position((uint) (time * self->sample_rate));
+	}
+
+	float
+	SoundPlayer::time () const
+	{
+		if (self->sample_rate <= 0) return 0;
+		return (float) ((double) position() / self->sample_rate);
+	}
+
+	void
+	SoundPlayer::set_time_scale (float scale)
+	{
+		self->source.set_time_scale(scale);
+	}
+
+	float
+	SoundPlayer::time_scale () const
+	{
+		return self->source.time_scale();
 	}
 
 	void

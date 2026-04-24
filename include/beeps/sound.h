@@ -47,6 +47,18 @@ namespace Beeps
 
 			State state () const;
 
+			void set_position (uint position);
+
+			uint     position () const;
+
+			void set_time (float time);
+
+			float    time () const;
+
+			void set_time_scale (float scale);
+
+			float    time_scale () const;
+
 			void set_gain (float gain);
 
 			float    gain () const;

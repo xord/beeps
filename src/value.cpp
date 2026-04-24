@@ -113,6 +113,12 @@ namespace Beeps
 		return self->points.end();
 	}
 
+	bool
+	Value::seekable () const
+	{
+		return true;
+	}
+
 	static float
 	interpolate_linear (const Value::PointList& points, float time)
 	{

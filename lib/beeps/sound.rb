@@ -55,7 +55,7 @@ module Beeps
       state == :stopped
     end
 
-    universal_accessor :gain, :loop
+    universal_accessor :position, :time, :time_scale, :gain, :loop
 
   end# SoundPlayer
 

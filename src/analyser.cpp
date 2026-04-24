@@ -192,6 +192,13 @@ namespace Beeps
 		return self->is_valid();
 	}
 
+	bool
+	Analyser::seekable () const
+	{
+		const Processor* in = input();
+		return !in || in->seekable();
+	}
+
 	static void
 	shift (Signals* signals, uint nsamples)
 	{

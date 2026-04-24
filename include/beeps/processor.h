@@ -38,6 +38,8 @@ namespace Beeps
 
 			virtual const Processor* input () const;
 
+			virtual bool seekable () const;
+
 			virtual void on_start ();
 
 			virtual operator bool () const;

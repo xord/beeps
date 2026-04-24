@@ -93,9 +93,7 @@ namespace Beeps
 
 			Signals process_next (Processor* processor);
 
-			//void push_offset (uint offset);
-
-			//uint pop_offset ();
+			void seek (uint offset);
 
 			bool is_finished () const;
 
@@ -110,8 +108,6 @@ namespace Beeps
 			uint offset   = 0;
 
 			bool finished = false;
-
-			//std::vector<uint> offset_stack;
 
 	};// StreamContext
 
