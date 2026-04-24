@@ -242,6 +242,14 @@ namespace Beeps
 	}
 
 	void
+	Processor::set_buffering_seconds (float seconds)
+	{
+		self->buffering_seconds = seconds;
+
+		set_updated();
+	}
+
+	void
 	Processor::set_updated ()
 	{
 		self->last_update_time = Xot::time();
@@ -264,14 +272,6 @@ namespace Beeps
 	:	Super(false)
 	{
 		if (input) set_input(input);
-	}
-
-	void
-	Filter::set_buffering_seconds (float seconds)
-	{
-		Super::self->buffering_seconds = seconds;
-
-		set_updated();
 	}
 
 	void

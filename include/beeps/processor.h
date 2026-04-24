@@ -71,6 +71,8 @@ namespace Beeps
 			virtual int get_max_segment_size_for_process (
 				double sample_rate, uint nsamples) const;
 
+			void set_buffering_seconds (float seconds);
+
 			virtual void set_updated ();
 
 			friend class ProcessorContext;
@@ -103,8 +105,6 @@ namespace Beeps
 		protected:
 
 			Filter (Processor* input = NULL);
-
-			void set_buffering_seconds (float seconds);
 
 		private:
 
