@@ -24,7 +24,7 @@ namespace Beeps
 
 			class Context {};
 
-			typedef Xot::Ref<This>     Ref;
+			typedef Xot::Ref<This>      Ref;
 
 			typedef std::map<uint, Ref> Map;
 
