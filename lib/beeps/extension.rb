@@ -31,6 +31,10 @@ module Beeps
       root_dir 'ext'
     end
 
+    def lib_name()
+      "#{name true}.dll" if /mswin|ming|cygwin/.match? RUBY_PLATFORM
+    end
+
   end# Extension
 
 
