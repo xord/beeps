@@ -25,7 +25,7 @@ Xot::ExtConf.new Xot, Rucy, Beeps do
       libs       << 'openal'
     end
 
-    $LDFLAGS << ' -Wl,--export-all-symbols,--out-implib=libbeeps.dll.a' if mingw? || cygwin?
+    $LDFLAGS << ' -Wl,--out-implib=libbeeps.dll.a' if mingw? || cygwin?
   end
 
   create_makefile 'beeps_ext'
