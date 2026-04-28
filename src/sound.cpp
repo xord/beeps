@@ -522,7 +522,23 @@ namespace Beeps
 				}
 
 				source.queue(buffer);
-				if (source.state() == STOPPED) source.play();
+				if (source.state() == STOPPED)
+				{
+					expand_buffer();
+					source.play();
+				}
+			}
+		}
+
+		void expand_buffer ()
+		{
+			if (buffers.size() >= 10) return;
+
+			SoundBuffer extra(true);
+			if (process_stream(&extra))
+			{
+				source.queue(extra);
+				buffers.emplace_back(extra);
 			}
 		}
 
