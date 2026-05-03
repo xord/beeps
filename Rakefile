@@ -25,7 +25,7 @@ use_external_library 'https://github.com/thestk/stk',
   excludes: %w[stk/src/include Tcp Udp Socket Thread Mutex InetWv /Rt]
 
 use_external_library 'https://github.com/adamstark/AudioFile',
-  tag:      '1.1.1',
+  tag:      '1.1.4',
   srcdirs:  'NOSRC',
   excludes: %w[examples/ tests/]
 
