@@ -670,11 +670,14 @@ namespace Beeps
 		self->source.pause();
 	}
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wmissing-noreturn"
 	void
 	SoundPlayer::rewind ()
 	{
 		not_implemented_error(__FILE__, __LINE__);
 	}
+	#pragma GCC diagnostic pop
 
 	void
 	SoundPlayer::stop ()
