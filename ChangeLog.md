@@ -1,6 +1,20 @@
 # beeps ChangeLog
 
 
+## [v0.3.12] - 2026-05-10
+
+- Support WebAssembly
+- Add adaptive stream buffering to prevent audio underruns
+- Add position(), time(), time_scale() to SoundPlayer and seekable() to Processor
+- Add constructors, clear(), and append() to Signals as public API
+- Move set_buffering_seconds() from Filter to Processor
+- Rename max_segment_size_for_process() to get_max_segment_size_for_process()
+- Bump AudioFile from 1.1.1 to 1.1.4 to fix Windows CI
+- Remove deprecated has_rdoc= from gemspecs
+
+- Fix SignalSamples copying channel 0 data to all channels
+
+
 ## [v0.3.11] - 2026-04-17
 
 - Update dependencies
