@@ -1,6 +1,12 @@
 # beeps ChangeLog
 
 
+## [v0.3.13] - 2026-05-17
+
+- Rewrite README.md
+- CI: Migrate release-gem.yml from actions/create-release to gh release create
+
+
 ## [v0.3.12] - 2026-05-10
 
 - Support WebAssembly
