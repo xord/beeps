@@ -183,7 +183,7 @@ namespace Beeps
 		uint max = signals->capacity() - start;
 		uint len = length_sec >= 0 ? length_sec * signals->sample_rate() : max;
 		if (len > max) len = max;
-		assert(0 < len && (start + len) <= signals->nsamples());
+		assert(0 < len && (start + len) <= signals->capacity());
 
 		return Signals_tick(
 			signals, start, start + len,
