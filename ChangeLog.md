@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.3.15] - 2026-06-12
+
+- Update dependencies
+
+
 ## [v0.3.14] - 2026-05-20
 
 - Fix wrong assert condition in envelope tick
