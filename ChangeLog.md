@@ -1,6 +1,11 @@
 # beeps ChangeLog
 
 
+## [v0.3.16] - 2026-06-23
+
+- Update dependencies
+
+
 ## [v0.3.15] - 2026-06-12
 
 - Update dependencies
