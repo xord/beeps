@@ -802,7 +802,17 @@ namespace Beeps
 		{
 		}
 
+		virtual Data* dup () const
+		{
+			return new Data(*this);
+		}
+
 		virtual void attach_to (SoundPlayer* player)
+		{
+			not_implemented_error(__FILE__, __LINE__);
+		}
+
+		virtual void save (const char* path) const
 		{
 			not_implemented_error(__FILE__, __LINE__);
 		}
@@ -820,11 +830,6 @@ namespace Beeps
 		virtual float seconds () const
 		{
 			return 0;
-		}
-
-		virtual void save (const char* path) const
-		{
-			not_implemented_error(__FILE__, __LINE__);
 		}
 
 		virtual bool is_valid () const
@@ -848,11 +853,24 @@ namespace Beeps
 		{
 		}
 
+		Data* dup () const override
+		{
+			return new SoundData(*this);
+		}
+
 		void attach_to (SoundPlayer* player) override
 		{
 			assert(player && *player);
 
 			player->self->attach_signals(signals);
+		}
+
+		void save (const char* path) const override
+		{
+			if (!signals)
+				invalid_state_error(__FILE__, __LINE__);
+
+			Signals_save(signals, path);
 		}
 
 		double sample_rate () const override
@@ -870,14 +888,6 @@ namespace Beeps
 			return signals ? Signals_get_seconds(signals) : Super::seconds();
 		}
 
-		void save (const char* path) const override
-		{
-			if (!signals)
-				invalid_state_error(__FILE__, __LINE__);
-
-			Signals_save(signals, path);
-		}
-
 		bool is_valid () const override
 		{
 			return signals;
@@ -893,7 +903,7 @@ namespace Beeps
 
 		double sample_rate_ = 0;
 
-		uint  nchannels_ = 0;
+		uint  nchannels_    = 0;
 
 		StreamSoundData (Processor* processor, uint nchannels, double sample_rate)
 		{
@@ -902,6 +912,12 @@ namespace Beeps
 			this->processor    = processor;
 			this->sample_rate_ = sample_rate;
 			this->nchannels_   = nchannels;
+		}
+
+		Data* dup () const override
+		{
+			invalid_state_error(
+				__FILE__, __LINE__, "can not duplicate a streaming sound");
 		}
 
 		void attach_to (SoundPlayer* player) override
@@ -969,8 +985,19 @@ namespace Beeps
 			self.reset(new StreamSoundData(processor, nchannels, sample_rate));
 	}
 
+	Sound::Sound (Data* data)
+	:	self(data)
+	{
+	}
+
 	Sound::~Sound ()
 	{
+	}
+
+	Sound
+	Sound::dup () const
+	{
+		return Sound(self->dup());
 	}
 
 	SoundPlayer

@@ -1,6 +1,7 @@
 #include "beeps/ruby/sound.h"
 
 
+#include "beeps/exception.h"
 #include "defs.h"
 
 
@@ -15,6 +16,13 @@ static
 RUCY_DEF_ALLOC(alloc, klass)
 {
 	return new_type<Beeps::SoundPlayer>(klass);
+}
+RUCY_END
+
+static
+RUCY_DEF1(initialize_copy, obj)
+{
+	Beeps::beeps_error(__FILE__, __LINE__, "can not duplicate SoundPlayer");
 }
 RUCY_END
 
@@ -179,6 +187,7 @@ Init_beeps_sound_player ()
 
 	cSoundPlayer = mBeeps.define_class("SoundPlayer");
 	cSoundPlayer.define_alloc_func(alloc);
+	cSoundPlayer.define_private_method("initialize_copy", initialize_copy);
 	cSoundPlayer.define_method("play",   play);
 	cSoundPlayer.define_method("pause",  pause);
 	cSoundPlayer.define_method("rewind", rewind);

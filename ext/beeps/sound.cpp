@@ -19,7 +19,7 @@ RUCY_DEF_ALLOC(alloc, klass)
 RUCY_END
 
 static
-RUCY_DEF4(setup, processor, seconds, nchannels, sample_rate)
+RUCY_DEF4(initialize, processor, seconds, nchannels, sample_rate)
 {
 	CHECK;
 
@@ -27,6 +27,14 @@ RUCY_DEF4(setup, processor, seconds, nchannels, sample_rate)
 		to<Beeps::Processor*>(processor),
 		to<float>(seconds), to<uint>(nchannels), to<double>(sample_rate));
 	return self;
+}
+RUCY_END
+
+static
+RUCY_DEF1(initialize_copy, obj)
+{
+	CHECK;
+	*THIS = to<Beeps::Sound&>(obj).dup();
 }
 RUCY_END
 
@@ -131,7 +139,8 @@ Init_beeps_sound ()
 
 	cSound = mBeeps.define_class("Sound");
 	cSound.define_alloc_func(alloc);
-	cSound.define_private_method("setup", setup);
+	cSound.define_private_method("initialize!",     initialize);
+	cSound.define_private_method("initialize_copy", initialize_copy);
 	cSound.define_private_method("play!", play);
 	cSound.define_method("sample_rate", get_sample_rate);
 	cSound.define_method("nchannels",   get_nchannels);

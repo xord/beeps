@@ -91,6 +91,8 @@ namespace Beeps
 
 			~Sound ();
 
+			Sound dup () const;
+
 			SoundPlayer play ();
 
 			double sample_rate () const;
@@ -116,6 +118,10 @@ namespace Beeps
 			struct Data;
 
 			Xot::PSharedImpl<Data> self;
+
+		private:
+
+			Sound (Data* data);
 
 	};// Sound
 

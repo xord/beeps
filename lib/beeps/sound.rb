@@ -15,7 +15,7 @@ module Beeps
     def initialize(
       processor, seconds = 0, nchannels: 1, sample_rate: 0, **options, &block)
 
-      setup processor, seconds, nchannels, sample_rate
+      initialize! processor, seconds, nchannels, sample_rate
       set(**options) unless options.empty?
       Xot::BlockUtil.instance_eval_or_block_call self, &block if block
     end
