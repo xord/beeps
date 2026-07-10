@@ -54,7 +54,7 @@ RUCY_DEF0(each_input)
 
 	Value ret;
 	for (auto& input : *THIS)
-		ret = rb_yield(value(input.get()));
+		ret = yield(value(input.get()));
 	return ret;
 }
 RUCY_END

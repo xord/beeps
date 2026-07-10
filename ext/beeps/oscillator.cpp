@@ -66,7 +66,7 @@ RUCY_DEF0(each_sample)
 
 	Value ret;
 	for (size_t i = 0; i < size; ++i)
-		ret = rb_yield(value((float) samples[i]));
+		ret = yield(value((float) samples[i]));
 	return ret;
 }
 RUCY_END

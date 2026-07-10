@@ -69,7 +69,7 @@ RUCY_DEF0(each_note)
 	Value ret;
 	for (auto it = THIS->begin(), end = THIS->end(); it != end; ++it)
 	{
-		ret = rb_yield_values(3,
+		ret = yield(
 			value(it->processor.get()),
 			value(it->offset),
 			value(it->duration));

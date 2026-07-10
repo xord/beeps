@@ -73,7 +73,7 @@ RUCY_DEF0(each_value)
 
 	Value ret;
 	for (auto it = THIS->begin(), end = THIS->end(); it != end; ++it)
-		ret = rb_yield_values(2, value(it->value), value(it->time));
+		ret = yield(value(it->value), value(it->time));
 	return ret;
 }
 RUCY_END

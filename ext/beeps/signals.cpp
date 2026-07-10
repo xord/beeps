@@ -91,13 +91,13 @@ RUCY_DEF1(each, channel_)
 
 		const auto* p = samples + channel;
 		for (uint i = 0; i < nsamples; ++i, p += nchannels)
-			rb_yield(value(*p));
+			yield(value(*p));
 	}
 	else
 	{
 		uint size = nsamples * nchannels;
 		for (uint i = 0; i < size; ++i)
-			rb_yield(value(samples[i]));
+			yield(value(samples[i]));
 	}
 }
 RUCY_END

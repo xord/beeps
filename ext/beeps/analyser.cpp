@@ -68,7 +68,7 @@ RUCY_DEF1(each_signal, nsamples_)
 	{
 		case 1:
 			for (uint i = start; i < nsamples; ++i)
-				rb_yield(value(samples[i]));
+				yield(value(samples[i]));
 			break;
 
 		case 2:
@@ -78,7 +78,7 @@ RUCY_DEF1(each_signal, nsamples_)
 			{
 				args.set(0, value(samples[i + 0]));
 				args.set(1, value(samples[i + 1]));
-				rb_yield(args);
+				yield(args);
 			}
 			break;
 	}
@@ -96,7 +96,7 @@ RUCY_DEF0(each_spectrum)
 		invalid_object_error(__FILE__, __LINE__);
 
 	for (auto val : THIS->spectrum())
-		rb_yield(value(val));
+		yield(value(val));
 
 	return nil();
 }
