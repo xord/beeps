@@ -37,6 +37,8 @@ namespace Beeps
 	void
 	FileIn::set_path (const char* path)
 	{
+		if (!path)
+			argument_error(__FILE__, __LINE__, "path is NULL");
 		if (*this)
 			invalid_state_error(__FILE__, __LINE__, "path is already set");
 

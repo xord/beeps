@@ -55,25 +55,18 @@ namespace Beeps
 
 	static bool is_file_exist (const char* path)
 	{
-		DWORD attribs = GetFileAttributes(path);
+		if (!path) return false;
+
+		DWORD attribs = GetFileAttributesW(Xot::String(path).to_wstr().c_str());
 		return
 			attribs != INVALID_FILE_ATTRIBUTES &&
 			!(attribs & FILE_ATTRIBUTE_DIRECTORY);
 	}
 
-	static std::wstring
-	to_wcs (const char* mbs)
-	{
-		size_t len = strlen(mbs);
-		std::wstring wcs(len, L'#');
-		mbstowcs(&wcs[0], mbs, len);
-		return wcs;
-	}
-
 	static void
 	load_bytes (WAVEFORMATEX* format, std::vector<BYTE>* bytes, const char* path)
 	{
-		std::wstring wpath = to_wcs(path);
+		std::wstring wpath = Xot::String(path).to_wstr();
 
 		ReleasePtr<IMFMediaType> pcm_media_type;
 		check_media_foundation_error(
