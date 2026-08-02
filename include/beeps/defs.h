@@ -19,14 +19,24 @@ namespace Beeps
 {
 
 
-	using namespace Xot::Types;
+	namespace Types
+	{
+
+
+		typedef double Sample;
+
+
+	}// Types
+
+
+	using namespace Xot  ::Types;
+
+	using namespace Beeps::Types;
+
 
 	using Xot::String;
 
 	using Xot::StringList;
-
-
-	typedef double Sample;
 
 
 }// Beeps
