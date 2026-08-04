@@ -1,6 +1,13 @@
 # beeps ChangeLog
 
 
+## [v0.4.0] - 2026-08-04
+
+- Support dup on value classes, reject it on stateful ones
+
+- Fix loading audio files whose path is outside the ANSI code page on Windows
+
+
 ## [v0.3.16] - 2026-06-23
 
 - Update dependencies
