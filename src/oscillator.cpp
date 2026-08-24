@@ -289,7 +289,7 @@ namespace Beeps
 		for (size_t i = 0; i < size; ++i)
 			samples[i] = fun(i / (float) size);
 
-		return new WaveformOsc(&samples[0], samples.size());
+		return new WaveformOsc(samples.data(), samples.size());
 	}
 
 	static void

@@ -51,7 +51,7 @@ RUCY_DEF1(set_samples, samples)
 	for (size_t i = 0; i < size; ++i)
 		data.push_back(to<Beeps::Sample>(array[i]));
 
-	THIS->set_samples(&data[0], data.size());
+	THIS->set_samples(data.data(), data.size());
 }
 RUCY_END
 

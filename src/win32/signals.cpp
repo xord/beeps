@@ -123,7 +123,7 @@ namespace Beeps
 				__FILE__, __LINE__);
 
 			bytes->resize(bytes->size() + size);
-			memcpy(&(*bytes)[0] + bytes->size() - size, data, size);
+			memcpy(bytes->data() + bytes->size() - size, data, size);
 
 			check_media_foundation_error(
 				buffer->Unlock(),
@@ -155,7 +155,7 @@ namespace Beeps
 				case 1:
 				{
 					Sample*        to_p = Signals_at(&signals, 0, ch);
-					const uchar* from_p = ((uchar*) &bytes[0]) + ch;
+					const uchar* from_p = ((uchar*) bytes.data()) + ch;
 					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
 						*to_p = (*to_p - 128) / 128.f;
 					break;
@@ -164,7 +164,7 @@ namespace Beeps
 				case 2:
 				{
 					Sample*         to_p = Signals_at(&signals, 0, ch);
-					const ushort* from_p = ((ushort*) &bytes[0]) + ch;
+					const ushort* from_p = ((ushort*) bytes.data()) + ch;
 					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
 						*to_p = *from_p / 32768.f;
 					break;

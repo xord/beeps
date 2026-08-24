@@ -65,12 +65,12 @@ namespace Beeps
 			auto& buffer = self->buffer;
 			if (buffer.size() < (size_t) nsamples) buffer.resize(nsamples);
 
-			alcCaptureSamples(self->device, (ALCvoid*) &buffer[0], nsamples);
+			alcCaptureSamples(self->device, (ALCvoid*) buffer.data(), nsamples);
 			OpenAL_check_error(__FILE__, __LINE__);
 
 			auto& samples = self->samples;
 			samples.reserve(samples.size() + nsamples);
-			samples.insert(samples.end(), &buffer[0], &buffer[0] + nsamples);
+			samples.insert(samples.end(), buffer.data(), buffer.data() + nsamples);
 
 			if (samples.size() > samples_size_max())
 			{
