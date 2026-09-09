@@ -10,7 +10,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Processor)
 
 #define THIS  to<Beeps::Processor*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::Processor, self)
+#define CHECK RUCY_CHECK_PTR(Beeps::Processor, self)
 
 #define CALL(fun) RUCY_CALL_SUPER(THIS, fun)
 

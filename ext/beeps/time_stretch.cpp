@@ -9,7 +9,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::TimeStretch)
 
 #define THIS  to<Beeps::TimeStretch*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::TimeStretch, self)
+#define CHECK RUCY_CHECK_PTR(Beeps::TimeStretch, self)
 
 
 static

@@ -9,7 +9,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::PitchShift)
 
 #define THIS  to<Beeps::PitchShift*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::PitchShift, self)
+#define CHECK RUCY_CHECK_PTR(Beeps::PitchShift, self)
 
 
 static

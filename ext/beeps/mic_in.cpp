@@ -9,7 +9,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::MicIn)
 
 #define THIS  to<Beeps::MicIn*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::MicIn, self)
+#define CHECK RUCY_CHECK_PTR(Beeps::MicIn, self)
 
 
 static

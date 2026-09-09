@@ -9,7 +9,7 @@ RUCY_DEFINE_WRAPPER_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::HighPass)
 
 #define THIS  to<Beeps::HighPass*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::HighPass, self)
+#define CHECK RUCY_CHECK_PTR(Beeps::HighPass, self)
 
 
 static

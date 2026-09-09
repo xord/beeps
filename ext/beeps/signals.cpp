@@ -8,7 +8,7 @@ RUCY_DEFINE_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::Signals)
 
 #define THIS  to<Beeps::Signals*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::Signals, self)
+#define CHECK RUCY_CHECK_PTR(Beeps::Signals, self)
 
 
 static

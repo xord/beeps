@@ -9,7 +9,7 @@ RUCY_DEFINE_VALUE_FROM_TO(BEEPS_EXPORT, Beeps::SoundPlayer)
 
 #define THIS  to<Beeps::SoundPlayer*>(self)
 
-#define CHECK RUCY_CHECK_OBJ(Beeps::SoundPlayer, self)
+#define CHECK RUCY_CHECK_PTR(Beeps::SoundPlayer, self)
 
 
 static
