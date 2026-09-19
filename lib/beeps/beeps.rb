@@ -38,10 +38,10 @@ module Beeps
 
     private
 
-      def beep_sound(time)
-        @beep_processor ||= Oscillator.new(:square)
-        Sound.new @beep_processor, time
-      end
+    def beep_sound(time)
+      @beep_processor ||= Oscillator.new(:square)
+      Sound.new @beep_processor, time
+    end
 
     self
 
