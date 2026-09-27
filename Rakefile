@@ -33,7 +33,7 @@ use_external_library 'https://github.com/avaneev/r8brain-free-src',
   tag: 'version-6.2',
   excludes: %w[DLL/ bench/ other/ pffft_double example.cpp],
   &proc {
-    filter_file('r8bconf.h') do |conf|
+    filter_file 'r8bconf.h' do |conf|
       <<~EOS + conf
         #ifndef R8B_PFFFT
         #define R8B_PFFFT 1
