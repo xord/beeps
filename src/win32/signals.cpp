@@ -157,14 +157,14 @@ namespace Beeps
 					Sample*        to_p = Signals_at(&signals, 0, ch);
 					const uchar* from_p = ((uchar*) bytes.data()) + ch;
 					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
-						*to_p = (*to_p - 128) / 128.f;
+						*to_p = (*from_p - 128) / 128.f;
 					break;
 				}
 
 				case 2:
 				{
-					Sample*         to_p = Signals_at(&signals, 0, ch);
-					const ushort* from_p = ((ushort*) bytes.data()) + ch;
+					Sample*        to_p = Signals_at(&signals, 0, ch);
+					const short* from_p = ((short*) bytes.data()) + ch;
 					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
 						*to_p = *from_p / 32768.f;
 					break;
