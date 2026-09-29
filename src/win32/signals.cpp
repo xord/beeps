@@ -74,7 +74,7 @@ namespace Beeps
 				MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, &native.ptr),
 			__FILE__, __LINE__);
 
-		GUID subtype = GUID_NULL;
+		GUID subtype = {};// all zeros, as GUID_NULL, which needs libuuid
 		UINT32 bits  = 0;
 		native->GetGUID(MF_MT_SUBTYPE, &subtype);
 		native->GetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, &bits);
