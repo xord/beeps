@@ -1,12 +1,14 @@
 #include "../signals.h"
 
 
+#include <stdint.h>
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
 #include <xot/noncopyable.h>
 #include <xot/string.h>
 #include <xot/windows.h>
+#include <mmreg.h>// must be after windows.h
 #include "exception.h"
 
 
@@ -64,25 +66,63 @@ namespace Beeps
 	}
 
 	static void
-	load_bytes (WAVEFORMATEX* format, std::vector<BYTE>* bytes, const char* path)
+	set_decoded_media_type (IMFMediaType* decoded, IMFSourceReader* source_reader)
+	{
+		ReleasePtr<IMFMediaType> native;
+		check_media_foundation_error(
+			source_reader->GetNativeMediaType(
+				MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, &native.ptr),
+			__FILE__, __LINE__);
+
+		GUID subtype = GUID_NULL;
+		UINT32 bits  = 0;
+		native->GetGUID(MF_MT_SUBTYPE, &subtype);
+		native->GetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, &bits);
+
+		bool is_float = subtype == MFAudioFormat_Float;
+		if (is_float)
+			bits = 32;
+		else if (subtype != MFAudioFormat_PCM || (bits != 8 && bits != 24 && bits != 32))
+			bits = 16;
+
+		decoded->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
+		decoded->SetGUID(MF_MT_SUBTYPE, is_float ? MFAudioFormat_Float : MFAudioFormat_PCM);
+		decoded->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, bits);
+	}
+
+	static bool
+	is_float_format (const WAVEFORMATEX& format)
+	{
+		if (format.wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
+			return true;
+		if (format.wFormatTag != WAVE_FORMAT_EXTENSIBLE)
+			return false;
+
+		const auto& extensible = (const WAVEFORMATEXTENSIBLE&) format;
+		return extensible.SubFormat.Data1 == WAVE_FORMAT_IEEE_FLOAT;
+	}
+
+	static void
+	load_bytes (
+		WAVEFORMATEX* format, bool* is_float, std::vector<BYTE>* bytes,
+		const char* path)
 	{
 		std::wstring wpath = Xot::String(path).to_wstr();
-
-		ReleasePtr<IMFMediaType> pcm_media_type;
-		check_media_foundation_error(
-			MFCreateMediaType(&pcm_media_type.ptr),
-			__FILE__, __LINE__);
-		pcm_media_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
-		pcm_media_type->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
 
 		ReleasePtr<IMFSourceReader> source_reader;
 		check_media_foundation_error(
 			MFCreateSourceReaderFromURL(wpath.c_str(), NULL, &source_reader.ptr),
 			__FILE__, __LINE__);
 
+		ReleasePtr<IMFMediaType> decoded_media_type;
+		check_media_foundation_error(
+			MFCreateMediaType(&decoded_media_type.ptr),
+			__FILE__, __LINE__);
+		set_decoded_media_type(decoded_media_type.ptr, source_reader.ptr);
+
 		check_media_foundation_error(
 			source_reader->SetCurrentMediaType(
-				MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, pcm_media_type.ptr),
+				MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, decoded_media_type.ptr),
 			__FILE__, __LINE__);
 
 		ReleasePtr<IMFMediaType> media_type;
@@ -96,9 +136,15 @@ namespace Beeps
 			MFCreateWaveFormatExFromMFMediaType(media_type.ptr, &format_.ptr, NULL),
 			__FILE__, __LINE__);
 
-		*format = *format_.ptr;
-		if (format->wFormatTag != WAVE_FORMAT_PCM)
+		*format   = *format_.ptr;
+		*is_float = is_float_format(*format_.ptr);
+		if (
+			format->wFormatTag != WAVE_FORMAT_PCM &&
+			format->wFormatTag != WAVE_FORMAT_IEEE_FLOAT &&
+			format->wFormatTag != WAVE_FORMAT_EXTENSIBLE)
+		{
 			beeps_error(__FILE__, __LINE__, "'%s' is not a PCM file.", path);
+		}
 
 		while (true)
 		{
@@ -138,35 +184,70 @@ namespace Beeps
 			beeps_error(__FILE__, __LINE__, "'%s' not found.", path);
 
 		WAVEFORMATEX format = {0};
+		bool is_float       = false;
 		std::vector<BYTE> bytes;
-		load_bytes(&format, &bytes, path);
+		load_bytes(&format, &is_float, &bytes, path);
 		if (bytes.empty())
 			beeps_error(__FILE__, __LINE__, "failed to read bytes: '%s'", path);
 
 		uint Bps       = format.wBitsPerSample / 8;
 		uint nchannels = format.nChannels;
-		uint nsamples  = bytes.size() / Bps / nchannels;
+		if (is_float ? Bps != 4 : (Bps < 1 || 4 < Bps))
+		{
+			beeps_error(
+				__FILE__, __LINE__, "'%s' has samples of %d bits.",
+				path, format.wBitsPerSample);
+		}
+		if (nchannels == 0)
+			beeps_error(__FILE__, __LINE__, "'%s' has no channels.", path);
+
+		uint nsamples = bytes.size() / Bps / nchannels;
 		Signals signals(nsamples, nchannels, format.nSamplesPerSec);
 
+		uint step = nchannels * Bps;
 		for (uint ch = 0; ch < nchannels; ++ch)
 		{
+			Sample*        to_p = Signals_at(&signals, 0, ch);
+			const uchar* from_p = ((uchar*) bytes.data()) + ch * Bps;
 			switch (Bps)
 			{
 				case 1:
 				{
-					Sample*        to_p = Signals_at(&signals, 0, ch);
-					const uchar* from_p = ((uchar*) bytes.data()) + ch;
-					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
+					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += step)
 						*to_p = (*from_p - 128) / 128.f;
 					break;
 				}
 
 				case 2:
 				{
-					Sample*        to_p = Signals_at(&signals, 0, ch);
-					const short* from_p = ((short*) bytes.data()) + ch;
-					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += nchannels)
-						*to_p = *from_p / 32768.f;
+					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += step)
+						*to_p = *(const short*) from_p / 32768.f;
+					break;
+				}
+
+				case 3:
+				{
+					for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += step)
+					{
+						int32_t value = from_p[0] | (from_p[1] << 8) | (from_p[2] << 16);
+						if (value & 0x800000) value -= 0x1000000;// sign extension
+						*to_p = value / 8388608.f;
+					}
+					break;
+				}
+
+				case 4:
+				{
+					if (is_float)
+					{
+						for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += step)
+							*to_p = *(const float*) from_p;
+					}
+					else
+					{
+						for (uint i = 0; i < nsamples; ++i, to_p += nchannels, from_p += step)
+							*to_p = *(const int32_t*) from_p / 2147483648.f;
+					}
 					break;
 				}
 			}
