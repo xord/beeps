@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
 
   ext   = Beeps::Extension
   name  = ext.name true
-  rdocs = glob.call *%w[README .doc/ext/**/*.cpp]
+  rdocs = glob.call(*%w[README .doc/ext/**/*.cpp])
 
   s.name        = name
   s.version     = ext.version
