@@ -445,6 +445,11 @@ namespace Beeps
 
 		std::unique_ptr<StreamContext> stream_context;
 
+		~Data ()
+		{
+			clear();
+		}
+
 		void clear ()
 		{
 			sample_rate = 0;
