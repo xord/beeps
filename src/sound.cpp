@@ -91,6 +91,8 @@ namespace Beeps
 			alGetBufferi(self->id, AL_SIZE, &size);
 			alGetBufferi(self->id, AL_BITS, &bits);
 			alGetBufferi(self->id, AL_CHANNELS, &channels);
+			OpenAL_check_error(__FILE__, __LINE__);
+
 			if (bits <= 0 || channels <= 0)
 				return 0;
 

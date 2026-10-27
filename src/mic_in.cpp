@@ -28,7 +28,7 @@ namespace Beeps
 				invalid_state_error(__FILE__, __LINE__);
 
 			alcCaptureStart(self->device);
-			OpenAL_check_error(__FILE__, __LINE__);
+			OpenAL_check_error(self->device, __FILE__, __LINE__);
 
 			self->started = true;
 		}
@@ -41,7 +41,7 @@ namespace Beeps
 				invalid_state_error(__FILE__, __LINE__);
 
 			alcCaptureStop(self->device);
-			OpenAL_check_error(__FILE__, __LINE__);
+			OpenAL_check_error(self->device, __FILE__, __LINE__);
 
 			self->started = false;
 		}
@@ -59,14 +59,14 @@ namespace Beeps
 			ALint nsamples = 0;
 			alcGetIntegerv(
 				self->device, ALC_CAPTURE_SAMPLES, sizeof(nsamples), &nsamples);
-			OpenAL_check_error(__FILE__, __LINE__);
+			OpenAL_check_error(self->device, __FILE__, __LINE__);
 			if (nsamples <= 0) return;
 
 			auto& buffer = self->buffer;
 			if (buffer.size() < (size_t) nsamples) buffer.resize(nsamples);
 
 			alcCaptureSamples(self->device, (ALCvoid*) buffer.data(), nsamples);
-			OpenAL_check_error(__FILE__, __LINE__);
+			OpenAL_check_error(self->device, __FILE__, __LINE__);
 
 			auto& samples = self->samples;
 			samples.reserve(samples.size() + nsamples);

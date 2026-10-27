@@ -25,11 +25,13 @@ namespace Beeps
 
 	void* OpenAL_get_context ();
 
-	ALCenum OpenAL_get_error();
+	ALenum OpenAL_get_error();
 
 	bool OpenAL_no_error();
 
 	void OpenAL_check_error(const char* file, int line);
+
+	void OpenAL_check_error(ALCdevice* device, const char* file, int line);
 
 
 }// Beeps
