@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <xot/util.h>
 #include "beeps/beeps.h"
 #include "beeps/exception.h"
 #include "openal.h"
@@ -134,7 +135,7 @@ namespace Beeps
 
 			~Data ()
 			{
-				clear();
+				Xot::call_and_log_errors([&]() {clear();});
 			}
 
 			void create ()

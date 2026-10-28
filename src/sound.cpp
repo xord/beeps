@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <memory>
 #include <algorithm>
+#include <xot/util.h>
 #include "Stk.h"
 #include "beeps/beeps.h"
 #include "beeps/generator.h"
@@ -138,7 +139,7 @@ namespace Beeps
 
 			~Data ()
 			{
-				clear();
+				Xot::call_and_log_errors([&]() {clear();});
 			}
 
 			void clear ()
@@ -394,7 +395,7 @@ namespace Beeps
 
 			~Data ()
 			{
-				clear();
+				Xot::call_and_log_errors([&]() {clear();});
 			}
 
 			void create ()
@@ -449,7 +450,7 @@ namespace Beeps
 
 		~Data ()
 		{
-			clear();
+			Xot::call_and_log_errors([&]() {clear();});
 		}
 
 		void clear ()
