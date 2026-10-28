@@ -37,7 +37,7 @@ module Beeps
     include Xot::Setter
 
     const_symbol_reader :state, **{
-      unknown: STATE_UNKNOWN,
+      none:    STATE_NONE,
       playing: PLAYING,
       paused:  PAUSED,
       stopped: STOPPED

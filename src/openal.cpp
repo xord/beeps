@@ -2,6 +2,7 @@
 
 
 #include <assert.h>
+#include <algorithm>
 #include "beeps/exception.h"
 #include "beeps/debug.h"
 #include "sound.h"
@@ -14,9 +15,11 @@ namespace Beeps
 	namespace global
 	{
 
-		static ALCdevice* device   = NULL;
+		static ALCdevice* device        = NULL;
 
-		static ALCcontext* context = NULL;
+		static ALCcontext* context      = NULL;
+
+		static uint max_playing_sources = 0;
 
 	}// global
 
@@ -39,6 +42,21 @@ namespace Beeps
 		}
 	}
 
+	static uint
+	get_max_playing_sources ()
+	{
+#if defined(OSX) || defined(IOS)
+		typedef ALint (*GetMaxBusses) ();
+
+		auto get_max_busses =
+			(GetMaxBusses) alcGetProcAddress(NULL, "alcMacOSXGetMixerMaxiumumBusses");
+		if (get_max_busses)
+			return (uint) std::max(get_max_busses(), 0);
+#endif
+
+		return 0;
+	}
+
 	void
 	OpenAL_init ()
 	{
@@ -56,6 +74,7 @@ namespace Beeps
 		if (!alcMakeContextCurrent(global::context))
 			goto FAILED;
 
+		global::max_playing_sources = get_max_playing_sources();
 		return;
 
 	FAILED:
@@ -76,6 +95,12 @@ namespace Beeps
 	OpenAL_get_context ()
 	{
 		return global::context;
+	}
+
+	uint
+	OpenAL_get_max_playing_sources ()
+	{
+		return global::max_playing_sources;
 	}
 
 	ALenum

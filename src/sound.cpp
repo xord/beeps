@@ -279,7 +279,7 @@ namespace Beeps
 
 		SoundPlayer::State state () const
 		{
-			if (!*this) return SoundPlayer::STATE_UNKNOWN;
+			if (!*this) return SoundPlayer::STATE_NONE;
 
 			ALint state = 0;
 			alGetSourcei(self->id, AL_SOURCE_STATE, &state);
@@ -290,7 +290,7 @@ namespace Beeps
 				case AL_PLAYING: return SoundPlayer::PLAYING;
 				case AL_PAUSED:  return SoundPlayer::PAUSED;
 				case AL_STOPPED: return SoundPlayer::STOPPED;
-				default:         return SoundPlayer::STATE_UNKNOWN;
+				default:         return SoundPlayer::STATE_NONE;
 			}
 		}
 
@@ -436,9 +436,11 @@ namespace Beeps
 	struct SoundPlayer::Data
 	{
 
-		double sample_rate = 0;
+		double sample_rate  = 0;
 
-		uint position      = 0;
+		uint position       = 0;
+
+		State pending_state = STATE_NONE;
 
 		SoundSource source;
 
@@ -455,8 +457,9 @@ namespace Beeps
 
 		void clear ()
 		{
-			sample_rate = 0;
-			position    = 0;
+			sample_rate   = 0;
+			position      = 0;
+			pending_state = STATE_NONE;
 
 			source.clear();
 
@@ -550,12 +553,35 @@ namespace Beeps
 			}
 		}
 
+		bool is_active () const
+		{
+			if (pending_state == PAUSED || pending_state == STOPPED)
+				return false;
+
+			// a source can stay initial for a moment after it starts to play,
+			// so count the initial ones too
+			return source.state() != STOPPED;
+		}
+
+		bool is_pending () const
+		{
+			return pending_state != STATE_NONE;
+		}
+
 		bool is_streaming () const
 		{
 			return processor && stream_context;
 		}
 
 	};// SoundPlayer::Data
+
+
+	namespace global
+	{
+
+		static std::vector<SoundPlayer> players, pending_players;
+
+	}// global
 
 
 	static SoundPlayer
@@ -575,17 +601,8 @@ namespace Beeps
 		return newplayer;
 	}
 
-
-	namespace global
-	{
-
-		static std::vector<SoundPlayer> players;
-
-	}// global
-
-
 	static void
-	remove_inactive_players ()
+	remove_stopped_players ()
 	{
 		auto it = std::remove_if(
 			global::players.begin(), global::players.end(),
@@ -619,11 +636,17 @@ namespace Beeps
 
 		if (!player && !global::players.empty())
 		{
-			player = reuse_player(&global::players.front());
+			auto it = std::find_if(
+				global::players.begin(), global::players.end(),
+				[](auto& p) {return p && !p.self->is_streaming();});
+			if (it == global::players.end())
+				it = global::players.begin();
+
+			player = reuse_player(&*it);
 			LOG("reuse oldest player");
 		}
 
-		remove_inactive_players();
+		remove_stopped_players();
 
 		if (player)
 			global::players.emplace_back(player);
@@ -631,9 +654,81 @@ namespace Beeps
 		return player;
 	}
 
+	static bool
+	stop_oldest_player ()
+	{
+		for (auto& player : global::players)
+		{
+			if (
+				!player ||
+				player.self->is_pending() ||
+				player.self->is_streaming())
+			{
+				continue;
+			}
+
+			if (player.self->source.state() == SoundPlayer::PLAYING)
+			{
+				player.stop();
+				LOG("stop oldest player");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	static void
+	stop_players_over_limit ()
+	{
+		uint max = OpenAL_get_max_playing_sources();
+		if (max == 0) return;
+
+		// a source stopped right after it starts can play again on macOS,
+		// so count them on each call
+		uint count = (uint) std::count_if(
+			global::players.begin(), global::players.end(),
+			[](auto& p) {return p && p.self->is_active();});
+
+		for (uint i = max; i < count; ++i)
+		{
+			if (!stop_oldest_player())
+				break;
+		}
+	}
+
+	static void
+	play_pending_players ()
+	{
+		stop_players_over_limit();
+
+		auto& pendings = global::pending_players;
+		while (!pendings.empty())
+		{
+			SoundPlayer& player = pendings.front();
+			if (player && player.self->pending_state == SoundPlayer::PLAYING)
+			{
+				// try again on the next call
+				try
+				{
+					player.self->source.play();
+				}
+				catch (const OpenALError&)
+				{
+					return;
+				}
+
+				player.self->pending_state = SoundPlayer::STATE_NONE;
+			}
+
+			pendings.erase(pendings.begin());
+		}
+	}
+
 	void
 	SoundPlayer_process_streams ()
 	{
+		play_pending_players();
+
 		for (auto& player : global::players)
 		{
 			if (player.self->is_streaming())
@@ -648,6 +743,7 @@ namespace Beeps
 			player.self->clear();
 
 		global::players.clear();
+		global::pending_players.clear();
 	}
 
 	void
@@ -669,12 +765,33 @@ namespace Beeps
 	void
 	SoundPlayer::play ()
 	{
+		if (!self->source)
+			invalid_state_error(__FILE__, __LINE__);
+
+#if defined(OSX) || defined(IOS)
+		// on macOS, a source fails to play when too many sources are playing,
+		// and a stopped source still counts as playing for a moment,
+		// so stop the oldest one and let the new one wait in the order
+		if (self->pending_state == PLAYING) return;
+
+		self->pending_state = PLAYING;
+		global::pending_players.emplace_back(*this);
+
+		play_pending_players();
+#else
 		self->source.play();
+#endif
 	}
 
 	void
 	SoundPlayer::pause ()
 	{
+		if (self->pending_state == PLAYING)
+		{
+			self->pending_state = PAUSED;
+			return;
+		}
+
 		self->source.pause();
 	}
 
@@ -690,6 +807,9 @@ namespace Beeps
 	void
 	SoundPlayer::stop ()
 	{
+		if (self->is_pending())
+			self->pending_state = STOPPED;
+
 		self->source.stop();
 		self->position = 0;
 	}
@@ -697,6 +817,9 @@ namespace Beeps
 	SoundPlayer::State
 	SoundPlayer::state () const
 	{
+		if (self->is_pending())
+			return self->pending_state;
+
 		State s = self->source.state();
 		if (s == STOPPED && self->is_streaming())
 			return PLAYING;

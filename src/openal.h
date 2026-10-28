@@ -25,6 +25,8 @@ namespace Beeps
 
 	void* OpenAL_get_context ();
 
+	uint OpenAL_get_max_playing_sources ();
+
 	ALenum OpenAL_get_error();
 
 	bool OpenAL_no_error();

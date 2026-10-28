@@ -102,6 +102,8 @@ class TestSoundPlayer < Test::Unit::TestCase
   end
 
   def test_state()
+    assert_equal :none, B::SoundPlayer.new.state
+
     p = sound.play
     assert_equal :playing, p.state
     assert_equal [true,  false, false], [p.playing?, p.paused?, p.stopped?]

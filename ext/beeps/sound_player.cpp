@@ -205,10 +205,10 @@ Init_beeps_sound_player ()
 	cSoundPlayer.define_method("loop",  get_loop);
 	cSoundPlayer.define_singleton_method("stop_all", stop_all);
 
-	cSoundPlayer.define_const("STATE_UNKNOWN", Beeps::SoundPlayer::STATE_UNKNOWN);
-	cSoundPlayer.define_const("PLAYING",       Beeps::SoundPlayer::PLAYING);
-	cSoundPlayer.define_const("PAUSED",        Beeps::SoundPlayer::PAUSED);
-	cSoundPlayer.define_const("STOPPED",       Beeps::SoundPlayer::STOPPED);
+	cSoundPlayer.define_const("STATE_NONE", Beeps::SoundPlayer::STATE_NONE);
+	cSoundPlayer.define_const("PLAYING",    Beeps::SoundPlayer::PLAYING);
+	cSoundPlayer.define_const("PAUSED",     Beeps::SoundPlayer::PAUSED);
+	cSoundPlayer.define_const("STOPPED",    Beeps::SoundPlayer::STOPPED);
 }
 
 

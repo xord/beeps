@@ -23,7 +23,7 @@ namespace Beeps
 			enum State
 			{
 
-				STATE_UNKNOWN = 0,
+				STATE_NONE = 0,
 
 				PLAYING,
 
