@@ -57,11 +57,11 @@ namespace Beeps
 			if (!*this)
 				invalid_state_error(__FILE__, __LINE__);
 
-			double sample_rate = signals.sample_rate();
 			uint nchannels     = signals.nchannels();
+			double sample_rate = signals.sample_rate();
 			uint nsamples      = signals.nsamples();
 			uint size          = nsamples * nchannels;
-			assert(sample_rate > 0 && nchannels > 0);
+			assert(nchannels > 0 && sample_rate > 0);
 			if (nsamples <= 0) return 0;
 
 			std::unique_ptr<short[]> buffer(new short[size]);
@@ -822,12 +822,12 @@ namespace Beeps
 			not_implemented_error(__FILE__, __LINE__);
 		}
 
-		virtual double sample_rate () const
+		virtual uint nchannels () const
 		{
 			return 0;
 		}
 
-		virtual uint nchannels () const
+		virtual double sample_rate () const
 		{
 			return 0;
 		}
@@ -878,14 +878,14 @@ namespace Beeps
 			Signals_save(signals, path);
 		}
 
-		double sample_rate () const override
-		{
-			return signals ? signals.sample_rate() : Super::sample_rate();
-		}
-
 		uint nchannels () const override
 		{
 			return signals ? signals.nchannels() : Super::nchannels();
+		}
+
+		double sample_rate () const override
+		{
+			return signals ? signals.sample_rate() : Super::sample_rate();
 		}
 
 		float seconds () const override
@@ -906,17 +906,17 @@ namespace Beeps
 
 		Processor::Ref processor;
 
-		double sample_rate_ = 0;
+		uint nchannels_     = 0;
 
-		uint  nchannels_    = 0;
+		double sample_rate_ = 0;
 
 		StreamSoundData (Processor* processor, uint nchannels, double sample_rate)
 		{
 			assert(processor && *processor && nchannels > 0 && sample_rate > 0);
 
 			this->processor    = processor;
-			this->sample_rate_ = sample_rate;
 			this->nchannels_   = nchannels;
+			this->sample_rate_ = sample_rate;
 		}
 
 		Data* dup () const override
@@ -932,14 +932,14 @@ namespace Beeps
 			player->self->attach_stream(processor, nchannels_, sample_rate_);
 		}
 
-		double sample_rate () const override
-		{
-			return sample_rate_;
-		}
-
 		uint nchannels () const override
 		{
 			return nchannels_;
+		}
+
+		double sample_rate () const override
+		{
+			return sample_rate_;
 		}
 
 		float seconds () const override
@@ -949,7 +949,7 @@ namespace Beeps
 
 		bool is_valid () const override
 		{
-			return processor && sample_rate_ > 0 && nchannels_ > 0;
+			return processor && nchannels_ > 0 && sample_rate_ > 0;
 		}
 
 	};// StreamSoundData
@@ -1028,16 +1028,16 @@ namespace Beeps
 		return player;
 	}
 
-	double
-	Sound::sample_rate () const
-	{
-		return self->sample_rate();
-	}
-
 	uint
 	Sound::nchannels () const
 	{
 		return self->nchannels();
+	}
+
+	double
+	Sound::sample_rate () const
+	{
+		return self->sample_rate();
 	}
 
 	float

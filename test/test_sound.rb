@@ -38,15 +38,15 @@ class TestSound < Test::Unit::TestCase
     assert_nothing_raised {B::Sound.load PATH}
   end
 
+  def test_nchannels()
+    assert_equal 1, sound              .nchannels
+    assert_equal 2, sound(nchannels: 2).nchannels
+  end
+
   def test_sample_rate()
     assert_in_epsilon 44100, sound                    .sample_rate
     assert_in_epsilon 48000, sound(sample_rate: 48000).sample_rate
     assert_in_epsilon 96000, sound(sample_rate: 96000).sample_rate
-  end
-
-  def test_nchannels()
-    assert_equal 1, sound              .nchannels
-    assert_equal 2, sound(nchannels: 2).nchannels
   end
 
   def test_seconds()
@@ -90,8 +90,8 @@ class TestSound < Test::Unit::TestCase
     }
 
     s = B::Sound.load PATH
-    assert_in_epsilon 96000, s.sample_rate
     assert_equal      2,     s.nchannels
+    assert_in_epsilon 96000, s.sample_rate
     assert_in_epsilon 0.1,   s.seconds
     assert_nothing_raised {s.play}
   end

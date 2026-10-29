@@ -37,9 +37,9 @@ namespace Beeps
 
 			uint append (const Signals& source, uint source_offset = 0);
 
-			double sample_rate () const;
-
 			uint nchannels () const;
+
+			double sample_rate () const;
 
 			uint nsamples () const;
 

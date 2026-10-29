@@ -114,7 +114,7 @@ namespace Beeps
 
 		bool is_valid () const
 		{
-			return self->sample_rate > 0 && self->nchannels > 0 && self->device;
+			return self->nchannels > 0 && self->sample_rate > 0 && self->device;
 		}
 
 		struct Data
@@ -139,7 +139,7 @@ namespace Beeps
 
 			void create ()
 			{
-				assert(sample_rate > 0 && nchannels > 0);
+				assert(nchannels > 0 && sample_rate > 0);
 
 				if (device) return;
 

@@ -623,16 +623,16 @@ namespace Beeps
 		return t;
 	}
 
-	double
-	Signals::sample_rate () const
-	{
-		return self->frames ? self->frames->dataRate() : Beeps::sample_rate();
-	}
-
 	uint
 	Signals::nchannels () const
 	{
 		return self->frames ? self->frames->channels() : 0;
+	}
+
+	double
+	Signals::sample_rate () const
+	{
+		return self->frames ? self->frames->dataRate() : Beeps::sample_rate();
 	}
 
 	uint

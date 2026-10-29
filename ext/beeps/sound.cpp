@@ -48,20 +48,20 @@ RUCY_DEF0(play)
 RUCY_END
 
 static
-RUCY_DEF0(get_sample_rate)
-{
-	CHECK;
-
-	return value(THIS->sample_rate());
-}
-RUCY_END
-
-static
 RUCY_DEF0(get_nchannels)
 {
 	CHECK;
 
 	return value(THIS->nchannels());
+}
+RUCY_END
+
+static
+RUCY_DEF0(get_sample_rate)
+{
+	CHECK;
+
+	return value(THIS->sample_rate());
 }
 RUCY_END
 
@@ -142,8 +142,8 @@ Init_beeps_sound ()
 	cSound.define_private_method("initialize!",     initialize);
 	cSound.define_private_method("initialize_copy", initialize_copy);
 	cSound.define_private_method("play!", play);
-	cSound.define_method("sample_rate", get_sample_rate);
 	cSound.define_method("nchannels",   get_nchannels);
+	cSound.define_method("sample_rate", get_sample_rate);
 	cSound.define_method("seconds",     get_seconds);
 	cSound.define_method("gain=", set_gain);
 	cSound.define_method("gain",  get_gain);

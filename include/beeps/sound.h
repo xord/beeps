@@ -95,9 +95,9 @@ namespace Beeps
 
 			SoundPlayer play ();
 
-			double sample_rate () const;
-
 			uint nchannels () const;
+
+			double sample_rate () const;
 
 			float seconds () const;
 
