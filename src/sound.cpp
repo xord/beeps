@@ -710,8 +710,14 @@ namespace Beeps
 			if (!self->is_streaming() || self->is_pending())
 				continue;
 
-			self->process_and_queue_stream_buffers();
-			if (self->is_pending())
+			bool processed = Xot::call_and_log_errors<OpenALError>([&]()
+			{
+				self->process_and_queue_stream_buffers();
+			});
+
+			if (!processed)
+				self->clear();
+			else if (self->is_pending())
 				global::pending_players.emplace_back(player);
 		}
 
@@ -768,11 +774,11 @@ namespace Beeps
 			return;
 
 		if (!stop_oldest_player())
-			invalid_state_error(__FILE__, __LINE__, "too many sound players");
+			openal_error(__FILE__, __LINE__, "too many sound players");
 
 		remove_stopped_players();
 		if (!source->create())
-			invalid_state_error(__FILE__, __LINE__, "failed to create a source");
+			openal_error(__FILE__, __LINE__, "failed to create a source");
 	}
 
 	static bool
@@ -780,21 +786,30 @@ namespace Beeps
 	{
 		SoundPlayer::Data* self = player->self.get();
 
-		create_source(&self->source);
+		bool loaded = false;
 		try
 		{
-			if (self->signals)
-				self->load_signals();
-			else if (!self->load_stream())
+			Xot::call_and_log_errors<OpenALError>([&]()
 			{
-				self->clear();
-				return false;
-			}
+				create_source(&self->source);
+				if (self->signals)
+					self->load_signals();
+				else if (!self->load_stream())
+					return;
+
+				loaded = true;
+			});
 		}
 		catch (...)
 		{
 			self->clear();
 			throw;
+		}
+
+		if (!loaded)
+		{
+			self->clear();
+			return false;
 		}
 
 		global::players.emplace_back(*player);
@@ -824,7 +839,8 @@ namespace Beeps
 
 		play_pending_players();
 #else
-		self->source.play();
+		if (!Xot::call_and_log_errors<OpenALError>([&]() {self->source.play();}))
+			self->clear();
 #endif
 	}
 
@@ -873,6 +889,9 @@ namespace Beeps
 	void
 	SoundPlayer::set_position (uint position)
 	{
+		if (self->signals && position >= self->signals.nsamples())
+			argument_error(__FILE__, __LINE__);
+
 		if (self->is_loaded() && state() == STOPPED)
 			self->clear();
 

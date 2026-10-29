@@ -189,13 +189,13 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_operator p.position, :>=, 1000
   end
 
-  def test_play_from_position_over_length()
+  def test_position_over_length()
     p = sound.play
+    assert_raise(ArgumentError) {p.position = 100_000}
     p.stop
-    p.position = 100_000
-    assert_raise(B::OpenALError) {p.play}
-    assert_equal :stopped, p.state
-    assert_equal :playing, sound.play.state
+    assert_raise(ArgumentError) {p.position = 100_000}
+    p.play
+    assert_equal :playing, p.state
 
     p = stream_sound.play
     p.stop
