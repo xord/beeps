@@ -87,6 +87,18 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal :playing, p.state
   end
 
+  def test_play_after_stop()
+    p = sound.play
+    p.stop
+    p.play
+    assert_equal :playing, p.state
+
+    p = stream_sound.play
+    p.stop
+    p.play
+    assert_equal :playing, p.state
+  end
+
   def test_stop_after_pause()
     p = sound.play
     p.pause
@@ -157,32 +169,67 @@ class TestSoundPlayer < Test::Unit::TestCase
     assert_equal 200, p.position
   end
 
+  def test_play_from_position_after_stop()
+    p = sound(1).play
+    p.stop
+    p.position = 22050
+    assert_equal 22050, p.position
+    p.play
+    sleep 0.05
+    assert_equal :playing, p.state
+    assert_operator p.position, :>=, 22050
+
+    p = stream_sound.play
+    p.stop
+    p.position = 1000
+    assert_equal 1000, p.position
+    p.play
+    sleep 0.05
+    assert_equal :playing, p.state
+    assert_operator p.position, :>=, 1000
+  end
+
+  def test_play_from_position_over_length()
+    p = sound.play
+    p.stop
+    p.position = 100_000
+    assert_raise(B::OpenALError) {p.play}
+    assert_equal :stopped, p.state
+    assert_equal :playing, sound.play.state
+
+    p = stream_sound.play
+    p.stop
+    p.position = 100_000
+    p.play
+    assert_equal :stopped, p.state
+  end
+
   def test_time()
     p = sound.play
     p.pause
-    assert_in_epsilon 0,    p.time
+    assert_in_epsilon 0,     p.time
 
-    p.time =          0.05
+    p.time =          0.025
     sleep 0.05
-    assert_in_epsilon 0.05, p.time
+    assert_in_epsilon 0.025, p.time
 
-    p.time            0.1
+    p.time            0.05
     sleep 0.05
-    assert_in_epsilon 0.1,  p.time
+    assert_in_epsilon 0.05,  p.time
   end
 
   def test_time_stream()
     p = stream_sound.play
     p.pause
-    assert_in_epsilon 0,    p.time
+    assert_in_epsilon 0,     p.time
 
-    p.time =          0.05
+    p.time =          0.025
     sleep 0.05
-    assert_in_epsilon 0.05, p.time
+    assert_in_epsilon 0.025, p.time
 
-    p.time            0.1
+    p.time            0.05
     sleep 0.05
-    assert_in_epsilon 0.1,  p.time
+    assert_in_epsilon 0.05,  p.time
   end
 
   def test_time_scale()
@@ -228,6 +275,25 @@ class TestSoundPlayer < Test::Unit::TestCase
 
     B::SoundPlayer.stop_all
     assert_true players.all? {|p| p.stopped?}
+  end
+
+  def test_players_over_limit()
+    s = sound 1
+
+    paused = s.play
+    paused.pause
+    paused.time = 0.5
+
+    players = 300.times.map {s.play}
+    assert_true players.none? {|p| p.state == :none}
+    assert_equal :paused, paused.state
+    assert_in_epsilon 0.5, paused.time
+
+    paused.play
+    assert_equal :playing, paused.state
+
+    players.first.play
+    assert_equal :playing, players.first.state
   end
 
 end# TestSoundPlayer

@@ -171,27 +171,20 @@ namespace Beeps
 	struct SoundSource
 	{
 
-		void create ()
+		bool create ()
 		{
-			self->create();
+			if (!self->create()) return false;
+
+			set_time_scale(self->time_scale);
+			set_gain(self->gain);
+			set_loop(self->loop);
+			return true;
 		}
 
 		void clear ()
 		{
 			stop();
 			self->clear();
-		}
-
-		SoundSource reuse ()
-		{
-			stop();
-			set_time_scale(1);
-			set_gain(1);
-			set_loop(false);
-
-			SoundSource source;
-			source.self.swap(self);
-			return source;
 		}
 
 		void attach (const SoundBuffer& buffer)
@@ -218,11 +211,7 @@ namespace Beeps
 
 		bool unqueue (SoundBuffer* buffer = NULL)
 		{
-			ALint count = 0;
-			alGetSourcei(self->id, AL_BUFFERS_PROCESSED, &count);
-			OpenAL_check_error(__FILE__, __LINE__);
-
-			if (count <= 0) return false;
+			if (count_processed_buffers() == 0) return false;
 
 			ALuint id = 0;
 			alSourceUnqueueBuffers(self->id, 1, &id);
@@ -237,8 +226,24 @@ namespace Beeps
 			if (!*this)
 				invalid_state_error(__FILE__, __LINE__);
 
+#if defined(OSX) || defined(IOS)
+			// macOS drops the offset set while the source is not playing,
+			// so set it again after the source starts to play
+			uint offset = state() == SoundPlayer::STATE_NONE ? position() : 0;
+#endif
+
 			alSourcePlay(self->id);
 			OpenAL_check_error(__FILE__, __LINE__);
+
+#if defined(OSX) || defined(IOS)
+			if (offset > 0)
+			{
+				pause();
+				set_position(offset);
+				alSourcePlay(self->id);
+				OpenAL_check_error(__FILE__, __LINE__);
+			}
+#endif
 		}
 
 		void pause ()
@@ -318,6 +323,7 @@ namespace Beeps
 			if (scale <= 0)
 				argument_error(__FILE__, __LINE__);
 
+			self->time_scale = scale;
 			if (!*this) return;
 
 			alSourcef(self->id, AL_PITCH, scale);
@@ -326,13 +332,7 @@ namespace Beeps
 
 		float time_scale () const
 		{
-			if (!*this) return 1;
-
-			float scale = 1;
-			alGetSourcef(self->id, AL_PITCH, &scale);
-			OpenAL_check_error(__FILE__, __LINE__);
-
-			return scale;
+			return self->time_scale;
 		}
 
 		void set_gain (float gain)
@@ -340,6 +340,7 @@ namespace Beeps
 			if (gain < 0)
 				argument_error(__FILE__, __LINE__);
 
+			self->gain = gain;
 			if (!*this) return;
 
 			alSourcef(self->id, AL_GAIN, gain);
@@ -348,17 +349,12 @@ namespace Beeps
 
 		float gain () const
 		{
-			float gain = 1;
-			if (!*this) return gain;
-
-			alGetSourcef(self->id, AL_GAIN, &gain);
-			OpenAL_check_error(__FILE__, __LINE__);
-
-			return gain;
+			return self->gain;
 		}
 
 		void set_loop (bool loop)
 		{
+			self->loop = loop;
 			if (!*this) return;
 
 			alSourcei(self->id, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
@@ -367,13 +363,16 @@ namespace Beeps
 
 		bool loop () const
 		{
-			if (!*this) return false;
+			return self->loop;
+		}
 
-			ALint loop = AL_FALSE;
-			alGetSourcei(self->id, AL_LOOPING, &loop);
+		uint count_processed_buffers () const
+		{
+			ALint count = 0;
+			alGetSourcei(self->id, AL_BUFFERS_PROCESSED, &count);
 			OpenAL_check_error(__FILE__, __LINE__);
 
-			return loop != AL_FALSE;
+			return count > 0 ? (uint) count : 0;
 		}
 
 		operator bool () const
@@ -389,23 +388,31 @@ namespace Beeps
 		struct Data
 		{
 
-			void* context = NULL;
+			void* context    = NULL;
 
-			ALint id      = -1;
+			ALint id         = -1;
+
+			float time_scale = 1;
+
+			float gain       = 1;
+
+			bool loop        = false;
 
 			~Data ()
 			{
 				Xot::call_and_log_errors([&]() {clear();});
 			}
 
-			void create ()
+			bool create ()
 			{
 				ALuint id_ = 0;
 				alGenSources(1, &id_);
-				if (!OpenAL_no_error()) return;
+				if (!OpenAL_no_error())
+					return false;
 
 				context = OpenAL_get_context();
 				id      = id_;
+				return true;
 			}
 
 			void clear ()
@@ -436,19 +443,23 @@ namespace Beeps
 	struct SoundPlayer::Data
 	{
 
+		uint nchannels      = 0;
+
 		double sample_rate  = 0;
 
 		uint position       = 0;
 
 		State pending_state = STATE_NONE;
 
-		SoundSource source;
-
-		std::vector<SoundBuffer> buffers;
+		Signals signals;
 
 		Processor::Ref processor;
 
 		std::unique_ptr<StreamContext> stream_context;
+
+		SoundSource source;
+
+		std::vector<SoundBuffer> buffers;
 
 		~Data ()
 		{
@@ -457,7 +468,6 @@ namespace Beeps
 
 		void clear ()
 		{
-			sample_rate   = 0;
 			position      = 0;
 			pending_state = STATE_NONE;
 
@@ -465,28 +475,50 @@ namespace Beeps
 
 			for (auto& buffer : buffers) buffer.clear();
 			buffers.clear();
+
+			stream_context.reset();
 		}
 
 		void attach_signals (const Signals& signals)
 		{
 			assert(signals);
 
-			sample_rate = signals.sample_rate();
+			this->signals     = signals;
+			this->sample_rate = signals.sample_rate();
+		}
+
+		void attach_stream (Processor* processor, uint nchannels, double sample_rate)
+		{
+			assert(processor && *processor && nchannels > 0 && sample_rate > 0);
+
+			this->processor   = processor;
+			this->nchannels   = nchannels;
+			this->sample_rate = sample_rate;
+		}
+
+		void load_signals ()
+		{
+			assert(signals);
 
 			SoundBuffer buffer(signals);
 			source.attach(buffer);
 			buffers.emplace_back(buffer);
+
+			source.set_position(position);
+			position = 0;
 		}
 
-		void attach_stream (
-			Processor* processor, uint nchannels, double sample_rate)
+		bool load_stream ()
 		{
 			assert(processor && *processor && nchannels > 0 && sample_rate > 0);
 
-			this->sample_rate = sample_rate;
-			this->processor   = processor;
 			stream_context.reset(
 				new StreamContext(sample_rate / 10, nchannels, sample_rate));
+
+			if (processor->seekable())
+				stream_context->seek(position);
+			else
+				position = 0;
 
 			for (int i = 0; i < 2; ++i)
 			{
@@ -500,6 +532,7 @@ namespace Beeps
 				source.queue(buffer);
 				buffers.emplace_back(buffer);
 			}
+			return !buffers.empty();
 		}
 
 		bool process_stream (SoundBuffer* buffer)
@@ -518,12 +551,12 @@ namespace Beeps
 
 		void process_and_queue_stream_buffers ()
 		{
-			SoundBuffer buffer;
-			while (is_streaming())
+			// a stopped source counts even the buffers queued after it stopped
+			// as processed, so read the count only once before queueing
+			for (uint n = source.count_processed_buffers(); n > 0 && is_streaming(); --n)
 			{
-				if (!source.unqueue(&buffer))
-					return;
-
+				SoundBuffer buffer;
+				source.unqueue(&buffer);
 				position += buffer.nsamples();
 
 				if (!process_stream(&buffer))
@@ -533,11 +566,17 @@ namespace Beeps
 				}
 
 				source.queue(buffer);
-				if (source.state() == STOPPED)
-				{
-					expand_buffer();
-					source.play();
-				}
+			}
+
+			if (source.state() == STOPPED)
+			{
+				expand_buffer();
+#if defined(OSX) || defined(IOS)
+				// play it on the next play_pending_players()
+				pending_state = PLAYING;
+#else
+				source.play();
+#endif
 			}
 		}
 
@@ -553,10 +592,18 @@ namespace Beeps
 			}
 		}
 
+		bool is_loaded () const
+		{
+			return source;
+		}
+
 		bool is_active () const
 		{
-			if (pending_state == PAUSED || pending_state == STOPPED)
+			if (!is_loaded())
 				return false;
+
+			if (is_pending())
+				return pending_state == PLAYING;
 
 			// a source can stay initial for a moment after it starts to play,
 			// so count the initial ones too
@@ -584,83 +631,13 @@ namespace Beeps
 	}// global
 
 
-	static SoundPlayer
-	create_player ()
-	{
-		SoundPlayer player;
-		player.self->source.create();
-		return player;
-	}
-
-	static SoundPlayer
-	reuse_player (SoundPlayer* player)
-	{
-		SoundPlayer newplayer;
-		newplayer.self->source = player->self->source.reuse();
-		player->self->clear();
-		return newplayer;
-	}
-
-	static void
-	remove_stopped_players ()
-	{
-		auto it = std::remove_if(
-			global::players.begin(), global::players.end(),
-			[](auto& player)
-			{
-				return !player || player.state() == SoundPlayer::STOPPED;
-			});
-
-		global::players.erase(it, global::players.end());
-	}
-
-	static SoundPlayer
-	get_next_player ()
-	{
-		SoundPlayer player = create_player();
-		if (player)
-			LOG("new player");
-
-		if (!player)
-		{
-			for (auto& p : global::players)
-			{
-				if (p && p.state() == SoundPlayer::STOPPED)
-				{
-					player = reuse_player(&p);
-					LOG("reuse stopped player");
-					break;
-				}
-			}
-		}
-
-		if (!player && !global::players.empty())
-		{
-			auto it = std::find_if(
-				global::players.begin(), global::players.end(),
-				[](auto& p) {return p && !p.self->is_streaming();});
-			if (it == global::players.end())
-				it = global::players.begin();
-
-			player = reuse_player(&*it);
-			LOG("reuse oldest player");
-		}
-
-		remove_stopped_players();
-
-		if (player)
-			global::players.emplace_back(player);
-
-		return player;
-	}
-
 	static bool
 	stop_oldest_player ()
 	{
 		for (auto& player : global::players)
 		{
 			if (
-				!player ||
+				!player.self->is_loaded() ||
 				player.self->is_pending() ||
 				player.self->is_streaming())
 			{
@@ -687,7 +664,7 @@ namespace Beeps
 		// so count them on each call
 		uint count = (uint) std::count_if(
 			global::players.begin(), global::players.end(),
-			[](auto& p) {return p && p.self->is_active();});
+			[](auto& p) {return p.self->is_active();});
 
 		for (uint i = max; i < count; ++i)
 		{
@@ -705,7 +682,7 @@ namespace Beeps
 		while (!pendings.empty())
 		{
 			SoundPlayer& player = pendings.front();
-			if (player && player.self->pending_state == SoundPlayer::PLAYING)
+			if (player.self->pending_state == SoundPlayer::PLAYING)
 			{
 				// try again on the next call
 				try
@@ -727,13 +704,18 @@ namespace Beeps
 	void
 	SoundPlayer_process_streams ()
 	{
-		play_pending_players();
-
 		for (auto& player : global::players)
 		{
-			if (player.self->is_streaming())
-				player.self->process_and_queue_stream_buffers();
+			SoundPlayer::Data* self = player.self.get();
+			if (!self->is_streaming() || self->is_pending())
+				continue;
+
+			self->process_and_queue_stream_buffers();
+			if (self->is_pending())
+				global::pending_players.emplace_back(player);
 		}
+
+		play_pending_players();
 	}
 
 	void
@@ -762,11 +744,74 @@ namespace Beeps
 	{
 	}
 
+	static void
+	remove_stopped_players ()
+	{
+		for (auto& player : global::players)
+		{
+			if (player.self->is_loaded() && player.state() == SoundPlayer::STOPPED)
+				player.self->clear();
+		}
+
+		auto it = std::remove_if(
+			global::players.begin(), global::players.end(),
+			[](auto& player) {return !player.self->is_loaded();});
+
+		global::players.erase(it, global::players.end());
+	}
+
+	static void
+	create_source (SoundSource* source)
+	{
+		remove_stopped_players();
+		if (source->create())
+			return;
+
+		if (!stop_oldest_player())
+			invalid_state_error(__FILE__, __LINE__, "too many sound players");
+
+		remove_stopped_players();
+		if (!source->create())
+			invalid_state_error(__FILE__, __LINE__, "failed to create a source");
+	}
+
+	static bool
+	attach_source (SoundPlayer* player)
+	{
+		SoundPlayer::Data* self = player->self.get();
+
+		create_source(&self->source);
+		try
+		{
+			if (self->signals)
+				self->load_signals();
+			else if (!self->load_stream())
+			{
+				self->clear();
+				return false;
+			}
+		}
+		catch (...)
+		{
+			self->clear();
+			throw;
+		}
+
+		global::players.emplace_back(*player);
+		return true;
+	}
+
 	void
 	SoundPlayer::play ()
 	{
-		if (!self->source)
+		if (!*this)
 			invalid_state_error(__FILE__, __LINE__);
+
+		if (self->is_loaded() && state() == STOPPED)
+			self->clear();
+
+		if (!self->is_loaded() && !attach_source(this))
+			return;
 
 #if defined(OSX) || defined(IOS)
 		// on macOS, a source fails to play when too many sources are playing,
@@ -807,11 +852,7 @@ namespace Beeps
 	void
 	SoundPlayer::stop ()
 	{
-		if (self->is_pending())
-			self->pending_state = STOPPED;
-
-		self->source.stop();
-		self->position = 0;
+		self->clear();
 	}
 
 	SoundPlayer::State
@@ -819,6 +860,9 @@ namespace Beeps
 	{
 		if (self->is_pending())
 			return self->pending_state;
+
+		if (!self->is_loaded())
+			return *this ? STOPPED : STATE_NONE;
 
 		State s = self->source.state();
 		if (s == STOPPED && self->is_streaming())
@@ -829,7 +873,12 @@ namespace Beeps
 	void
 	SoundPlayer::set_position (uint position)
 	{
-		if (self->is_streaming())
+		if (self->is_loaded() && state() == STOPPED)
+			self->clear();
+
+		if (!self->is_loaded())
+			self->position = position;
+		else if (self->is_streaming())
 		{
 			if (!self->processor || !self->processor->seekable())
 				invalid_state_error(__FILE__, __LINE__, "processor is not seekable");
@@ -913,7 +962,7 @@ namespace Beeps
 
 	SoundPlayer::operator bool () const
 	{
-		return self->source;
+		return self->signals || self->processor;
 	}
 
 	bool
@@ -991,7 +1040,7 @@ namespace Beeps
 
 		void attach_to (SoundPlayer* player) override
 		{
-			assert(player && *player);
+			assert(player && !*player);
 
 			player->self->attach_signals(signals);
 		}
@@ -1053,7 +1102,7 @@ namespace Beeps
 
 		void attach_to (SoundPlayer* player) override
 		{
-			assert(player && *player);
+			assert(player && !*player);
 
 			player->self->attach_stream(processor, nchannels_, sample_rate_);
 		}
@@ -1134,14 +1183,10 @@ namespace Beeps
 	SoundPlayer
 	Sound::play ()
 	{
-		SoundPlayer player = get_next_player();
-		if (!player)
-			invalid_state_error(__FILE__, __LINE__);
-
+		SoundPlayer player;
+		self->attach_to(&player);
 		player.set_gain(gain());
 		player.set_loop(loop());
-
-		self->attach_to(&player);
 		player.play();
 
 #if 0
